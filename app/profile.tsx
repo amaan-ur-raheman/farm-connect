@@ -31,7 +31,7 @@ import {
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
-import { useUserStore, useAuthStore } from '../src/stores';
+import { useUserStore, useAuthStore, useRegistrationStore } from '../src/stores';
 
 function SidebarItem({ icon, label, active = false, onPress }: { icon: any; label: string; active?: boolean; onPress?: () => void }) {
   return (
@@ -62,6 +62,8 @@ export default function ProfileScreen() {
 
   const { profile, wallet, holdings } = useUserStore();
   const { userRole, logout } = useAuthStore();
+  const resetRegistration = useRegistrationStore((s) => s.reset);
+  const clearUser = useUserStore((s) => s.clearUser);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -81,6 +83,8 @@ export default function ProfileScreen() {
           style: 'destructive',
           onPress: () => {
             logout();
+            resetRegistration();
+            clearUser();
             router.replace('/login');
           }
         },

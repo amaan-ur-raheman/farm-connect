@@ -29,7 +29,12 @@ export default function LoginScreen() {
     }
     
     login(userRole);
-    router.replace('/marketplace');
+    
+    if (userRole === 'farmer') {
+      router.replace('/dashboard');
+    } else {
+      router.replace('/marketplace');
+    }
   };
 
   const handleRoleSelect = (role: UserRole) => {

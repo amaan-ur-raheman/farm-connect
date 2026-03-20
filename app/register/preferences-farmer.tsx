@@ -18,7 +18,7 @@ import {
   Building2,
   CheckCircle,
 } from 'lucide-react-native';
-import { useRegistrationStore } from '../../src/stores';
+import { useRegistrationStore, useAuthStore } from '../../src/stores';
 
 const FARM_SIZE_RANGES = [
   { label: '< 1 acre', value: '<1' },
@@ -48,6 +48,7 @@ const FARMING_EXPERIENCE = [
 
 export default function FarmerPreferences() {
   const { farmerDetails, setFarmerDetails, bankDetails, setBankDetails, reset } = useRegistrationStore();
+  const { login } = useAuthStore();
   
   const [localFarmDetails, setLocalFarmDetails] = useState({
     farmName: farmerDetails?.farmLocation || '',
@@ -94,8 +95,9 @@ export default function FarmerPreferences() {
       });
       setStep(2);
     } else if (step === 2 && validateBank()) {
+      login('farmer');
       reset();
-      router.replace('/marketplace');
+      router.replace('/dashboard');
     }
   };
 

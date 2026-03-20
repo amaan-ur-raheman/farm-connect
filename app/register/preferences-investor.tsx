@@ -17,7 +17,7 @@ import {
   Building2,
   CheckCircle,
 } from 'lucide-react-native';
-import { useRegistrationStore } from '../../src/stores';
+import { useRegistrationStore, useAuthStore } from '../../src/stores';
 
 const INVESTMENT_RANGES = [
   { label: '$500 - $2,500', value: '500-2500' },
@@ -44,6 +44,7 @@ const FARM_TYPES = [
 
 export default function InvestorPreferences() {
   const { investorDetails, setInvestorDetails, bankDetails, setBankDetails, reset } = useRegistrationStore();
+  const { login } = useAuthStore();
   
   const [investmentRange, setInvestmentRange] = useState(investorDetails?.investmentRange || '');
   const [investmentGoals, setInvestmentGoals] = useState<string[]>(investorDetails?.investmentGoals || []);
@@ -85,6 +86,7 @@ export default function InvestorPreferences() {
       });
       setStep(2);
     } else if (step === 2 && validateBank()) {
+      login('investor');
       reset();
       router.replace('/marketplace');
     }
