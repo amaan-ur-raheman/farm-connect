@@ -5,13 +5,13 @@ import {
   TextInput, 
   TouchableOpacity, 
   Image, 
-  SafeAreaView, 
   StatusBar,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
   ScrollView
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Lock, Sprout, Chrome } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Button } from '../src/components/ui/Button';

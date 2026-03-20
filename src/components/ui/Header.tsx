@@ -4,9 +4,9 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Search,
   Bell,
