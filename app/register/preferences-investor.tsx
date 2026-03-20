@@ -7,9 +7,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import {
   ChevronRight,
   ChevronLeft,
@@ -18,6 +17,7 @@ import {
   Building2,
   CheckCircle,
 } from 'lucide-react-native';
+import { useRegistrationStore } from '../../src/stores';
 
 const INVESTMENT_RANGES = [
   { label: '$500 - $2,500', value: '500-2500' },
@@ -43,17 +43,12 @@ const FARM_TYPES = [
 ];
 
 export default function InvestorPreferences() {
-  const params = useLocalSearchParams();
+  const { investorDetails, setInvestorDetails, bankDetails, setBankDetails, reset } = useRegistrationStore();
   
-  const [investmentRange, setInvestmentRange] = useState('');
-  const [investmentGoals, setInvestmentGoals] = useState<string[]>([]);
-  const [preferredFarmTypes, setPreferredFarmTypes] = useState<string[]>([]);
-  const [bankDetails, setBankDetails] = useState({
-    bankName: '',
-    accountNumber: '',
-    routingNumber: '',
-    accountType: 'checking',
-  });
+  const [investmentRange, setInvestmentRange] = useState(investorDetails?.investmentRange || '');
+  const [investmentGoals, setInvestmentGoals] = useState<string[]>(investorDetails?.investmentGoals || []);
+  const [preferredFarmTypes, setPreferredFarmTypes] = useState<string[]>(investorDetails?.preferredFarmTypes || []);
+  const [accountType, setAccountType] = useState<'checking' | 'savings'>('checking');
   const [step, setStep] = useState(1);
 
   const toggleSelection = (
@@ -69,7 +64,7 @@ export default function InvestorPreferences() {
   };
 
   const updateBank = (field: string, value: string) => {
-    setBankDetails(prev => ({ ...prev, [field]: value }));
+    setBankDetails({ [field]: value });
   };
 
   const validatePreferences = () => {
@@ -82,8 +77,15 @@ export default function InvestorPreferences() {
 
   const handleNext = () => {
     if (step === 1 && validatePreferences()) {
+      setInvestorDetails({
+        investmentRange,
+        investmentGoals,
+        preferredFarmTypes,
+        expectedROI: 0,
+      });
       setStep(2);
     } else if (step === 2 && validateBank()) {
+      reset();
       router.replace('/marketplace');
     }
   };
@@ -270,14 +272,14 @@ export default function InvestorPreferences() {
 
         <View>
           <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Routing Number
+            IFSC Code
           </Text>
           <TextInput
-            value={bankDetails.routingNumber}
-            onChangeText={(v) => updateBank('routingNumber', v)}
-            placeholder="Enter routing number"
+            value={bankDetails.ifscCode}
+            onChangeText={(v) => updateBank('ifscCode', v)}
+            placeholder="Enter IFSC code"
             placeholderTextColor="#9ca3af"
-            keyboardType="numeric"
+            autoCapitalize="characters"
             className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
           />
         </View>
@@ -287,18 +289,18 @@ export default function InvestorPreferences() {
             Account Type
           </Text>
           <View className="flex-row gap-3">
-            {['checking', 'savings'].map((type) => (
+            {(['checking', 'savings'] as const).map((type) => (
               <TouchableOpacity
                 key={type}
-                onPress={() => updateBank('accountType', type)}
+                onPress={() => setAccountType(type)}
                 className={`flex-1 py-3 rounded-xl border-2 text-center capitalize transition-all ${
-                  bankDetails.accountType === type
+                  accountType === type
                     ? 'border-primary bg-primary/5'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
                 <Text className={`text-sm font-medium ${
-                  bankDetails.accountType === type
+                  accountType === type
                     ? 'text-primary'
                     : 'text-text-main dark:text-white'
                 }`}>

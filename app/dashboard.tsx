@@ -6,7 +6,6 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
-  TextInput,
   RefreshControl,
 } from 'react-native';
 import {
@@ -28,7 +27,6 @@ import { Button } from '../src/components/ui/Button';
 
 export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
 
   const inspectionImage = {
     uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCTy_BFevnJwTX9oUvW3cQRXLG5qTzbu0Mo42-QfJeT_itRa1eeJwlmUmzFW93riuxbCkvCVTDtkRMO3_GQGHnJWVb2kLpn_McXb2i7UJTWS_m5eaROMxEza2lnkbWUdXjnCRldnUMwR2bF61JIWVLbPSu6MttWwAaqunY3-Vob5hxkol-o-VhzuDvJV9vz9a6WeIjUAfwr5as7EHSY-T_Cue498JtDcWn33490jedTzZYEOfo0XwBrv0kk1iVwX5qcdVveUsJ51ik0',
@@ -88,8 +86,6 @@ export default function DashboardScreen() {
       <Header
         variant="menu"
         userImage={userImage}
-        showSearch={showSearch}
-        onSearchToggle={() => setShowSearch(!showSearch)}
         onAvatarPress={() => router.push('/profile')}
       />
 

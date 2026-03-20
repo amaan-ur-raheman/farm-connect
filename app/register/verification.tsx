@@ -9,7 +9,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import {
   ChevronRight,
@@ -20,25 +20,24 @@ import {
   FileText,
   CheckCircle,
 } from 'lucide-react-native';
+import { useRegistrationStore } from '../../src/stores';
+
+type LocalDocType = 'idFront' | 'idBack' | 'proofOfAddress';
+
+const TYPE_MAP: Record<LocalDocType, 'aadhaar' | 'pan' | 'bank_statement'> = {
+  idFront: 'aadhaar',
+  idBack: 'pan',
+  proofOfAddress: 'bank_statement',
+};
 
 export default function RegisterStep2() {
-  const params = useLocalSearchParams();
-  const role = params.role as string;
+  const { userRole, addDocument, removeDocument: storeRemoveDoc, documents } = useRegistrationStore();
+  const role = userRole || 'farmer';
   
-  const [documents, setDocuments] = useState<{
-    idFront: string | null;
-    idBack: string | null;
-    proofOfAddress: string | null;
-  }>({
-    idFront: null,
-    idBack: null,
-    proofOfAddress: null,
-  });
-
   const [uploadedDocs, setUploadedDocs] = useState({
-    idFront: false,
-    idBack: false,
-    proofOfAddress: false,
+    idFront: documents.some(d => d.type === 'aadhaar'),
+    idBack: documents.some(d => d.type === 'pan'),
+    proofOfAddress: documents.some(d => d.type === 'bank_statement'),
   });
 
   const requestPermissions = async () => {
@@ -55,7 +54,7 @@ export default function RegisterStep2() {
     return true;
   };
 
-  const pickImage = async (type: 'idFront' | 'idBack' | 'proofOfAddress') => {
+  const pickImage = async (type: LocalDocType) => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
 
@@ -68,10 +67,12 @@ export default function RegisterStep2() {
 
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0];
-      setDocuments(prev => ({
-        ...prev,
-        [type]: asset.uri,
-      }));
+      addDocument({
+        type: TYPE_MAP[type],
+        uri: asset.uri,
+        fileName: `${type}.jpg`,
+        uploadedAt: new Date().toISOString(),
+      });
       setUploadedDocs(prev => ({
         ...prev,
         [type]: true,
@@ -79,7 +80,7 @@ export default function RegisterStep2() {
     }
   };
 
-  const takePhoto = async (type: 'idFront' | 'idBack' | 'proofOfAddress') => {
+  const takePhoto = async (type: LocalDocType) => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
 
@@ -91,10 +92,12 @@ export default function RegisterStep2() {
 
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0];
-      setDocuments(prev => ({
-        ...prev,
-        [type]: asset.uri,
-      }));
+      addDocument({
+        type: TYPE_MAP[type],
+        uri: asset.uri,
+        fileName: `${type}.jpg`,
+        uploadedAt: new Date().toISOString(),
+      });
       setUploadedDocs(prev => ({
         ...prev,
         [type]: true,
@@ -102,11 +105,8 @@ export default function RegisterStep2() {
     }
   };
 
-  const removeDocument = (type: 'idFront' | 'idBack' | 'proofOfAddress') => {
-    setDocuments(prev => ({
-      ...prev,
-      [type]: null,
-    }));
+  const removeDoc = (type: LocalDocType) => {
+    storeRemoveDoc(TYPE_MAP[type]);
     setUploadedDocs(prev => ({
       ...prev,
       [type]: false,
@@ -118,12 +118,11 @@ export default function RegisterStep2() {
   };
 
   const handleNext = () => {
-    router.push({
-      pathname: role === 'investor' 
+    router.push(
+      role === 'investor' 
         ? '/register/preferences-investor' 
-        : '/register/preferences-farmer',
-      params: params as Record<string, string>,
-    });
+        : '/register/preferences-farmer'
+    );
   };
 
   const DocumentUpload = ({
@@ -133,9 +132,11 @@ export default function RegisterStep2() {
   }: {
     title: string;
     subtitle: string;
-    type: 'idFront' | 'idBack' | 'proofOfAddress';
+    type: LocalDocType;
   }) => {
-    const hasDocument = documents[type] !== null;
+    const storeType = TYPE_MAP[type];
+    const doc = documents.find(d => d.type === storeType);
+    const hasDocument = !!doc;
 
     return (
       <View className="mb-4">
@@ -146,10 +147,10 @@ export default function RegisterStep2() {
           {subtitle}
         </Text>
         
-        {hasDocument ? (
+        {hasDocument && doc ? (
           <View className="rounded-xl overflow-hidden border-2 border-primary">
             <Image
-              source={{ uri: documents[type] as string }}
+              source={{ uri: doc.uri }}
               className="w-full h-40"
               resizeMode="cover"
             />
@@ -159,7 +160,7 @@ export default function RegisterStep2() {
                 <Text className="text-xs font-medium text-white">Uploaded</Text>
               </View>
               <TouchableOpacity
-                onPress={() => removeDocument(type)}
+                onPress={() => removeDoc(type)}
                 className="flex-row items-center gap-1"
               >
                 <X size={14} color="white" />

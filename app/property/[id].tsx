@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -14,11 +14,9 @@ import {
   Heart,
   MapPin,
   ChevronRight,
-  Maximize2,
   IndianRupee,
   CheckCircle2,
   Ruler,
-  Coins,
   Droplets,
   Grape,
   Leaf,
@@ -35,15 +33,17 @@ import {
 } from 'lucide-react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Header } from '../../src/components/ui/Header';
-import { Button } from '../../src/components/ui/Button';
+import { useMarketplaceStore } from '../../src/stores';
+import { useUiStore } from '../../src/stores';
 
 const { width } = Dimensions.get('window');
 
 export default function PropertyDetailScreen() {
   const { id } = useLocalSearchParams();
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
+  const { toggleFavorite, isFavorite } = useMarketplaceStore();
+  const { toggleSearch, searchVisible } = useUiStore();
   const userImage = { uri: 'https://i.pravatar.cc/100?u=amaan' };
+  const isPropertyFavorite = isFavorite(id as string);
 
   const property = {
     title: 'Sahyadri Farms - Plot #14',
@@ -82,8 +82,8 @@ export default function PropertyDetailScreen() {
       <Header
         variant="menu"
         userImage={userImage}
-        showSearch={showSearch}
-        onSearchToggle={() => setShowSearch(!showSearch)}
+        showSearch={searchVisible}
+        onSearchToggle={toggleSearch}
         onAvatarPress={() => router.push('/profile')}
       />
 
@@ -139,13 +139,13 @@ export default function PropertyDetailScreen() {
                     <Share2 size={18} color="white" />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => setIsFavorite(!isFavorite)}
+                    onPress={() => toggleFavorite(id as string)}
                     className="size-10 bg-white/20 backdrop-blur-sm items-center justify-center rounded-full"
                   >
                     <Heart
                       size={18}
-                      color={isFavorite ? '#ef4444' : 'white'}
-                      fill={isFavorite ? '#ef4444' : 'transparent'}
+                      color={isPropertyFavorite ? '#ef4444' : 'white'}
+                      fill={isPropertyFavorite ? '#ef4444' : 'transparent'}
                     />
                   </TouchableOpacity>
                 </View>

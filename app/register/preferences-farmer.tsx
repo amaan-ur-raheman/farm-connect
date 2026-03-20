@@ -7,19 +7,18 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import {
   ChevronRight,
   ChevronLeft,
   Sprout,
   MapPin,
-  Calendar,
   Wallet,
   Building2,
   CheckCircle,
 } from 'lucide-react-native';
+import { useRegistrationStore } from '../../src/stores';
 
 const FARM_SIZE_RANGES = [
   { label: '< 1 acre', value: '<1' },
@@ -47,62 +46,32 @@ const FARMING_EXPERIENCE = [
   { label: 'Expert', years: '10+ years' },
 ];
 
-const SOIL_TYPES = [
-  'Sandy',
-  'Clay',
-  'Loamy',
-  'Silty',
-  'Peaty',
-  'Chalky',
-];
-
 export default function FarmerPreferences() {
-  const params = useLocalSearchParams();
+  const { farmerDetails, setFarmerDetails, bankDetails, setBankDetails, reset } = useRegistrationStore();
   
-  const [farmDetails, setFarmDetails] = useState({
-    farmName: '',
-    farmSize: '',
-    farmingType: '',
-    experience: '',
-    soilType: '',
-    location: '',
-    description: '',
+  const [localFarmDetails, setLocalFarmDetails] = useState({
+    farmName: farmerDetails?.farmLocation || '',
+    farmSize: farmerDetails?.farmSize || '',
+    farmingType: farmerDetails?.farmType || '',
+    experience: farmerDetails?.yearsOfExperience?.toString() || '',
+    location: farmerDetails?.farmLocation || '',
   });
-  const [bankDetails, setBankDetails] = useState({
-    bankName: '',
-    accountNumber: '',
-    routingNumber: '',
-    accountType: 'checking',
-  });
+  const [accountType, setAccountType] = useState<'checking' | 'savings'>('checking');
   const [step, setStep] = useState(1);
 
   const updateFarm = (field: string, value: string) => {
-    setFarmDetails(prev => ({ ...prev, [field]: value }));
+    setLocalFarmDetails(prev => ({ ...prev, [field]: value }));
   };
 
   const updateBank = (field: string, value: string) => {
-    setBankDetails(prev => ({ ...prev, [field]: value }));
+    setBankDetails({ [field]: value });
   };
 
   const toggleFarmingType = (type: string) => {
-    setFarmDetails(prev => ({
+    setLocalFarmDetails(prev => ({
       ...prev,
       farmingType: prev.farmingType === type ? '' : type,
     }));
-  };
-
-  const toggleSoilType = (type: string, currentTypes: string[]) => {
-    if (currentTypes.includes(type)) {
-      setFarmDetails(prev => ({
-        ...prev,
-        soilType: prev.soilType.split(',').filter(s => s !== type).join(','),
-      }));
-    } else {
-      setFarmDetails(prev => ({
-        ...prev,
-        soilType: prev.soilType ? `${prev.soilType},${type}` : type,
-      }));
-    }
   };
 
   const validateFarmDetails = () => {
@@ -115,8 +84,17 @@ export default function FarmerPreferences() {
 
   const handleNext = () => {
     if (step === 1 && validateFarmDetails()) {
+      setFarmerDetails({
+        farmSize: localFarmDetails.farmSize,
+        farmLocation: localFarmDetails.location,
+        farmType: localFarmDetails.farmingType,
+        cropsGrown: [],
+        irrigationType: '',
+        yearsOfExperience: parseInt(localFarmDetails.experience) || 0,
+      });
       setStep(2);
     } else if (step === 2 && validateBank()) {
+      reset();
       router.replace('/marketplace');
     }
   };
@@ -155,7 +133,7 @@ export default function FarmerPreferences() {
             Farm Name
           </Text>
           <TextInput
-            value={farmDetails.farmName}
+            value={localFarmDetails.farmName}
             onChangeText={(v) => updateFarm('farmName', v)}
             placeholder="Enter your farm name"
             placeholderTextColor="#9ca3af"
@@ -174,13 +152,13 @@ export default function FarmerPreferences() {
                 key={range.value}
                 onPress={() => updateFarm('farmSize', range.value)}
                 className={`px-3 py-2 rounded-full border-2 transition-all ${
-                  farmDetails.farmSize === range.value
+                  localFarmDetails.farmSize === range.value
                     ? 'border-primary bg-primary'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
                 <Text className={`text-xs font-medium ${
-                  farmDetails.farmSize === range.value
+                  localFarmDetails.farmSize === range.value
                     ? 'text-white'
                     : 'text-text-main dark:text-white'
                 }`}>
@@ -202,13 +180,13 @@ export default function FarmerPreferences() {
                 key={type}
                 onPress={() => toggleFarmingType(type)}
                 className={`px-3 py-2 rounded-full border-2 transition-all ${
-                  farmDetails.farmingType === type
+                  localFarmDetails.farmingType === type
                     ? 'border-primary bg-primary'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
                 <Text className={`text-xs font-medium ${
-                  farmDetails.farmingType === type
+                  localFarmDetails.farmingType === type
                     ? 'text-white'
                     : 'text-text-main dark:text-white'
                 }`}>
@@ -230,13 +208,13 @@ export default function FarmerPreferences() {
                 key={exp.label}
                 onPress={() => updateFarm('experience', exp.label)}
                 className={`flex-1 p-3 rounded-xl border-2 text-center transition-all ${
-                  farmDetails.experience === exp.label
+                  localFarmDetails.experience === exp.label
                     ? 'border-primary bg-primary/5'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
                 <Text className={`text-xs font-medium ${
-                  farmDetails.experience === exp.label
+                  localFarmDetails.experience === exp.label
                     ? 'text-primary'
                     : 'text-text-main dark:text-white'
                 }`}>
@@ -258,7 +236,7 @@ export default function FarmerPreferences() {
           <View className="flex-row items-center bg-white dark:bg-[#1e291e] border border-[#eaf0ea] dark:border-[#2a382a] rounded-xl px-4">
             <MapPin size={18} color="#9ca3af" />
             <TextInput
-              value={farmDetails.location}
+              value={localFarmDetails.location}
               onChangeText={(v) => updateFarm('location', v)}
               placeholder="Enter farm location"
               placeholderTextColor="#9ca3af"
@@ -339,14 +317,14 @@ export default function FarmerPreferences() {
 
         <View>
           <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Routing Number
+            IFSC Code
           </Text>
           <TextInput
-            value={bankDetails.routingNumber}
-            onChangeText={(v) => updateBank('routingNumber', v)}
-            placeholder="Enter routing number"
+            value={bankDetails.ifscCode}
+            onChangeText={(v) => updateBank('ifscCode', v)}
+            placeholder="Enter IFSC code"
             placeholderTextColor="#9ca3af"
-            keyboardType="numeric"
+            autoCapitalize="characters"
             className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
           />
         </View>
@@ -356,18 +334,18 @@ export default function FarmerPreferences() {
             Account Type
           </Text>
           <View className="flex-row gap-3">
-            {['checking', 'savings'].map((type) => (
+            {(['checking', 'savings'] as const).map((type) => (
               <TouchableOpacity
                 key={type}
-                onPress={() => updateBank('accountType', type)}
+                onPress={() => setAccountType(type)}
                 className={`flex-1 py-3 rounded-xl border-2 text-center capitalize transition-all ${
-                  bankDetails.accountType === type
+                  accountType === type
                     ? 'border-primary bg-primary/5'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
                 <Text className={`text-sm font-medium ${
-                  bankDetails.accountType === type
+                  accountType === type
                     ? 'text-primary'
                     : 'text-text-main dark:text-white'
                 }`}>

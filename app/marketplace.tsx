@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   View, 
   Text, 
@@ -20,7 +20,6 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Star,
   ShieldCheck,
   Wifi,
   Droplets,
@@ -31,6 +30,7 @@ import {
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import { Button } from '../src/components/ui/Button';
+import { useMarketplaceStore } from '../src/stores';
 
 const { width } = Dimensions.get('window');
 
@@ -87,41 +87,28 @@ const MARKETPLACE_DATA = [
 ];
 
 export default function MarketplaceScreen() {
-  const [activeTab, setActiveTab] = useState('Marketplace');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [showSearch, setShowSearch] = useState(false);
-
-  const userImage = { uri: 'https://i.pravatar.cc/100?u=amaan' };
-
-  const toggleFavorite = (id: string) => {
-    setFavorites(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
+  const [activeTab, setActiveTab] = React.useState('Marketplace');
+  
+  const { 
+    viewMode, 
+    setViewMode,
+    toggleFavorite,
+    isFavorite,
+    favorites
+  } = useMarketplaceStore();
 
   return (
     <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
       <StatusBar barStyle="dark-content" />
 
-      {/* Header - Using unified Header component */}
+      {/* Header */}
       <Header
         variant="menu"
-        userImage={userImage}
-        showSearch={showSearch}
-        onSearchToggle={() => setShowSearch(!showSearch)}
         onAvatarPress={() => router.push('/profile')}
       />
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
-          {/* Map Section - Matching HTML Reference */}
+          {/* Map Section */}
           <View className="relative w-full h-[300px] lg:h-[450px] bg-[#eaf0ea] dark:bg-[#2a352a] overflow-hidden">
              <Image 
                source={{ uri: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940' }} 
@@ -142,7 +129,7 @@ export default function MarketplaceScreen() {
                 <View className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-[#1e291e] border-r border-b border-[#4cae4f] rotate-45" />
              </View>
 
-             {/* Quick Map Controls - Matching HTML */}
+             {/* Quick Map Controls */}
              <View className="absolute bottom-6 right-6 flex-col gap-2">
                 <View className="bg-white dark:bg-[#1e291e] rounded-lg shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
                    <TouchableOpacity className="p-2.5 border-b border-gray-100 dark:border-gray-700">
@@ -160,7 +147,7 @@ export default function MarketplaceScreen() {
 
           {/* Discovery Area */}
           <View className="px-4 md:px-10 lg:px-40 py-8">
-             {/* Results Header with View Toggle & Sort - Matching HTML */}
+             {/* Results Header with View Toggle & Sort */}
              <View className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <View>
                    <Text className="text-2xl font-bold text-[#111811] dark:text-white">Find your perfect plot</Text>
@@ -190,7 +177,7 @@ export default function MarketplaceScreen() {
                 </View>
              </View>
 
-             {/* In-View Search & Filters - Matching HTML Reference */}
+             {/* In-View Search & Filters */}
              <View className="bg-white dark:bg-[#1e291e] rounded-xl shadow-lg p-4 border border-gray-100 dark:border-gray-800 mb-8">
                 <View className="relative mb-4">
                    <View className="absolute left-3 top-2.5 z-10">
@@ -203,7 +190,7 @@ export default function MarketplaceScreen() {
                    />
                 </View>
                 
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 hide-scrollbar">
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
                    <TouchableOpacity className="flex-row items-center gap-1 px-3 py-2 bg-[#f9fbf9] dark:bg-[#151d15] border border-gray-200 dark:border-gray-700 rounded-lg">
                       <Text className="text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Radius: 50km</Text>
                       <ChevronDown size={12} color="#94a3b8" />
@@ -223,7 +210,7 @@ export default function MarketplaceScreen() {
                 </ScrollView>
              </View>
 
-             {/* Property Grid - 4 Column Layout Matching HTML */}
+             {/* Property Grid */}
              <View className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {MARKETPLACE_DATA.map((item) => (
                    <TouchableOpacity 
@@ -264,10 +251,10 @@ export default function MarketplaceScreen() {
                            onPress={() => toggleFavorite(item.id)}
                            className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/20 backdrop-blur-sm"
                          >
-                            <Heart size={16} color="white" fill={favorites.has(item.id) ? '#ef4444' : 'transparent'} />
+                            <Heart size={16} color="white" fill={isFavorite(item.id) ? '#ef4444' : 'transparent'} />
                          </TouchableOpacity>
-                         
-                         <Image source={{ uri: item.image }} className="w-full h-full" />
+                        
+                        <Image source={{ uri: item.image }} className="w-full h-full" />
                       </View>
 
                       <View className="p-4">
@@ -308,7 +295,7 @@ export default function MarketplaceScreen() {
                 ))}
              </View>
 
-             {/* Pagination - Matching HTML Reference */}
+             {/* Pagination */}
              <View className="flex flex-row items-center justify-center gap-2 mt-12">
                 <TouchableOpacity className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#2a352a]">
                    <ChevronLeft size={18} color="#6b7280" />
@@ -333,7 +320,7 @@ export default function MarketplaceScreen() {
           </View>
        </ScrollView>
 
-       {/* Bottom Navigation - Matching HTML */}
+       {/* Bottom Navigation */}
        <View className="absolute bottom-6 left-4 right-4 bg-[#111811] dark:bg-white h-16 rounded-2xl items-center justify-around px-6 shadow-2xl flex-row">
           <TouchableOpacity 
             onPress={() => setActiveTab('Marketplace')}

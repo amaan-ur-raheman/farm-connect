@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import {
-  Tractor,
   ShieldCheck,
   TrendingUp,
   Sprout,
@@ -19,31 +18,23 @@ import {
   EyeOff,
   ChevronRight,
 } from 'lucide-react-native';
-
-type UserRole = 'investor' | 'farmer' | null;
+import { useRegistrationStore } from '../../src/stores';
 
 export default function RegisterStep1() {
-  const [selectedRole, setSelectedRole] = useState<UserRole>(null);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-  });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const updateForm = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
+  const { 
+    userRole, 
+    setUserRole, 
+    formData, 
+    updateFormData, 
+    errors, 
+    setError, 
+    clearError,
+    clearAllErrors,
+  } = useRegistrationStore();
 
   const validateForm = () => {
-    if (!selectedRole) {
+    if (!userRole) {
       Alert.alert('Select Role', 'Please select Investor or Farmer');
       return false;
     }
@@ -52,17 +43,7 @@ export default function RegisterStep1() {
 
   const handleNext = () => {
     if (validateForm()) {
-      // Store form data and proceed to verification
-      router.push({
-        pathname: '/register/verification',
-        params: {
-          role: selectedRole!,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-        },
-      });
+      router.push('/register/verification');
     }
   };
 
@@ -103,19 +84,19 @@ export default function RegisterStep1() {
             {/* Investor Option */}
             <TouchableOpacity
               onPress={() => {
-                setSelectedRole('investor');
-                if (errors.role) setErrors(prev => ({ ...prev, role: '' }));
+                setUserRole('investor');
+                clearError('role');
               }}
               className={`flex-1 p-4 rounded-xl border-2 transition-all ${
-                selectedRole === 'investor'
+                userRole === 'investor'
                   ? 'border-primary bg-primary/5'
                   : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
               }`}
             >
               <View className={`size-10 rounded-full items-center justify-center mb-3 ${
-                selectedRole === 'investor' ? 'bg-primary' : 'bg-[#4cae4f]/20'
+                userRole === 'investor' ? 'bg-primary' : 'bg-[#4cae4f]/20'
               }`}>
-                <TrendingUp size={20} color={selectedRole === 'investor' ? 'white' : '#4cae4f'} />
+                <TrendingUp size={20} color={userRole === 'investor' ? 'white' : '#4cae4f'} />
               </View>
               <Text className="text-sm font-semibold text-text-main dark:text-white mb-1">
                 Investor
@@ -123,7 +104,7 @@ export default function RegisterStep1() {
               <Text className="text-xs text-gray-500 dark:text-gray-400">
                 Fund farms and earn returns
               </Text>
-              {selectedRole === 'investor' && (
+              {userRole === 'investor' && (
                 <View className="absolute top-3 right-3">
                   <ShieldCheck size={18} color="#2be619" />
                 </View>
@@ -133,19 +114,19 @@ export default function RegisterStep1() {
             {/* Farmer Option */}
             <TouchableOpacity
               onPress={() => {
-                setSelectedRole('farmer');
-                if (errors.role) setErrors(prev => ({ ...prev, role: '' }));
+                setUserRole('farmer');
+                clearError('role');
               }}
               className={`flex-1 p-4 rounded-xl border-2 transition-all ${
-                selectedRole === 'farmer'
+                userRole === 'farmer'
                   ? 'border-primary bg-primary/5'
                   : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
               }`}
             >
               <View className={`size-10 rounded-full items-center justify-center mb-3 ${
-                selectedRole === 'farmer' ? 'bg-primary' : 'bg-[#4cae4f]/20'
+                userRole === 'farmer' ? 'bg-primary' : 'bg-[#4cae4f]/20'
               }`}>
-                <Sprout size={20} color={selectedRole === 'farmer' ? 'white' : '#4cae4f'} />
+                <Sprout size={20} color={userRole === 'farmer' ? 'white' : '#4cae4f'} />
               </View>
               <Text className="text-sm font-semibold text-text-main dark:text-white mb-1">
                 Farmer
@@ -153,7 +134,7 @@ export default function RegisterStep1() {
               <Text className="text-xs text-gray-500 dark:text-gray-400">
                 List your farm and get funded
               </Text>
-              {selectedRole === 'farmer' && (
+              {userRole === 'farmer' && (
                 <View className="absolute top-3 right-3">
                   <ShieldCheck size={18} color="#2be619" />
                 </View>
@@ -174,7 +155,7 @@ export default function RegisterStep1() {
                 </Text>
                 <TextInput
                   value={formData.firstName}
-                  onChangeText={(v) => updateForm('firstName', v)}
+                  onChangeText={(v) => updateFormData('firstName', v)}
                   placeholder="John"
                   placeholderTextColor="#9ca3af"
                   className={`px-4 py-3 rounded-xl border text-sm text-text-main dark:text-white bg-white dark:bg-[#1e291e] ${
@@ -191,7 +172,7 @@ export default function RegisterStep1() {
                 </Text>
                 <TextInput
                   value={formData.lastName}
-                  onChangeText={(v) => updateForm('lastName', v)}
+                  onChangeText={(v) => updateFormData('lastName', v)}
                   placeholder="Doe"
                   placeholderTextColor="#9ca3af"
                   className={`px-4 py-3 rounded-xl border text-sm text-text-main dark:text-white bg-white dark:bg-[#1e291e] ${
@@ -211,7 +192,7 @@ export default function RegisterStep1() {
               </Text>
               <TextInput
                 value={formData.email}
-                onChangeText={(v) => updateForm('email', v)}
+                onChangeText={(v) => updateFormData('email', v)}
                 placeholder="john.doe@email.com"
                 placeholderTextColor="#9ca3af"
                 keyboardType="email-address"
@@ -232,7 +213,7 @@ export default function RegisterStep1() {
               </Text>
               <TextInput
                 value={formData.phone}
-                onChangeText={(v) => updateForm('phone', v)}
+                onChangeText={(v) => updateFormData('phone', v)}
                 placeholder="+1 (555) 000-0000"
                 placeholderTextColor="#9ca3af"
                 keyboardType="phone-pad"
@@ -253,7 +234,7 @@ export default function RegisterStep1() {
               <View className="relative">
                 <TextInput
                   value={formData.password}
-                  onChangeText={(v) => updateForm('password', v)}
+                  onChangeText={(v) => updateFormData('password', v)}
                   placeholder="Min. 8 characters"
                   placeholderTextColor="#9ca3af"
                   secureTextEntry={!showPassword}
@@ -284,7 +265,7 @@ export default function RegisterStep1() {
               </Text>
               <TextInput
                 value={formData.confirmPassword}
-                onChangeText={(v) => updateForm('confirmPassword', v)}
+                onChangeText={(v) => updateFormData('confirmPassword', v)}
                 placeholder="Re-enter password"
                 placeholderTextColor="#9ca3af"
                 secureTextEntry={!showPassword}

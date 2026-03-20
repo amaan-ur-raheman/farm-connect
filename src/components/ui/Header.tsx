@@ -13,9 +13,9 @@ import {
   Tractor,
   Video,
   Settings,
-  ChevronLeft,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { useUiStore, useUserStore } from '../../stores';
 
 export type HeaderVariant = 'menu' | 'back-title' | 'back-avatar';
 
@@ -44,12 +44,25 @@ export function Header({
   userImage,
   onActionPress,
   onAvatarPress,
-  onMenuPress,
-  showSearch = false,
+  showSearch,
   onSearchToggle,
   onSearchChange,
   searchPlaceholder = 'Search farms, crops, or reports...',
 }: HeaderProps) {
+  const { searchVisible, setSearchVisible, setGlobalSearchQuery } = useUiStore();
+  const { profile } = useUserStore();
+
+  const actualShowSearch = showSearch !== undefined ? showSearch : searchVisible;
+  const actualOnSearchToggle = onSearchToggle || (() => setSearchVisible(!searchVisible));
+  const actualOnSearchChange = onSearchChange || setGlobalSearchQuery;
+  
+  const displayUserImage = userImage || (profile?.avatar ? { uri: profile.avatar } : undefined);
+  const displayUserName = userName || profile?.firstName || 'User';
+
+  const handleSearchChange = (text: string) => {
+    actualOnSearchChange(text);
+  };
+
   return (
     <>
       <SafeAreaView className="bg-white dark:bg-[#1e291e] border-b border-[#eaf0ea] dark:border-[#2a382a]">
@@ -90,15 +103,15 @@ export function Header({
               <View className="flex-row items-center gap-3 flex-1">
                 <View className="relative">
                   <View className="size-10 rounded-full border-2 border-primary overflow-hidden bg-slate-100">
-                    {userImage || userAvatar ? (
+                    {displayUserImage || userAvatar ? (
                       <Image
-                        source={userImage || { uri: userAvatar }}
+                        source={displayUserImage || { uri: userAvatar }}
                         className="w-full h-full"
                       />
                     ) : (
                       <View className="w-full h-full bg-[#4cae4f]/20 items-center justify-center">
                         <Text className="text-sm font-bold text-[#4cae4f]">
-                          {userName?.charAt(0) || 'U'}
+                          {displayUserName.charAt(0)}
                         </Text>
                       </View>
                     )}
@@ -106,8 +119,8 @@ export function Header({
                   <View className="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-white dark:border-[#1e291e]" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-base font-bold text-[#1e291b] dark:text-white leading-tight">
-                    {userName || 'User'}
+                  <Text className="text-base font-bold text-[#1e293b] dark:text-white leading-tight">
+                    {displayUserName}
                   </Text>
                   {userStatus && (
                     <Text className="text-xs font-medium text-[#608562]">{userStatus}</Text>
@@ -122,7 +135,7 @@ export function Header({
             {variant === 'menu' && (
               <>
                 <TouchableOpacity
-                  onPress={onSearchToggle}
+                  onPress={actualOnSearchToggle}
                   className="p-2"
                 >
                   <Search size={20} color="#608562" />
@@ -131,15 +144,18 @@ export function Header({
                   <Bell size={20} color="#608562" />
                   <View className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onAvatarPress} className="size-10 rounded-full border border-[#eaf0ea] overflow-hidden">
-                  {userImage || userAvatar ? (
+                <TouchableOpacity 
+                  onPress={onAvatarPress || (() => router.push('/profile'))} 
+                  className="size-10 rounded-full border border-[#eaf0ea] overflow-hidden"
+                >
+                  {displayUserImage || userAvatar ? (
                     <Image
-                      source={userImage || { uri: userAvatar || '' }}
+                      source={displayUserImage || { uri: userAvatar || '' }}
                       className="w-full h-full"
                     />
                   ) : (
                     <View className="w-full h-full bg-[#4cae4f]/20 items-center justify-center">
-                      <Text className="text-sm font-bold text-[#4cae4f]">A</Text>
+                      <Text className="text-sm font-bold text-[#4cae4f]">{displayUserName.charAt(0)}</Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -175,7 +191,7 @@ export function Header({
         </View>
 
         {/* Search Bar - Shown when active */}
-        {variant === 'menu' && showSearch && (
+        {variant === 'menu' && actualShowSearch && (
           <View className="px-4 pb-3">
             <View className="bg-[#eaf0ea] dark:bg-[#2a382a] rounded-lg px-4 py-2.5 flex-row items-center">
               <Search size={18} color="#608562" className="mr-3" />
@@ -183,7 +199,8 @@ export function Header({
                 placeholder={searchPlaceholder}
                 placeholderTextColor="#608562"
                 className="flex-1 text-sm font-medium text-[#1e293b] dark:text-white"
-                onChangeText={onSearchChange}
+                onChangeText={handleSearchChange}
+                autoFocus
               />
             </View>
           </View>

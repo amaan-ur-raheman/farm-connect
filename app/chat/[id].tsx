@@ -17,15 +17,17 @@ import {
   MapPin, 
   Mic, 
   Send, 
-  Play, 
+  Play,
 } from 'lucide-react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Header } from '../../src/components/ui/Header';
+import { useUserStore } from '../../src/stores';
 
 const { width } = Dimensions.get('window');
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams();
+  const { profile } = useUserStore();
   const [messages, setMessages] = useState([
     { 
       id: '1', 
