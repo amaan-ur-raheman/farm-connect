@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Image, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { Image } from 'expo-image';
 import { ChevronLeft, Plus, MapPin, Trash2 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Listing } from '../../src/config/api';
@@ -91,8 +92,8 @@ export default function MyListingsScreen() {
               >
                 <Image
                   source={{ uri: listing.images?.[0] || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800' }}
-                  className="w-full h-40"
-                  resizeMode="cover"
+                  style={{ width: '100%', height: 160 }}
+                  contentFit="cover"
                 />
                 <View className="p-4">
                   <View className="flex-row items-center justify-between mb-2">

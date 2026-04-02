@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated';
 
 const prisma = new PrismaClient();
 
@@ -42,7 +42,7 @@ async function main() {
     },
   });
 
-  // Create investor
+  // Create investor (consumer)
   const investor = await prisma.user.create({
     data: {
       phone: '+919876543211',

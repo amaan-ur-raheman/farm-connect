@@ -4,17 +4,21 @@ import { asyncHandler } from '@/shared/middleware/handlers';
 import { createFarmUpdate, getContractUpdates } from './update.service';
 import multer from 'multer';
 import streamifier from 'streamifier';
-import { v2 as cloudinary } from 'cloudinary';
-import { env } from '@/config/env';
+import { cloudinary } from '@/config/cloudinary';
 import { createUpdateSchema } from './update.schema';
 
-cloudinary.config({
-  cloud_name: env.cloudinary.cloudName,
-  api_key: env.cloudinary.apiKey,
-  api_secret: env.cloudinary.apiSecret,
+const upload = multer({ 
+  storage: multer.memoryStorage(), 
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/quicktime'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only images and videos are allowed.'));
+    }
+  },
 });
-
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 const uploadRouter = Router({ mergeParams: true });
 

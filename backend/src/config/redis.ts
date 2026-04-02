@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import crypto from "crypto";
 import { env } from "@/config/env";
 
 const redis = new Redis({
@@ -9,10 +10,15 @@ const redis = new Redis({
 const OTP_TTL = 300; // 5 minutes
 const OTP_LIMIT = 5; // max OTP requests per hour per phone
 
+const hashOtp = (phone: string, otp: string): string => {
+	return crypto.createHash("sha256").update(`${phone}:${otp}`).digest("hex");
+};
+
 export const redisClient = redis;
 
 export const setOtp = async (phone: string, otp: string): Promise<void> => {
-	await redis.set(`otp:${phone}`, otp, { ex: OTP_TTL });
+	const hashedOtp = hashOtp(phone, otp);
+	await redis.set(`otp:${phone}`, hashedOtp, { ex: OTP_TTL });
 };
 
 export const getOtp = async (phone: string): Promise<string | null> => {
@@ -21,6 +27,13 @@ export const getOtp = async (phone: string): Promise<string | null> => {
 
 export const deleteOtp = async (phone: string): Promise<void> => {
 	await redis.del(`otp:${phone}`);
+};
+
+export const verifyOtp = async (phone: string, otp: string): Promise<boolean> => {
+	const storedHash = await redis.get<string>(`otp:${phone}`);
+	if (!storedHash) return false;
+	const inputHash = hashOtp(phone, otp);
+	return storedHash === inputHash;
 };
 
 export const checkOtpRateLimit = async (phone: string): Promise<boolean> => {

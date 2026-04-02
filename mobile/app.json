@@ -28,6 +28,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
+      "apiUrl": "https://YOUR_PRODUCTION_URL/api",
       "eas": {
         "projectId": "YOUR_EAS_PROJECT_ID"
       }
@@ -39,7 +40,8 @@
           "icon": "./assets/icon.png",
           "color": "#4a7c59"
         }
-      ]
+      ],
+      "expo-image"
     ]
   }
 }

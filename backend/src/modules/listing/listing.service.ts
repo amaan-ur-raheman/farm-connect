@@ -1,15 +1,8 @@
 import { prisma } from '@/config/database';
 import { NotFoundError, ForbiddenError } from '@/shared/errors';
 import type { CreateListingInput, UpdateListingInput, ListingFiltersInput } from './listing.schema';
-import { v2 as cloudinary } from 'cloudinary';
+import { cloudinary } from '@/config/cloudinary';
 import streamifier from 'streamifier';
-import { env } from '@/config/env';
-
-cloudinary.config({
-  cloud_name: env.cloudinary.cloudName,
-  api_key: env.cloudinary.apiKey,
-  api_secret: env.cloudinary.apiSecret,
-});
 
 const EARTH_RADIUS_KM = 6371;
 

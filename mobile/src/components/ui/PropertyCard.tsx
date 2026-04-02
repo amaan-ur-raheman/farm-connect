@@ -1,4 +1,5 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { MapPin, Heart, ShieldCheck, Wifi } from 'lucide-react-native';
 import { Button } from './Button';
 
@@ -35,8 +36,8 @@ export function PropertyCard({
       <View className="relative h-56 overflow-hidden">
         <Image 
           source={{ uri: image }} 
-          className="w-full h-full" 
-          resizeMode="cover"
+          style={{ width: '100%', height: '100%' }} 
+          contentFit="cover"
         />
         <View className="absolute top-4 left-4 gap-2">
           {verified && (

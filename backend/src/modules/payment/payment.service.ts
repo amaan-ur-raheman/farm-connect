@@ -4,10 +4,11 @@ import { env } from '@/config/env';
 import { BadRequestError } from '@/shared/errors';
 import { prisma } from '@/config/database';
 import { createNotification } from '@/modules/notification/notification.service';
+import { invalidateWalletBalance } from '@/config/redis';
 
 const razorpay = new Razorpay({
-  key_id: env.razorpay.keyId,
-  key_secret: env.razorpay.keySecret,
+  key_id: env.razorpay.keyId ?? '',
+  key_secret: env.razorpay.keySecret ?? '',
 });
 
 export const createRazorpayOrder = async (amount: number, receipt: string) => {
@@ -25,6 +26,9 @@ export const verifyRazorpaySignature = (
   paymentId: string,
   signature: string
 ): boolean => {
+  if (!env.razorpay.keySecret) {
+    throw new Error('RAZORPAY_KEY_SECRET is not configured');
+  }
   const expectedSignature = crypto
     .createHmac('sha256', env.razorpay.keySecret)
     .update(`${orderId}|${paymentId}`)
@@ -33,6 +37,9 @@ export const verifyRazorpaySignature = (
 };
 
 export const verifyWebhookSignature = (payload: string, signature: string): boolean => {
+  if (!env.razorpay.webhookSecret) {
+    throw new Error('RAZORPAY_WEBHOOK_SECRET is not configured');
+  }
   const expectedSignature = crypto
     .createHmac('sha256', env.razorpay.webhookSecret)
     .update(payload)
@@ -180,6 +187,19 @@ export const createFundAccount = async (userId: string, contact: string, account
 };
 
 export const initiatePayout = async (userId: string, amount: number, fundAccountId: string) => {
+  // Get current wallet balance before payout
+  const lastTransaction = await prisma.walletTransaction.findFirst({
+    where: { user_id: userId },
+    orderBy: { created_at: 'desc' },
+    select: { balance_after: true },
+  });
+  const currentBalance = lastTransaction?.balance_after ?? 0;
+  const newBalance = currentBalance - amount;
+
+  if (newBalance < 0) {
+    throw new BadRequestError('Insufficient wallet balance');
+  }
+
   const payout = await (razorpay as any).payouts.create({
     account_number: env.razorpay.fundAccountNumber,
     to_fund_account_id: fundAccountId,
@@ -192,13 +212,16 @@ export const initiatePayout = async (userId: string, amount: number, fundAccount
   await prisma.walletTransaction.create({
     data: {
       user_id: userId,
-      type: 'CREDIT',
+      type: 'DEBIT',
       amount,
-      description: 'Payout received',
-      balance_after: 0,
+      description: 'Payout initiated',
+      balance_after: newBalance,
       razorpay_payout_id: payout.id,
     },
   });
+
+  // Invalidate wallet cache
+  invalidateWalletBalance(userId);
 
   return payout;
 };

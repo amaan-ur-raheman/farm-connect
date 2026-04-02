@@ -16,7 +16,19 @@ vi.mock("@/config/env", () => ({
 			webhookSecret: "test_webhook_secret",
 			fundAccountNumber: "test_fund_account",
 		},
+		redis: {
+			url: "http://localhost",
+			token: "test-redis-token",
+		},
 	},
+}));
+
+vi.mock("@upstash/redis", () => ({
+	Redis: vi.fn().mockImplementation(() => ({
+		get: vi.fn(),
+		set: vi.fn(),
+		del: vi.fn(),
+	})),
 }));
 
 vi.mock("razorpay", () => ({

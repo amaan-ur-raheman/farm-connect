@@ -1,7 +1,19 @@
 import ky, { HTTPError, type Options } from "ky";
 import { useAuthStore } from "../stores/authStore";
+import Constants from "expo-constants";
 
-export const BASE_URL = "http://localhost:3000";
+const getBaseUrl = (): string => {
+  const extra = Constants.expoConfig?.extra;
+  if (extra?.apiUrl) {
+    return extra.apiUrl;
+  }
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL;
+  }
+  return "http://localhost:3000";
+};
+
+export const BASE_URL = getBaseUrl();
 
 // ky doesn't have axios-style interceptors, so we build a thin wrapper
 // that exposes the same .get/.post/.patch/.put/.delete interface and

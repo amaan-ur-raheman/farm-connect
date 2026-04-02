@@ -5,11 +5,11 @@ import {
 	releaseWageToFarmer,
 	finalSettlement,
 	getEscrowLedger,
-	freezeEscrow,
 } from "./escrow.service";
 import { releaseWageSchema } from "@/modules/payment/payment.schema";
 import { validate } from "@/shared/middleware/validate";
-import { createDispute } from "@/modules/dispute/dispute.service";
+import { prisma } from "@/config/database";
+import { BadRequestError } from "@/shared/errors";
 
 export const escrowRouter = Router();
 
@@ -52,15 +52,49 @@ escrowRouter.post(
 	asyncHandler(async (req, res) => {
 		const { amount, reason, description } = req.body;
 		const contractId = req.params.contractId as string;
+		const reporterId = req.user!.userId;
 
-		const contract = await freezeEscrow(contractId, amount);
+		const result = await prisma.$transaction(async (tx) => {
+			const contract = await tx.contract.findUnique({
+				where: { id: contractId },
+			});
+			if (!contract) {
+				throw new BadRequestError("Contract not found");
+			}
 
-		const dispute = await createDispute(req.user!.userId, {
-			contract_id: contractId,
-			reason,
-			description,
+			await tx.contract.update({
+				where: { id: contractId },
+				data: {
+					status: "DISPUTED",
+					escrow_frozen: { increment: amount },
+				},
+			});
+
+			await tx.escrowLedger.create({
+				data: {
+					contract_id: contractId,
+					user_id: reporterId,
+					event: "DISPUTE_LOCK",
+					amount,
+					transaction_type: "DEBIT",
+					description: `Escrow frozen for dispute: ${reason}`,
+				},
+			});
+
+			const dispute = await tx.dispute.create({
+				data: {
+					contract_id: contractId,
+					reporter_id: reporterId,
+					reason,
+					description,
+					escrow_frozen: amount,
+					status: "OPEN",
+				},
+			});
+
+			return { contract: await tx.contract.findUnique({ where: { id: contractId } }), dispute };
 		});
 
-		res.json({ success: true, data: { contract, dispute } });
+		res.json({ success: true, data: result });
 	}),
 );

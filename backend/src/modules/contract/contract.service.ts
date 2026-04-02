@@ -2,11 +2,11 @@ import { prisma } from '@/config/database';
 import { NotFoundError, ForbiddenError, BadRequestError } from '@/shared/errors';
 import type { CreateContractInput } from './contract.schema';
 
-export const createContract = async (farmerId: string, input: CreateContractInput) => {
+export const createContract = async (consumerId: string, input: CreateContractInput) => {
   const listing = await prisma.farmListing.findUnique({ where: { id: input.listing_id } });
   if (!listing) throw new NotFoundError('Listing');
   if (listing.status !== 'ACTIVE') throw new BadRequestError('Listing is not available');
-  if (listing.farmer_id === farmerId) throw new BadRequestError('Cannot contract your own listing');
+  if (listing.farmer_id === consumerId) throw new BadRequestError('Cannot contract your own listing');
 
   const total = input.acreage * input.price_per_acre;
   const startDate = new Date(input.start_date);
@@ -18,7 +18,7 @@ export const createContract = async (farmerId: string, input: CreateContractInpu
     data: {
       listing_id: listing.id,
       farmer_id: listing.farmer_id,
-      consumer_id: farmerId,
+      consumer_id: consumerId,
       crop: input.crop,
       acreage: input.acreage,
       price_per_acre: input.price_per_acre,

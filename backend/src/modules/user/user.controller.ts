@@ -6,25 +6,18 @@ import { validate } from '@/shared/middleware/validate';
 import { updateProfileSchema } from './user.schema';
 import multer from 'multer';
 import streamifier from 'streamifier';
-import { v2 as cloudinary } from 'cloudinary';
-import { env } from '@/config/env';
+import { cloudinary } from '@/config/cloudinary';
 import { BadRequestError } from '@/shared/errors';
-
-cloudinary.config({
-  cloud_name: env.cloudinary.cloudName,
-  api_key: env.cloudinary.apiKey,
-  api_secret: env.cloudinary.apiSecret,
-});
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-    if (allowed.includes(file.mimetype)) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new BadRequestError('Only JPEG, PNG, WebP, and PDF files are allowed'));
+      cb(new Error('Invalid file type. Only images and PDF documents are allowed.'));
     }
   },
 });

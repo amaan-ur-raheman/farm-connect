@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
+import { Image } from 'expo-image';
 import { ChevronLeft, MessageSquare } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Conversation } from '../../src/config/api';
@@ -67,7 +68,7 @@ export default function ChatListScreen() {
                 <View className="relative mr-3">
                   <Image
                     source={{ uri: conv.other_user.avatar_url || `https://i.pravatar.cc/100?u=${conv.other_user.id}` }}
-                    className="size-12 rounded-full"
+                    style={{ width: 48, height: 48, borderRadius: 24 }}
                   />
                   {conv.unread_count > 0 && (
                     <View className="absolute -top-1 -right-1 size-5 bg-red-500 rounded-full items-center justify-center">

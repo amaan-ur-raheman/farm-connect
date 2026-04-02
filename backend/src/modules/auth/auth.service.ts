@@ -1,5 +1,5 @@
 import { prisma } from '@/config/database';
-import { setOtp, getOtp, deleteOtp, checkOtpRateLimit, setRefreshToken, deleteRefreshToken, getRefreshToken } from '@/config/redis';
+import { setOtp, verifyOtp, deleteOtp, checkOtpRateLimit, setRefreshToken, deleteRefreshToken, getRefreshToken } from '@/config/redis';
 import { sendSmsOtp } from './auth.sms';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from './auth.utils';
 import { ConflictError, UnauthorizedError, BadRequestError } from '@/shared/errors';
@@ -34,9 +34,9 @@ export const verifyOtpAndLogin = async (input: VerifyOtpInput): Promise<{
   accessToken: string;
   refreshToken: string;
 }> => {
-  const storedOtp = await getOtp(input.phone);
+  const isValid = await verifyOtp(input.phone, input.otp);
 
-  if (!storedOtp || storedOtp !== input.otp) {
+  if (!isValid) {
     throw new UnauthorizedError('Invalid or expired OTP');
   }
 
