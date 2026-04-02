@@ -29,8 +29,8 @@ export default function NotificationsScreen() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const res = await api.get('/api/notifications');
-      setNotifications(res.data.data || res.data || []);
+      const res = await api.get<{ data: Notification[] }>('/api/notifications');
+      setNotifications(res.data.data || []);
     } catch {} finally {
       setLoading(false);
     }

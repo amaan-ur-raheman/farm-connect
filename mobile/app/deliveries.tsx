@@ -18,8 +18,8 @@ export default function DeliveriesScreen() {
   const fetchDeliveries = useCallback(async () => {
     try {
       const endpoint = contractId ? `/api/deliveries/contract/${contractId}` : '/api/deliveries';
-      const res = await api.get(endpoint).catch(() => ({ data: { data: [] } }));
-      setDeliveries(res.data.data || res.data || []);
+      const res = await api.get<{ data: Delivery[] }>(endpoint).catch(() => ({ data: { data: [] } }));
+      setDeliveries(res.data.data || []);
     } catch {} finally {
       setLoading(false);
     }

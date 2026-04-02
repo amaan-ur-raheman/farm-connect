@@ -174,7 +174,7 @@ export default function FarmerPreferences() {
           </Text>
           <TextInput
             value={localFarmDetails.farmName}
-            onChangeText={(v) => updateFarm('farmName', v)}
+            onChangeText={(v: string) => updateFarm('farmName', v)}
             placeholder="Enter your farm name"
             placeholderTextColor="#9ca3af"
             className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
@@ -277,7 +277,7 @@ export default function FarmerPreferences() {
             <MapPin size={18} color="#9ca3af" />
             <TextInput
               value={localFarmDetails.location}
-              onChangeText={(v) => updateFarm('location', v)}
+              onChangeText={(v: string) => updateFarm('location', v)}
               placeholder="Enter farm location"
               placeholderTextColor="#9ca3af"
               className="flex-1 py-3.5 ml-3 text-sm text-text-main dark:text-white"
@@ -333,7 +333,7 @@ export default function FarmerPreferences() {
             <Building2 size={18} color="#9ca3af" />
             <TextInput
               value={bankDetails.bankName}
-              onChangeText={(v) => updateBank('bankName', v)}
+              onChangeText={(v: string) => updateBank('bankName', v)}
               placeholder="Enter bank name"
               placeholderTextColor="#9ca3af"
               className="flex-1 py-3.5 ml-3 text-sm text-text-main dark:text-white"
@@ -347,7 +347,7 @@ export default function FarmerPreferences() {
           </Text>
           <TextInput
             value={bankDetails.accountNumber}
-            onChangeText={(v) => updateBank('accountNumber', v)}
+            onChangeText={(v: string) => updateBank('accountNumber', v)}
             placeholder="Enter account number"
             placeholderTextColor="#9ca3af"
             keyboardType="numeric"
@@ -361,7 +361,7 @@ export default function FarmerPreferences() {
           </Text>
           <TextInput
             value={bankDetails.ifscCode}
-            onChangeText={(v) => updateBank('ifscCode', v)}
+            onChangeText={(v: string) => updateBank('ifscCode', v)}
             placeholder="Enter IFSC code"
             placeholderTextColor="#9ca3af"
             autoCapitalize="characters"

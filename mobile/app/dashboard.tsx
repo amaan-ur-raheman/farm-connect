@@ -43,23 +43,23 @@ export default function DashboardScreen() {
     setLoadingContracts(true);
     try {
       const [contractsRes, walletRes] = await Promise.all([
-        api.get('/api/contracts/farmer'),
-        api.get('/api/wallet/balance').catch(() => ({ data: { data: { balance: 0 } } })),
+        api.get<{ data: Contract[] }>('/api/contracts/farmer'),
+        api.get<{ data: { balance: number } }>('/api/wallet/balance').catch(() => ({ data: { data: { balance: 0 } } })),
       ]);
-      const data: Contract[] = contractsRes.data?.data || contractsRes.data || [];
+      const data: Contract[] = contractsRes.data.data || [];
       setContracts(data);
       if (data.length > 0 && !selectedContract) {
         setSelectedContract(data[0]);
       }
-      const bal = walletRes.data.data || walletRes.data;
+      const bal = walletRes.data.data;
       setWalletBalance(bal.balance || 0);
 
       // Fetch updates for selected contract
       if (selectedContract || data[0]) {
         const contractId = selectedContract?.id || data[0]?.id;
         try {
-          const updatesRes = await api.get(`/api/updates/${contractId}`);
-          setUpdates(updatesRes.data.data || updatesRes.data || []);
+          const updatesRes = await api.get<{ data: FarmUpdate[] }>(`/api/updates/${contractId}`);
+          setUpdates(updatesRes.data.data || []);
         } catch {}
       }
     } catch {

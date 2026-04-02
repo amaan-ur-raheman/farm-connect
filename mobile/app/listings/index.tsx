@@ -11,8 +11,8 @@ export default function MyListingsScreen() {
 
   const fetchListings = useCallback(async () => {
     try {
-      const res = await api.get('/api/listings/mine');
-      setListings(res.data.data || res.data || []);
+      const res = await api.get<{ data: Listing[] }>('/api/listings/mine');
+      setListings(res.data.data || []);
     } catch {} finally {
       setLoading(false);
     }

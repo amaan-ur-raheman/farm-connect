@@ -17,11 +17,11 @@ export default function WalletScreen() {
   const fetchData = useCallback(async () => {
     try {
       const [balRes, txRes] = await Promise.all([
-        api.get('/api/wallet/balance'),
-        api.get('/api/wallet/transactions').catch(() => ({ data: { data: [] } })),
+        api.get<{ data: { balance: number; currency: string } }>('/api/wallet/balance'),
+        api.get<{ data: WalletTransaction[] }>('/api/wallet/transactions').catch(() => ({ data: { data: [] } })),
       ]);
-      setBalance(balRes.data.data || balRes.data);
-      setTransactions(txRes.data.data || txRes.data || []);
+      setBalance(balRes.data.data || { balance: 0, currency: 'INR' });
+      setTransactions(txRes.data.data || []);
     } catch {} finally {
       setLoading(false);
     }

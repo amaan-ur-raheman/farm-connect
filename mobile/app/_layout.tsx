@@ -4,9 +4,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 import "../src/global.css";
 import { useAuthStore } from "../src/stores";
 import api from "../src/config/api";
+import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -16,6 +18,8 @@ Notifications.setNotificationHandler({
 		shouldShowAlert: true,
 		shouldPlaySound: true,
 		shouldSetBadge: false,
+		shouldShowBanner: true,
+		shouldShowList: true,
 	}),
 });
 
@@ -87,8 +91,12 @@ export default function RootLayout() {
 				const { status } =
 					await Notifications.requestPermissionsAsync();
 				if (status === "granted") {
+					const projectId =
+						Constants.expoConfig?.extra?.eas?.projectId;
 					const tokenData =
-						await Notifications.getExpoPushTokenAsync();
+						await Notifications.getExpoPushTokenAsync(
+							projectId ? { projectId } : undefined,
+						);
 					await api.post("/api/users/push-token", {
 						expo_push_token: tokenData.data,
 					});
@@ -106,5 +114,9 @@ export default function RootLayout() {
 		return null;
 	}
 
-	return <RootLayoutNav />;
+	return (
+		<ErrorBoundary>
+			<RootLayoutNav />
+		</ErrorBoundary>
+	);
 }

@@ -16,12 +16,15 @@ import { Phone, Sprout, ChevronRight } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Button } from '../src/components/ui/Button';
 import { useAuthStore } from '../src/stores';
+import { validatePhone, validateOtp } from '../src/utils/validation';
 
 export default function LoginScreen() {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
+  const [touchedPhone, setTouchedPhone] = useState(false);
+  const [touchedOtp, setTouchedOtp] = useState(false);
 
   const {
     userRole,
@@ -34,16 +37,34 @@ export default function LoginScreen() {
     setPhone: setStorePhone,
   } = useAuthStore();
 
-  const isValidPhone = (p: string) => /^\+91[6-9]\d{9}$/.test(p);
-  const isValidOtp = (o: string) => /^\d{6}$/.test(o);
+  const handlePhoneBlur = () => {
+    setTouchedPhone(true);
+    const result = validatePhone(phone);
+    if (!result.isValid) {
+      clearError();
+    }
+  };
+
+  const handleOtpBlur = () => {
+    setTouchedOtp(true);
+    const result = validateOtp(otp);
+    if (!result.isValid) {
+      clearError();
+    }
+  };
+
+  const isPhoneValid = validatePhone(phone).isValid;
+  const isOtpValid = validateOtp(otp).isValid;
 
   const handleSendOtp = async () => {
     if (!userRole) {
       Alert.alert('Select Role', 'Please select Investor or Farmer to continue.');
       return;
     }
-    if (!isValidPhone(phone)) {
-      Alert.alert('Invalid Phone', 'Please enter a valid Indian phone number (e.g., +919876543210)');
+
+    const phoneValidation = validatePhone(phone);
+    if (!phoneValidation.isValid) {
+      Alert.alert('Invalid Phone', phoneValidation.error);
       return;
     }
 
@@ -61,8 +82,9 @@ export default function LoginScreen() {
   };
 
   const handleVerifyOtp = async () => {
-    if (!isValidOtp(otp)) {
-      Alert.alert('Invalid OTP', 'Please enter a valid 6-digit OTP.');
+    const otpValidation = validateOtp(otp);
+    if (!otpValidation.isValid) {
+      Alert.alert('Invalid OTP', otpValidation.error);
       return;
     }
 
@@ -134,22 +156,28 @@ export default function LoginScreen() {
                   <Text className="text-sm font-medium text-[#111b0e] dark:text-slate-200">
                     Phone Number
                   </Text>
-                  <View className="h-12 bg-[#f9fcf8] dark:bg-[#152111] rounded-lg px-4 flex-row items-center border border-[#d6e7d0] dark:border-[#3a5033]">
+                  <View className={`h-12 bg-[#f9fcf8] dark:bg-[#152111] rounded-lg px-4 flex-row items-center border ${
+                    touchedPhone && !isPhoneValid ? 'border-red-500' : 'border-[#d6e7d0] dark:border-[#3a5033]'
+                  }`}>
                     <Phone size={20} color="#60974e" style={{ marginRight: 8 }} />
                     <TextInput
                       placeholder="+919876543210"
                       placeholderTextColor="rgba(96, 151, 78, 0.6)"
                       value={phone}
-                      onChangeText={(text) => {
+                      onChangeText={(text: string) => {
                         setPhone(text);
                         clearError();
                       }}
+                      onBlur={handlePhoneBlur}
                       className="flex-1 text-base text-[#111b0e] dark:text-white"
                       keyboardType="phone-pad"
                       autoComplete="tel"
                       maxLength={13}
                     />
                   </View>
+                  {touchedPhone && !isPhoneValid && (
+                    <Text className="text-xs text-red-500">{validatePhone(phone).error}</Text>
+                  )}
                 </View>
 
                 {/* OTP Input - shown after OTP sent */}
@@ -158,21 +186,27 @@ export default function LoginScreen() {
                     <Text className="text-sm font-medium text-[#111b0e] dark:text-slate-200">
                       Enter OTP
                     </Text>
-                    <View className="h-12 bg-[#f9fcf8] dark:bg-[#152111] rounded-lg px-4 flex-row items-center border border-[#d6e7d0] dark:border-[#3a5033]">
+                    <View className={`h-12 bg-[#f9fcf8] dark:bg-[#152111] rounded-lg px-4 flex-row items-center border ${
+                      touchedOtp && !isOtpValid ? 'border-red-500' : 'border-[#d6e7d0] dark:border-[#3a5033]'
+                    }`}>
                       <TextInput
                         placeholder="6-digit OTP"
                         placeholderTextColor="rgba(96, 151, 78, 0.6)"
                         value={otp}
-                        onChangeText={(text) => {
+                        onChangeText={(text: string) => {
                           setOtp(text.replace(/\D/g, '').slice(0, 6));
                           clearError();
                         }}
+                        onBlur={handleOtpBlur}
                         className="flex-1 text-base text-[#111b0e] dark:text-white"
                         keyboardType="number-pad"
                         maxLength={6}
                         secureTextEntry={false}
                       />
                     </View>
+                    {touchedOtp && !isOtpValid && (
+                      <Text className="text-xs text-red-500">{validateOtp(otp).error}</Text>
+                    )}
 
                     {/* Dev OTP hint */}
                     {devOtpHint && (
@@ -206,7 +240,7 @@ export default function LoginScreen() {
                     className="w-full py-3.5 rounded-lg bg-primary mt-3 shadow-md active:scale-95"
                     textClassName="text-white font-bold text-base"
                     loading={isLoading}
-                    disabled={!userRole || !isValidPhone(phone)}
+                    disabled={!userRole || !isPhoneValid}
                   />
                 ) : (
                   <Button
@@ -215,7 +249,7 @@ export default function LoginScreen() {
                     className="w-full py-3.5 rounded-lg bg-primary mt-3 shadow-md active:scale-95"
                     textClassName="text-white font-bold text-base"
                     loading={isLoading}
-                    disabled={!isValidOtp(otp)}
+                    disabled={!isOtpValid}
                   />
                 )}
               </View>

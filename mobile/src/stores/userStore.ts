@@ -73,7 +73,7 @@ export const useUserStore = create<UserState>()(
       fetchProfile: async () => {
         set({ isLoading: true });
         try {
-          const response = await api.get('/api/users/me');
+          const response = await api.get<{ data: { id: string; name: string; email: string | null; phone: string; avatar_url: string | null } }>('/api/users/me');
           const user = response.data.data;
           const nameParts = (user.name || '').trim().split(' ');
           set({
@@ -83,7 +83,7 @@ export const useUserStore = create<UserState>()(
               lastName: nameParts.slice(1).join(' ') || '',
               email: user.email || '',
               phone: user.phone,
-              avatar: user.avatar_url,
+              avatar: user.avatar_url ?? undefined,
             },
             isLoading: false,
           });
@@ -98,7 +98,7 @@ export const useUserStore = create<UserState>()(
 
       fetchWallet: async () => {
         try {
-          const response = await api.get('/api/wallet/balance');
+          const response = await api.get<{ data: { balance: number; currency: string } }>('/api/wallet/balance');
           const data = response.data.data;
           set({
             wallet: {
@@ -117,7 +117,7 @@ export const useUserStore = create<UserState>()(
           const endpoint = userRole === 'investor'
             ? '/api/contracts/consumer'
             : '/api/contracts/farmer';
-          const response = await api.get(endpoint);
+          const response = await api.get<{ data: unknown[] }>(endpoint);
           const contracts = response.data.data || [];
           set({
             holdings: {

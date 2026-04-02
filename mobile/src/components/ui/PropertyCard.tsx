@@ -54,7 +54,7 @@ export function PropertyCard({
         </View>
         <TouchableOpacity 
           className="absolute top-4 right-4 size-10 rounded-full bg-black/10 backdrop-blur-md items-center justify-center"
-          onPress={(e) => {
+          onPress={(e: { stopPropagation: () => void }) => {
             e.stopPropagation();
             // Handle favorite
           }}

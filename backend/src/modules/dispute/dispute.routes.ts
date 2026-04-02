@@ -39,7 +39,7 @@ disputeRouter.post(
 	validate(resolveDisputeSchema),
 	asyncHandler(async (req, res) => {
 		const dispute = await resolveDispute(
-			req.params.id,
+			req.params.id as string,
 			req.user!.userId,
 			req.body,
 		);

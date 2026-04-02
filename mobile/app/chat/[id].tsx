@@ -16,10 +16,8 @@ import { useLocalSearchParams, router } from "expo-router";
 import { io, Socket } from "socket.io-client";
 import { Header } from "../../src/components/ui/Header";
 import { useUserStore } from "../../src/stores";
-import api, { ChatMessage } from "../../src/config/api";
+import api, { ChatMessage, Conversation, BASE_URL } from "../../src/config/api";
 import { useAuthStore } from "../../src/stores/authStore";
-
-const BASE_URL = "http://localhost:3000";
 
 export default function ChatScreen() {
 	const { id } = useLocalSearchParams();
@@ -38,17 +36,17 @@ export default function ChatScreen() {
 
 	const fetchMessages = useCallback(async () => {
 		try {
-			const res = await api.get(`/api/chat/conversations/${id}/messages`);
-			const data: ChatMessage[] = res.data.data || res.data || [];
+			const res = await api.get<{ data: ChatMessage[] }>(`/api/chat/conversations/${id}/messages`);
+			const data: ChatMessage[] = res.data.data || [];
 			setMessages(data);
 
 			// Get conversation details for other user
 			const convRes = await api
-				.get("/api/chat/conversations")
+				.get<{ data: Conversation[] }>("/api/chat/conversations")
 				.catch(() => null);
 			if (convRes) {
-				const conversations = convRes.data.data || convRes.data || [];
-				const conv = conversations.find((c: any) => c.id === id);
+				const conversations: Conversation[] = convRes.data.data || [];
+				const conv = conversations.find((c) => c.id === id);
 				if (conv?.other_user) {
 					setOtherUser({
 						name: conv.other_user.name || "User",

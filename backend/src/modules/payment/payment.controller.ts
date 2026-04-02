@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '@/shared/middleware/handlers';
-import { createRazorpayOrder, verifyRazorpaySignature } from './payment.service';
+import { createRazorpayOrder, verifyRazorpaySignature, verifyWebhookSignature, handleWebhookEvent } from './payment.service';
 import { createEscrowDeposit } from '@/modules/escrow/escrow.service';
 import { validate } from '@/shared/middleware/validate';
 import { depositToEscrowSchema } from './payment.schema';
@@ -24,5 +24,19 @@ export const depositEscrowHandler = asyncHandler(async (req: Request, res: Respo
 });
 
 export const webhookHandler = asyncHandler(async (req: Request, res: Response) => {
-  res.json({ received: true });
+  const signature = req.headers['x-razorpay-signature'] as string;
+  const body = JSON.stringify(req.body);
+
+  const isValid = verifyWebhookSignature(body, signature);
+  if (!isValid) {
+    res.status(400).json({ success: false, message: 'Invalid webhook signature' });
+    return;
+  }
+
+  const event = req.body.event;
+  const payload = req.body.payload;
+
+  await handleWebhookEvent(event, payload);
+
+  res.json({ received: true, event });
 });

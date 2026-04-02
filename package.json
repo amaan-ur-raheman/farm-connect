@@ -6,6 +6,7 @@
     "backend"
   ],
   "scripts": {
+    "dev": "npm run dev:backend & npm run dev:mobile",
     "dev:mobile": "npm run dev -w mobile",
     "dev:backend": "npm run dev -w backend",
     "build:mobile": "npm run build -w mobile",

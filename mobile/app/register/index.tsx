@@ -17,9 +17,11 @@ import {
   ChevronRight,
 } from 'lucide-react-native';
 import { useRegistrationStore, useAuthStore } from '../../src/stores';
-
-const isValidPhone = (p: string) => /^\+91[6-9]\d{9}$/.test(p);
-const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+import {
+  validatePhone,
+  validateEmail,
+  validateName,
+} from '../../src/utils/validation';
 
 export default function RegisterStep1() {
   const {
@@ -33,6 +35,40 @@ export default function RegisterStep1() {
   } = useRegistrationStore();
 
   const { sendOtp, isLoading } = useAuthStore();
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+
+  const validateField = (field: string, value: string) => {
+    let result;
+    switch (field) {
+      case 'firstName':
+        result = validateName(value, 'First name');
+        break;
+      case 'lastName':
+        result = validateName(value, 'Last name');
+        break;
+      case 'email':
+        result = validateEmail(value);
+        break;
+      case 'phone':
+        result = validatePhone(value);
+        break;
+      default:
+        return true;
+    }
+
+    if (!result.isValid) {
+      setError(field, result.error || '');
+      return false;
+    } else {
+      clearError(field);
+      return true;
+    }
+  };
+
+  const handleFieldBlur = (field: string, value: string) => {
+    setTouchedFields(prev => ({ ...prev, [field]: true }));
+    validateField(field, value);
+  };
 
   const validateForm = () => {
     clearError('role');
@@ -46,27 +82,24 @@ export default function RegisterStep1() {
       setError('role', 'Please select Investor or Farmer');
       valid = false;
     }
-    if (!formData.firstName.trim()) {
-      setError('firstName', 'First name is required');
+
+    const firstNameValid = validateField('firstName', formData.firstName);
+    const lastNameValid = validateField('lastName', formData.lastName);
+    const emailValid = validateField('email', formData.email);
+    const phoneValid = validateField('phone', formData.phone);
+
+    if (!firstNameValid || !lastNameValid || !emailValid || !phoneValid) {
       valid = false;
     }
-    if (!formData.lastName.trim()) {
-      setError('lastName', 'Last name is required');
-      valid = false;
-    }
-    if (!formData.email.trim() || !isValidEmail(formData.email)) {
-      setError('email', 'Valid email is required');
-      valid = false;
-    }
-    if (!isValidPhone(formData.phone)) {
-      setError('phone', 'Valid Indian phone number required (e.g., +919876543210)');
-      valid = false;
-    }
+
     return valid;
   };
 
   const handleContinue = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      Alert.alert('Validation Error', 'Please fix the errors before continuing.');
+      return;
+    }
 
     const success = await sendOtp(formData.phone);
     if (success) {
@@ -175,7 +208,11 @@ export default function RegisterStep1() {
                 </Text>
                 <TextInput
                   value={formData.firstName}
-                  onChangeText={(v) => updateFormData('firstName', v)}
+                  onChangeText={(v: string) => {
+                    updateFormData('firstName', v);
+                    if (touchedFields.firstName) validateField('firstName', v);
+                  }}
+                  onBlur={() => handleFieldBlur('firstName', formData.firstName)}
                   placeholder="John"
                   placeholderTextColor="#9ca3af"
                   className={`px-4 py-3 rounded-xl border text-sm text-text-main dark:text-white bg-white dark:bg-[#1e291e] ${
@@ -192,7 +229,11 @@ export default function RegisterStep1() {
                 </Text>
                 <TextInput
                   value={formData.lastName}
-                  onChangeText={(v) => updateFormData('lastName', v)}
+                  onChangeText={(v: string) => {
+                    updateFormData('lastName', v);
+                    if (touchedFields.lastName) validateField('lastName', v);
+                  }}
+                  onBlur={() => handleFieldBlur('lastName', formData.lastName)}
                   placeholder="Doe"
                   placeholderTextColor="#9ca3af"
                   className={`px-4 py-3 rounded-xl border text-sm text-text-main dark:text-white bg-white dark:bg-[#1e291e] ${
@@ -211,7 +252,11 @@ export default function RegisterStep1() {
               </Text>
               <TextInput
                 value={formData.email}
-                onChangeText={(v) => updateFormData('email', v)}
+                onChangeText={(v: string) => {
+                  updateFormData('email', v);
+                  if (touchedFields.email) validateField('email', v);
+                }}
+                onBlur={() => handleFieldBlur('email', formData.email)}
                 placeholder="john.doe@email.com"
                 placeholderTextColor="#9ca3af"
                 keyboardType="email-address"
@@ -231,7 +276,11 @@ export default function RegisterStep1() {
               </Text>
               <TextInput
                 value={formData.phone}
-                onChangeText={(v) => updateFormData('phone', v)}
+                onChangeText={(v: string) => {
+                  updateFormData('phone', v);
+                  if (touchedFields.phone) validateField('phone', v);
+                }}
+                onBlur={() => handleFieldBlur('phone', formData.phone)}
                 placeholder="+919876543210"
                 placeholderTextColor="#9ca3af"
                 keyboardType="phone-pad"

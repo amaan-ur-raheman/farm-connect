@@ -277,7 +277,7 @@ export default function InvestorPreferences() {
           </Text>
           <TextInput
             value={bankDetails.accountHolderName}
-            onChangeText={(v) => updateBank('accountHolderName', v)}
+            onChangeText={(v: string) => updateBank('accountHolderName', v)}
             placeholder="Enter account holder name"
             placeholderTextColor="#9ca3af"
             className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
@@ -292,7 +292,7 @@ export default function InvestorPreferences() {
             <Building2 size={18} color="#9ca3af" />
             <TextInput
               value={bankDetails.bankName}
-              onChangeText={(v) => updateBank('bankName', v)}
+              onChangeText={(v: string) => updateBank('bankName', v)}
               placeholder="Enter bank name"
               placeholderTextColor="#9ca3af"
               className="flex-1 py-3.5 ml-3 text-sm text-text-main dark:text-white"
@@ -306,7 +306,7 @@ export default function InvestorPreferences() {
           </Text>
           <TextInput
             value={bankDetails.accountNumber}
-            onChangeText={(v) => updateBank('accountNumber', v)}
+            onChangeText={(v: string) => updateBank('accountNumber', v)}
             placeholder="Enter account number"
             placeholderTextColor="#9ca3af"
             keyboardType="numeric"
@@ -320,7 +320,7 @@ export default function InvestorPreferences() {
           </Text>
           <TextInput
             value={bankDetails.ifscCode}
-            onChangeText={(v) => updateBank('ifscCode', v)}
+            onChangeText={(v: string) => updateBank('ifscCode', v)}
             placeholder="Enter IFSC code"
             placeholderTextColor="#9ca3af"
             autoCapitalize="characters"

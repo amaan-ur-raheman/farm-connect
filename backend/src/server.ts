@@ -1,5 +1,6 @@
 import http from "http";
 import { Server } from "socket.io";
+import jwt from "jsonwebtoken";
 import app from "./app";
 import { env } from "./config/env";
 import { prisma } from "./config/database";
@@ -11,6 +12,25 @@ export const io = new Server(httpServer, {
 		origin: env.corsOrigin,
 		credentials: true,
 	},
+});
+
+// Authenticate WebSocket connections via JWT
+io.use((socket, next) => {
+	const token = socket.handshake.auth?.token as string | undefined;
+	if (!token) {
+		return next(new Error("Unauthorized"));
+	}
+	try {
+		const payload = jwt.verify(token, env.jwt.secret) as { userId: string };
+		socket.data.userId = payload.userId;
+		next();
+	} catch {
+		next(new Error("Unauthorized"));
+	}
+});
+
+io.on("connection", (socket) => {
+	socket.join(socket.data.userId);
 });
 
 httpServer.listen(env.port, () => {

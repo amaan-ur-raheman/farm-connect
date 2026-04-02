@@ -416,7 +416,7 @@ export default function RegisterStep2() {
               keyboardType="number-pad"
               maxLength={6}
               value={otpInput}
-              onChangeText={(text) => {
+              onChangeText={(text: string) => {
                 setOtpInput(text.replace(/[^0-9]/g, ''));
                 setOtpError(null);
               }}

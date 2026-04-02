@@ -18,8 +18,8 @@ export default function DisputesScreen() {
 
   const fetchDisputes = useCallback(async () => {
     try {
-      const res = await api.get('/api/disputes');
-      setDisputes(res.data.data || res.data || []);
+      const res = await api.get<{ data: Dispute[] }>('/api/disputes');
+      setDisputes(res.data.data || []);
     } catch {} finally {
       setLoading(false);
     }

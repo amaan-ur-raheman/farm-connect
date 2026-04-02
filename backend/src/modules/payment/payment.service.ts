@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { env } from '@/config/env';
 import { BadRequestError } from '@/shared/errors';
 import { prisma } from '@/config/database';
+import { createNotification } from '@/modules/notification/notification.service';
 
 const razorpay = new Razorpay({
   key_id: env.razorpay.keyId,
@@ -37,6 +38,115 @@ export const verifyWebhookSignature = (payload: string, signature: string): bool
     .update(payload)
     .digest('hex');
   return expectedSignature === signature;
+};
+
+export const handleWebhookEvent = async (
+  event: string,
+  payload: Record<string, unknown>
+) => {
+  console.log(`📡 Processing Razorpay webhook event: ${event}`);
+
+  try {
+    switch (event) {
+      case 'payment.captured': {
+        const payment = payload.payment as Record<string, unknown>;
+        const paymentId = payment?.id as string;
+        const amount = (payment?.amount as number) / 100; // Convert from paise
+        const orderId = payment?.order_id as string;
+
+        console.log(`✅ Payment captured: ${paymentId}, Amount: ₹${amount}`);
+
+        // Find the contract from the order receipt
+        const order = await razorpay.orders.fetch(orderId);
+        const receipt = order.receipt; // escrow_{contract_id}_{timestamp}
+        const contractId = receipt?.split('_')[1];
+
+        if (contractId) {
+          // Find the consumer from the contract
+          const contract = await prisma.contract.findUnique({
+            where: { id: contractId },
+            select: { consumer_id: true, farmer_id: true },
+          });
+
+          if (contract) {
+            // Create escrow deposit entry
+            await prisma.escrowLedger.create({
+              data: {
+                contract_id: contractId,
+                user_id: contract.consumer_id,
+                event: 'DEPOSIT',
+                amount,
+                transaction_type: 'CREDIT',
+                razorpay_payment_id: paymentId,
+                description: `Escrow deposit via Razorpay for contract ${contractId}`,
+              },
+            });
+
+            // Update contract escrow held
+            await prisma.contract.update({
+              where: { id: contractId },
+              data: { escrow_held: { increment: amount } },
+            });
+
+            // Notify both parties
+            await Promise.all([
+              createNotification(
+                contract.consumer_id,
+                'PAYMENT_RECEIVED',
+                'Payment Successful',
+                `₹${amount.toLocaleString('en-IN')} has been added to escrow for your contract.`,
+                { contract_id: contractId, payment_id: paymentId }
+              ),
+              createNotification(
+                contract.farmer_id,
+                'PAYMENT_RECEIVED',
+                'Escrow Funded',
+                `₹${amount.toLocaleString('en-IN')} has been added to escrow by the investor.`,
+                { contract_id: contractId, payment_id: paymentId }
+              ),
+            ]);
+          }
+        }
+        break;
+      }
+
+      case 'payment.failed': {
+        const payment = payload.payment as Record<string, unknown>;
+        const paymentId = payment?.id as string;
+        const reason = payment?.error_description as string;
+
+        console.error(`❌ Payment failed: ${paymentId}, Reason: ${reason}`);
+        // Log failed payment for monitoring
+        break;
+      }
+
+      case 'refund.created': {
+        const refund = payload.refund as Record<string, unknown>;
+        const refundId = refund?.id as string;
+        const paymentId = refund?.payment_id as string;
+        const amount = (refund?.amount as number) / 100;
+
+        console.log(`↩️ Refund created: ${refundId}, Amount: ₹${amount}`);
+        // Handle refund logic if needed
+        break;
+      }
+
+      case 'refund.processed': {
+        const refund = payload.refund as Record<string, unknown>;
+        const refundId = refund?.id as string;
+
+        console.log(`✅ Refund processed: ${refundId}`);
+        // Update refund status in database if needed
+        break;
+      }
+
+      default:
+        console.log(`⚠️ Unhandled webhook event: ${event}`);
+    }
+  } catch (error) {
+    console.error('❌ Webhook event processing failed:', error);
+    // Don't throw - webhook should always return success to avoid retries
+  }
 };
 
 export const createFundAccount = async (userId: string, contact: string, accountDetails: {

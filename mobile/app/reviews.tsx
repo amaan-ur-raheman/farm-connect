@@ -19,8 +19,8 @@ export default function ReviewsScreen() {
       const id = (listingId || contractId) as string;
       if (!id) { setLoading(false); return; }
       const endpoint = `/api/reviews/listing/${id}`;
-      const res = await api.get(endpoint).catch(() => ({ data: { data: [] } }));
-      setReviews(res.data.data || res.data || []);
+      const res = await api.get<{ data: Review[] }>(endpoint).catch(() => ({ data: { data: [] } }));
+      setReviews(res.data.data || []);
     } catch {} finally {
       setLoading(false);
     }

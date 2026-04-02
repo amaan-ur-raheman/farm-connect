@@ -53,12 +53,12 @@ export default function CreateListingScreen() {
     }
     setSubmitting(true);
     try {
-      const res = await api.post('/api/listings', {
+      const res = await api.post<{ data: { id: string } }>('/api/listings', {
         name: form.name,
         description: form.description || null,
         area_acres: parseFloat(form.area_acres),
         price_per_acre: parseFloat(form.price_per_acre),
-        crops: form.crops.split(',').map(c => c.trim()).filter(Boolean),
+        crops: form.crops.split(',').map((c: string) => c.trim()).filter(Boolean),
         location_name: form.location_name,
         soil_type: form.soil_type || null,
         irrigation_type: form.irrigation_type || null,
@@ -66,7 +66,7 @@ export default function CreateListingScreen() {
         expected_harvest_month: form.expected_harvest_month || null,
       });
 
-      const listingId = res.data.data?.id || res.data.id;
+      const listingId = res.data.data?.id;
 
       // Upload images
       for (const uri of images) {
@@ -94,32 +94,32 @@ export default function CreateListingScreen() {
       <Text className="text-xl font-bold text-slate-900 dark:text-white mb-2">Basic Information</Text>
       <View>
         <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Listing Name *</Text>
-        <TextInput value={form.name} onChangeText={v => updateForm('name', v)} placeholder="e.g., Sahyadri Farms - Plot #14" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+        <TextInput value={form.name} onChangeText={(v: string) => updateForm('name', v)} placeholder="e.g., Sahyadri Farms - Plot #14" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
       </View>
       <View>
         <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Description</Text>
-        <TextInput value={form.description} onChangeText={v => updateForm('description', v)} placeholder="Describe your farm..." placeholderTextColor="#9ca3af" multiline numberOfLines={4} className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" style={{ textAlignVertical: 'top' }} />
+        <TextInput value={form.description} onChangeText={(v: string) => updateForm('description', v)} placeholder="Describe your farm..." placeholderTextColor="#9ca3af" multiline numberOfLines={4} className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" style={{ textAlignVertical: 'top' }} />
       </View>
       <View className="flex-row gap-3">
         <View className="flex-1">
           <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Area (Acres) *</Text>
-          <TextInput value={form.area_acres} onChangeText={v => updateForm('area_acres', v)} placeholder="45.8" placeholderTextColor="#9ca3af" keyboardType="numeric" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+          <TextInput value={form.area_acres} onChangeText={(v: string) => updateForm('area_acres', v)} placeholder="45.8" placeholderTextColor="#9ca3af" keyboardType="numeric" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
         </View>
         <View className="flex-1">
           <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Price/Acre (₹) *</Text>
-          <TextInput value={form.price_per_acre} onChangeText={v => updateForm('price_per_acre', v)} placeholder="25000" placeholderTextColor="#9ca3af" keyboardType="numeric" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+          <TextInput value={form.price_per_acre} onChangeText={(v: string) => updateForm('price_per_acre', v)} placeholder="25000" placeholderTextColor="#9ca3af" keyboardType="numeric" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
         </View>
       </View>
       <View>
         <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Location *</Text>
         <View className="flex-row items-center px-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e]">
           <MapPin size={18} color="#9ca3af" />
-          <TextInput value={form.location_name} onChangeText={v => updateForm('location_name', v)} placeholder="Nashik District, Maharashtra" placeholderTextColor="#9ca3af" className="flex-1 py-3 ml-2 text-sm text-slate-900 dark:text-white" />
+          <TextInput value={form.location_name} onChangeText={(v: string) => updateForm('location_name', v)} placeholder="Nashik District, Maharashtra" placeholderTextColor="#9ca3af" className="flex-1 py-3 ml-2 text-sm text-slate-900 dark:text-white" />
         </View>
       </View>
       <View>
         <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Crops (comma-separated)</Text>
-        <TextInput value={form.crops} onChangeText={v => updateForm('crops', v)} placeholder="Cotton, Sugarcane, Wheat" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+        <TextInput value={form.crops} onChangeText={(v: string) => updateForm('crops', v)} placeholder="Cotton, Sugarcane, Wheat" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
       </View>
       <TouchableOpacity onPress={() => setStep(2)} className="bg-[#4cae4f] py-4 rounded-xl items-center flex-row justify-center gap-2">
         <Text className="text-white font-bold">Next</Text>
@@ -155,11 +155,11 @@ export default function CreateListingScreen() {
       </View>
       <View>
         <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Expected Harvest Month</Text>
-        <TextInput value={form.expected_harvest_month} onChangeText={v => updateForm('expected_harvest_month', v)} placeholder="e.g., October" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+        <TextInput value={form.expected_harvest_month} onChangeText={(v: string) => updateForm('expected_harvest_month', v)} placeholder="e.g., October" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
       </View>
       <View className="flex-row items-center justify-between py-3">
         <Text className="text-sm font-medium text-slate-900 dark:text-white">Organic Farming</Text>
-        <Switch value={form.is_organic} onValueChange={v => updateForm('is_organic', v)} trackColor={{ false: '#d1d5db', true: '#4cae4f' }} />
+        <Switch value={form.is_organic} onValueChange={(v: boolean) => updateForm('is_organic', v)} trackColor={{ false: '#d1d5db', true: '#4cae4f' }} />
       </View>
       <TouchableOpacity onPress={() => setStep(3)} className="bg-[#4cae4f] py-4 rounded-xl items-center flex-row justify-center gap-2">
         <Text className="text-white font-bold">Next</Text>

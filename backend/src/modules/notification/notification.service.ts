@@ -17,7 +17,8 @@ export const createNotification = async (
 			type,
 			title,
 			message,
-			data: data ? (data as Prisma.InputJsonValue) : Prisma.JsonNull,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		data: data ? (data as any) : Prisma.JsonNull,
 		},
 	});
 

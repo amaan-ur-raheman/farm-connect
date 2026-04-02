@@ -59,11 +59,11 @@ export default function PropertyDetailScreen() {
       setLoading(true);
       try {
         const [listingRes, reviewsRes] = await Promise.all([
-          api.get(`/api/listings/${id}`),
-          api.get(`/api/reviews/listing/${id}`).catch(() => ({ data: { data: [] } })),
+          api.get<{ data: Listing }>(`/api/listings/${id}`),
+          api.get<{ data: Review[] }>(`/api/reviews/listing/${id}`).catch(() => ({ data: { data: [] } })),
         ]);
-        setListing(listingRes.data.data || listingRes.data);
-        setReviews(reviewsRes.data.data || reviewsRes.data || []);
+        setListing(listingRes.data.data || null);
+        setReviews(reviewsRes.data.data || []);
       } catch {
         Alert.alert('Error', 'Failed to load property details.');
       } finally {
@@ -94,11 +94,11 @@ export default function PropertyDetailScreen() {
   const handleStartChat = async () => {
     if (!listing?.farmer_id) return;
     try {
-      const res = await api.post('/api/chat/conversations', {
+      const res = await api.post<{ data: { id: string } }>('/api/chat/conversations', {
         other_user_id: listing.farmer_id,
         contract_id: null,
       });
-      const conversationId = res.data.data?.id || res.data.id;
+      const conversationId = res.data.data?.id;
       router.push(`/chat/${conversationId}`);
     } catch {
       Alert.alert('Error', 'Failed to start conversation.');

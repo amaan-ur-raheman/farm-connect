@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { ChevronLeft, MapPin, MessageSquare, Package, Star, Clock, Wallet } from 'lucide-react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import api, { Contract, FarmUpdate, Delivery, EscrowLedgerEntry } from '../../src/config/api';
+import api, { Contract, FarmUpdate, Delivery, EscrowLedgerEntry, Listing } from '../../src/config/api';
 import { useAuthStore } from '../../src/stores/authStore';
 
 const statusColors: Record<string, string> = {
@@ -21,15 +21,15 @@ export default function ContractDetailScreen() {
   const fetchData = async () => {
     try {
       const [contractRes, updatesRes, deliveriesRes, escrowRes] = await Promise.all([
-        api.get(`/api/contracts/${id}`).catch(() => null),
-        api.get(`/api/updates/${id}`).catch(() => ({ data: { data: [] } })),
-        api.get(`/api/deliveries/contract/${id}`).catch(() => ({ data: { data: [] } })),
-        api.get(`/api/escrow/contracts/${id}/ledger`).catch(() => ({ data: { data: [] } })),
+        api.get<{ data: Contract }>(`/api/contracts/${id}`).catch(() => null),
+        api.get<{ data: FarmUpdate[] }>(`/api/updates/${id}`).catch(() => ({ data: { data: [] } })),
+        api.get<{ data: Delivery[] }>(`/api/deliveries/contract/${id}`).catch(() => ({ data: { data: [] } })),
+        api.get<{ data: EscrowLedgerEntry[] }>(`/api/escrow/contracts/${id}/ledger`).catch(() => ({ data: { data: [] } })),
       ]);
-      if (contractRes) setContract(contractRes.data.data || contractRes.data);
-      setUpdates(updatesRes.data.data || updatesRes.data || []);
-      setDeliveries(deliveriesRes.data.data || deliveriesRes.data || []);
-      setEscrow(escrowRes.data.data || escrowRes.data || []);
+      if (contractRes) setContract(contractRes.data.data || null);
+      setUpdates(updatesRes.data.data || []);
+      setDeliveries(deliveriesRes.data.data || []);
+      setEscrow(escrowRes.data.data || []);
     } catch {} finally {
       setLoading(false);
     }
@@ -51,11 +51,11 @@ export default function ContractDetailScreen() {
     const otherUserId = userRole === 'farmer' ? contract.consumer_id : contract.listing?.farmer_id;
     if (!otherUserId) return;
     try {
-      const res = await api.post('/api/chat/conversations', {
+      const res = await api.post<{ data: { id: string } }>('/api/chat/conversations', {
         other_user_id: otherUserId,
         contract_id: contract.id,
       });
-      router.push(`/chat/${res.data.data?.id || res.data.id}`);
+      router.push(`/chat/${res.data.data?.id || ''}`);
     } catch {
       Alert.alert('Error', 'Failed to start conversation.');
     }

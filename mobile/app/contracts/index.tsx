@@ -23,8 +23,8 @@ export default function ContractsScreen() {
   const fetchContracts = useCallback(async () => {
     try {
       const endpoint = userRole === 'farmer' ? '/api/contracts/farmer' : '/api/contracts/consumer';
-      const res = await api.get(endpoint);
-      setContracts(res.data.data || res.data || []);
+      const res = await api.get<{ data: Contract[] }>(endpoint);
+      setContracts(res.data.data || []);
     } catch {} finally {
       setLoading(false);
     }
@@ -50,11 +50,11 @@ export default function ContractsScreen() {
     const otherUserId = userRole === 'farmer' ? contract.consumer_id : contract.listing?.farmer_id;
     if (!otherUserId) return;
     try {
-      const res = await api.post('/api/chat/conversations', {
+      const res = await api.post<{ data: { id: string } }>('/api/chat/conversations', {
         other_user_id: otherUserId,
         contract_id: contract.id,
       });
-      const conversationId = res.data.data?.id || res.data.id;
+      const conversationId = res.data.data?.id;
       router.push(`/chat/${conversationId}`);
     } catch {
       Alert.alert('Error', 'Failed to start conversation.');

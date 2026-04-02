@@ -20,8 +20,8 @@ export default function UpdatesScreen() {
 
   const fetchUpdates = useCallback(async () => {
     try {
-      const res = await api.get(`/api/updates/${contractId}`);
-      setUpdates(res.data.data || res.data || []);
+      const res = await api.get<{ data: FarmUpdate[] }>(`/api/updates/${contractId}`);
+      setUpdates(res.data.data || []);
     } catch {} finally {
       setLoading(false);
     }

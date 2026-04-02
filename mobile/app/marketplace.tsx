@@ -79,7 +79,7 @@ export default function MarketplaceScreen() {
       if (filter === 'price_high') params.set('sort', 'price_desc');
       if (filter === 'newest') params.set('sort', 'newest');
 
-      const response = await api.get(`/api/listings?${params.toString()}`);
+      const response = await api.get<{ data: Listing[]; pagination: { total: number; pages: number } }>(`/api/listings?${params.toString()}`);
       const result = response.data;
       setListings(result.data || []);
       setProperties(result.data?.map(mapListingToProperty) || []);

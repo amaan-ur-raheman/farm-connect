@@ -22,7 +22,7 @@ kycRouter.post(
 	authenticate,
 	requireRole("ADMIN"),
 	asyncHandler(async (req, res) => {
-		const user = await verifyKyc(req.params.userId);
+		const user = await verifyKyc(req.params.userId as string);
 		res.json({ success: true, data: user });
 	}),
 );
@@ -33,7 +33,7 @@ kycRouter.post(
 	requireRole("ADMIN"),
 	validate(rejectKycSchema),
 	asyncHandler(async (req, res) => {
-		const user = await rejectKyc(req.params.userId, req.body.reason);
+		const user = await rejectKyc(req.params.userId as string, req.body.reason);
 		res.json({ success: true, data: user });
 	}),
 );
