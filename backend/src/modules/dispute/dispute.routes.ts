@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate, requireRole } from "@/shared/middleware/auth";
 import { asyncHandler } from "@/shared/middleware/handlers";
+import { sanitizeFields } from "@/shared/middleware/sanitize";
 import {
 	createDispute,
 	getUserDisputes,
@@ -14,6 +15,7 @@ export const disputeRouter = Router();
 disputeRouter.post(
 	"/",
 	authenticate,
+	sanitizeFields("description"),
 	validate(createDisputeSchema),
 	asyncHandler(async (req, res) => {
 		const dispute = await createDispute(req.user!.userId, req.body);

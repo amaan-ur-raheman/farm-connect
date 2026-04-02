@@ -129,24 +129,24 @@ Four-phase implementation covering critical correctness fixes, real-time feature
     - [x] 2.9 Checkpoint — Phase 2 complete
         - Ensure all tests pass, ask the user if questions arise.
 
-- [ ]   3. Phase 3 — Performance and Reliability
-    - [ ] 3.1 Install backend sanitization dependency
+- [x]   3. Phase 3 — Performance and Reliability
+    - [x] 3.1 Install backend sanitization dependency
         - Add `sanitize-html` and `@types/sanitize-html` to `backend/package.json` (`dependencies` and `devDependencies` respectively)
         - Run `npm install` in the `backend` directory
         - _Requirements: 8.1_
 
-    - [ ] 3.2 Create sanitize utility and middleware
+    - [x] 3.2 Create sanitize utility and middleware
         - Create `backend/src/shared/utils/sanitize.ts` exporting `sanitizeText(input: string): string` using `sanitizeHtml(input, { allowedTags: [], allowedAttributes: {} })`
         - Create `backend/src/shared/middleware/sanitize.ts` exporting `sanitizeFields(...fields: string[])` middleware that calls `sanitizeText` on each named field in `req.body` before passing to `next()`
         - _Requirements: 8.1, 8.2, 8.3_
 
-    - [ ] 3.3 Apply sanitization middleware to listing, chat, and dispute routes
+    - [x] 3.3 Apply sanitization middleware to listing, chat, and dispute routes
         - In `backend/src/modules/listing/listing.routes.ts`: apply `sanitizeFields('description')` before the validate middleware on create/update routes
         - In `backend/src/modules/chat/chat.routes.ts`: apply `sanitizeFields('text')` before the validate middleware on the send-message route
         - In `backend/src/modules/dispute/dispute.routes.ts`: apply `sanitizeFields('description')` before the validate middleware on the create-dispute route
         - _Requirements: 8.1, 8.2_
 
-    - [ ] 3.4 Write property tests for sanitizer (Properties 14 and 15)
+    - [x] 3.4 Write property tests for sanitizer (Properties 14 and 15)
         - **Property 14: Sanitizer Strips HTML from Text Fields**
         - **Validates: Requirements 8.1, 8.2**
         - **Property 15: Sanitizer Preserves Plain Text**
@@ -155,7 +155,7 @@ Four-phase implementation covering critical correctness fixes, real-time feature
         - P14: use `fc.string()` combined with HTML injection templates; assert output contains no `<` or `>` characters
         - P15: use `fc.unicodeString()` filtered to strings with no HTML; assert `sanitizeText(input) === input`
 
-    - [ ] 3.5 Extract `wallet.service.ts` and add Redis caching helpers
+    - [x] 3.5 Extract `wallet.service.ts` and add Redis caching helpers
         - Add Redis helpers to `backend/src/config/redis.ts`:
             - `getWalletBalance(userId)` → `redis.get<number>('wallet_balance:' + userId)`
             - `setWalletBalance(userId, balance)` → `redis.set('wallet_balance:' + userId, balance, { ex: 60 })`
@@ -165,12 +165,12 @@ Four-phase implementation covering critical correctness fixes, real-time feature
             - `createTransaction(userId, type, amount, description)`: read latest `balance_after`, compute new balance (`CREDIT`: add, `DEBIT`: subtract), write `WalletTransaction` with correct `balance_after`, then call `invalidateWalletBalance`
         - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-    - [ ] 3.6 Update `wallet.routes.ts` to use `wallet.service.ts`
+    - [x] 3.6 Update `wallet.routes.ts` to use `wallet.service.ts`
         - Replace the inline balance aggregation in `GET /wallet/balance` with `getBalance(userId)` from `wallet.service.ts`
         - Replace the inline balance check in `POST /wallet/withdraw` with `getBalance(userId)` from `wallet.service.ts`
         - _Requirements: 7.3, 7.5_
 
-    - [ ] 3.7 Write property tests for wallet balance (Properties 12 and 13)
+    - [x] 3.7 Write property tests for wallet balance (Properties 12 and 13)
         - **Property 12: Wallet Balance Round Trip**
         - **Validates: Requirements 7.1, 7.2**
         - **Property 13: Wallet Cache Invalidation on Write**
@@ -179,7 +179,7 @@ Four-phase implementation covering critical correctness fixes, real-time feature
         - P12: use `fc.array(fc.record({ type: fc.constantFrom('CREDIT', 'DEBIT'), amount: fc.float({ min: 0.01, max: 10000 }) }), { minLength: 1 })`; mock Prisma and Redis; assert `balance_after` of last transaction equals algebraic sum
         - P13: use `fc.float({ min: 0.01 })` for amount; mock Redis; assert `invalidateWalletBalance` is called after `createTransaction`
 
-    - [ ] 3.8 Checkpoint — Phase 3 complete
+    - [x] 3.8 Checkpoint — Phase 3 complete
         - Ensure all tests pass, ask the user if questions arise.
 
 - [ ]   4. Phase 4 — Testing
