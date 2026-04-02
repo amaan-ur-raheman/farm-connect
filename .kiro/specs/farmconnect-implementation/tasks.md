@@ -70,7 +70,7 @@ Four-phase implementation covering critical correctness fixes, real-time feature
     - [x] 1.9 Checkpoint — Phase 1 complete
         - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 2. Phase 2 — Real-time Features
+- [x]   2. Phase 2 — Real-time Features
     - [x] 2.1 Install backend real-time dependencies
         - Add `socket.io` and `expo-server-sdk` to `dependencies` in `backend/package.json`
         - Add `fast-check` to `devDependencies` in `backend/package.json`
@@ -86,18 +86,18 @@ Four-phase implementation covering critical correctness fixes, real-time feature
         - Update `httpServer.listen(...)` replacing `app.listen`
         - _Requirements: 5.1, 5.2, 5.3, 5.8_
 
-    - [ ] 2.3 Emit `new_message` events from `chat.service.ts`
+    - [x] 2.3 Emit `new_message` events from `chat.service.ts`
         - Import `io` from `server.ts` into `backend/src/modules/chat/chat.service.ts`
         - After the `prisma.$transaction` in `sendMessage`, call `io.to(participantOneId).to(participantTwoId).emit('new_message', message)`
         - _Requirements: 5.4_
 
-    - [ ] 2.4 Install mobile real-time dependencies
+    - [x] 2.4 Install mobile real-time dependencies
         - Add `socket.io-client` and `expo-notifications` to `dependencies` in `mobile/package.json`
-        - Add `"axios": "^1.7.0"` to `dependencies` in `mobile/package.json`
+        - Add `"ky"` to `dependencies` in `mobile/package.json`
         - Run `npm install` in the `mobile` directory
         - _Requirements: 5.5, 6.5, 9.1, 9.2_
 
-    - [ ] 2.5 Replace polling with Socket.io in `mobile/app/chat/[id].tsx`
+    - [x] 2.5 Replace polling with Socket.io in `mobile/app/chat/[id].tsx`
         - Import `io` from `socket.io-client` and `useAuthStore` to get the access token
         - On mount: connect with `io(BASE_URL, { auth: { token: accessToken } })`
         - Listen for `new_message` events; if `msg.conversation_id === id`, append to `messages` state (deduplicate by `id`)
@@ -106,27 +106,27 @@ Four-phase implementation covering critical correctness fixes, real-time feature
         - Keep the initial `fetchMessages` REST call on mount to load history
         - _Requirements: 5.5, 5.6, 5.7_
 
-    - [ ] 2.6 Add push token endpoint to user routes
+    - [x] 2.6 Add push token endpoint to user routes
         - Add `POST /api/users/push-token` route in `backend/src/modules/user/user.routes.ts` (authenticated)
         - Validate body with Zod: `{ expo_push_token: z.string() }`
         - In `user.service.ts`, add `savePushToken(userId, token)` that updates `user.expo_push_token`
         - _Requirements: 6.1, 6.2_
 
-    - [ ] 2.7 Extend `notification.service.ts` to send Expo push notifications
+    - [x] 2.7 Extend `notification.service.ts` to send Expo push notifications
         - Import `Expo` from `expo-server-sdk`
         - After `prisma.notification.create`, look up the user's `expo_push_token`
         - If token is non-null and `Expo.isExpoPushToken(token)`, call `expo.sendPushNotificationsAsync([{ to: token, title, body: message }])`
         - On delivery error (check `receipt.status === 'error'`), log with `console.error` and continue — do not throw
         - _Requirements: 6.3, 6.4_
 
-    - [ ] 2.8 Register push notifications in `mobile/app/_layout.tsx`
+    - [x] 2.8 Register push notifications in `mobile/app/_layout.tsx`
         - Import `* as Notifications` from `expo-notifications`
         - Set foreground notification handler with `Notifications.setNotificationHandler`
         - In `RootLayout` `useEffect`: request permissions with `Notifications.requestPermissionsAsync()`; on grant, get token with `Notifications.getExpoPushTokenAsync()` and POST to `/api/users/push-token`
         - On failure, log silently — do not block app startup
         - _Requirements: 6.5, 6.6_
 
-    - [ ] 2.9 Checkpoint — Phase 2 complete
+    - [x] 2.9 Checkpoint — Phase 2 complete
         - Ensure all tests pass, ask the user if questions arise.
 
 - [ ]   3. Phase 3 — Performance and Reliability
