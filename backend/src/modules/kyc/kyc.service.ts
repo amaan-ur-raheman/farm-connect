@@ -2,6 +2,19 @@ import { prisma } from "@/config/database";
 import { createNotification } from "@/modules/notification/notification.service";
 import { NotFoundError } from "@/shared/errors";
 
+export const getUserKycStatus = async (userId: string) => {
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+		select: {
+			id: true,
+			kyc_status: true,
+			kyc_documents: true,
+		},
+	});
+	if (!user) throw new NotFoundError("User");
+	return user;
+};
+
 export const getPendingKyc = async () => {
 	return prisma.user.findMany({
 		where: { kyc_status: "SUBMITTED" },

@@ -3,12 +3,14 @@ import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator,
 import { Image } from 'expo-image';
 import { ChevronLeft, MessageSquare } from 'lucide-react-native';
 import { router } from 'expo-router';
-import api, { Conversation } from '../../src/config/api';
+import api, { Conversation, ChatMessage } from '../../src/config/api';
+import { useSocketStore } from '../../src/stores';
 
 export default function ChatListScreen() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { socket } = useSocketStore();
 
   const fetchConversations = useCallback(async () => {
     try {
@@ -22,6 +24,38 @@ export default function ChatListScreen() {
   }, []);
 
   useEffect(() => { fetchConversations(); }, [fetchConversations]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const onNewMessage = (msg: ChatMessage) => {
+      setConversations(prev => {
+        const index = prev.findIndex(c => c.id === msg.conversation_id);
+        if (index === -1) {
+          fetchConversations();
+          return prev;
+        }
+
+        const updated = [...prev];
+        const conv = { ...updated[index] };
+        
+        conv.last_message = {
+          text: msg.text || '📎 Media',
+          created_at: msg.created_at
+        };
+        
+        // Simplified unread increment - in a production app we'd check if we are on the ChatScreen for this ID
+        conv.unread_count += 1;
+
+        updated.splice(index, 1);
+        updated.unshift(conv);
+        return updated;
+      });
+    };
+
+    socket.on('new_message', onNewMessage);
+    return () => { socket.off('new_message', onNewMessage); };
+  }, [socket, fetchConversations]);
 
   const onRefresh = () => {
     setRefreshing(true);

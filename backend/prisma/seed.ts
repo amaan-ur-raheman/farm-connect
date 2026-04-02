@@ -20,6 +20,17 @@ async function main() {
   await prisma.farmListing.deleteMany();
   await prisma.user.deleteMany();
 
+  // Create farmers and investor...
+  const admin = await prisma.user.create({
+    data: {
+      phone: '+910000000000',
+      name: 'System Admin',
+      email: 'admin@farmconnect.com',
+      role: 'ADMIN',
+      kyc_status: 'VERIFIED',
+    },
+  });
+
   // Create farmer
   const farmer = await prisma.user.create({
     data: {

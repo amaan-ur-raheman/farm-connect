@@ -20,6 +20,7 @@ import { disputeRouter } from "@/modules/dispute/dispute.routes";
 import { notificationRouter } from "@/modules/notification/notification.routes";
 import { chatRouter } from "@/modules/chat/chat.routes";
 import { kycRouter } from "@/modules/kyc/kyc.routes";
+import { adminRouter } from "@/modules/admin/admin.routes";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -38,10 +39,15 @@ app.get(
 );
 
 const generalLimiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	max: 100,
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100, // 100 requests per 15 minutes
 	standardHeaders: true,
 	legacyHeaders: false,
+	skip: (req) => {
+		// Skip rate limiting for health checks during testing
+		if (req.path === '/health') return true;
+		return false;
+	},
 	handler: (_req, res) => {
 		res.status(429).json({
 			success: false,
@@ -81,6 +87,7 @@ app.use("/api/disputes", disputeRouter);
 app.use("/api/notifications", notificationRouter);
 app.use("/api/chat", chatRouter);
 app.use("/api/kyc", kycRouter);
+app.use("/api/admin", adminRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

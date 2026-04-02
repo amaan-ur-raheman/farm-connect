@@ -47,8 +47,10 @@ enum EscrowEvent {
 enum DeliveryStatus {
   PENDING
   HARVESTED
+  IN_TRANSIT
   DELIVERED
   VERIFIED
+  REJECTED
 }
 
 enum DisputeStatus {
@@ -61,6 +63,13 @@ enum DisputeStatus {
 enum TransactionType {
   CREDIT
   DEBIT
+}
+
+enum WalletTransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REVERSED
 }
 
 enum NotificationType {
@@ -261,15 +270,16 @@ model Dispute {
 }
 
 model WalletTransaction {
-  id                 String          @id @default(uuid())
+  id                 String                  @id @default(uuid())
   user_id            String
-  user               User            @relation(fields: [user_id], references: [id])
+  user               User                    @relation(fields: [user_id], references: [id])
   type               TransactionType
+  status             WalletTransactionStatus @default(SUCCESS)
   amount             Float
   description        String?
   balance_after      Float
   razorpay_payout_id String?
-  created_at         DateTime        @default(now())
+  created_at         DateTime                @default(now())
 
   @@index([user_id])
 }

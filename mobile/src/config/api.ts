@@ -210,6 +210,7 @@ export interface WalletBalance {
 export interface WalletTransaction {
 	id: string;
 	type: "CREDIT" | "DEBIT";
+	status: "PENDING" | "SUCCESS" | "FAILED" | "REVERSED";
 	amount: number;
 	description: string;
 	reference?: string;
@@ -231,9 +232,10 @@ export interface Delivery {
 	batch_number: string;
 	quantity_kg: number;
 	quality_grade: string;
-	status: "PENDING" | "IN_TRANSIT" | "DELIVERED" | "VERIFIED" | "REJECTED";
+	status: "PENDING" | "HARVESTED" | "IN_TRANSIT" | "DELIVERED" | "VERIFIED" | "REJECTED";
 	proof_url?: string;
 	created_at: string;
+	contract?: Contract;
 }
 
 export interface Dispute {

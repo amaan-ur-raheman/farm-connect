@@ -13,6 +13,16 @@ import { BadRequestError } from "@/shared/errors";
 
 export const escrowRouter = Router();
 
+// Get escrow ledger by contract ID (alias for compatibility)
+escrowRouter.get(
+	"/contract/:contractId",
+	authenticate,
+	asyncHandler(async (req, res) => {
+		const ledger = await getEscrowLedger(req.params.contractId as string);
+		res.json({ success: true, data: ledger });
+	}),
+);
+
 escrowRouter.post(
 	"/contracts/:contractId/release-wage",
 	authenticate,

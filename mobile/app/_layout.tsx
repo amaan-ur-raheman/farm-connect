@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import "../src/global.css";
-import { useAuthStore } from "../src/stores";
+import { useAuthStore, useSocketStore } from "../src/stores";
 import api from "../src/config/api";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 
@@ -27,6 +27,15 @@ function RootLayoutNav() {
 	const router = useRouter();
 	const segments = useSegments();
 	const { isAuthenticated, userRole } = useAuthStore();
+	const { connect, disconnect } = useSocketStore();
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			connect();
+		} else {
+			disconnect();
+		}
+	}, [isAuthenticated, connect, disconnect]);
 
 	useEffect(() => {
 		if (!isAuthenticated) return;

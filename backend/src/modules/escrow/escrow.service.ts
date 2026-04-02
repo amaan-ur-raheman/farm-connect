@@ -4,6 +4,7 @@ import {
 	BadRequestError,
 	ForbiddenError,
 } from "@/shared/errors";
+import { createTransaction } from "@/modules/wallet/wallet.service";
 
 export const createEscrowDeposit = async (
 	contractId: string,
@@ -79,6 +80,14 @@ export const releaseWageToFarmer = async (
 		}),
 	]);
 
+	// Credit farmer's wallet
+	await createTransaction(
+		farmerId,
+		"CREDIT",
+		amount,
+		description ?? `Wage release from contract ${contractId}`,
+	);
+
 	return {
 		wage_released: amount,
 		farmer_paid: updatedContract.farmer_paid,
@@ -117,6 +126,14 @@ export const finalSettlement = async (contractId: string) => {
 			},
 		}),
 	]);
+
+	// Credit farmer's wallet
+	await createTransaction(
+		contract.farmer_id,
+		"CREDIT",
+		remaining,
+		`Final settlement for contract ${contractId}`,
+	);
 
 	return { settled: remaining };
 };

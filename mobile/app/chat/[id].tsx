@@ -13,16 +13,16 @@ import {
 } from "react-native";
 import { Camera, MapPin, Mic, Send, Play } from "lucide-react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { io, Socket } from "socket.io-client";
 import { Header } from "../../src/components/ui/Header";
-import { useUserStore } from "../../src/stores";
+import { useUserStore, useSocketStore } from "../../src/stores";
 import api, { ChatMessage, Conversation, BASE_URL } from "../../src/config/api";
 import { useAuthStore } from "../../src/stores/authStore";
 
 export default function ChatScreen() {
 	const { id } = useLocalSearchParams();
 	const { profile } = useUserStore();
-	const { authUser, accessToken } = useAuthStore();
+	const { authUser } = useAuthStore();
+	const { socket } = useSocketStore();
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [inputText, setInputText] = useState("");
 	const [loading, setLoading] = useState(true);
@@ -32,7 +32,6 @@ export default function ChatScreen() {
 		avatar: string;
 	}>({ name: "User", avatar: "" });
 	const scrollViewRef = useRef<ScrollView>(null);
-	const socketRef = useRef<Socket | null>(null);
 
 	const fetchMessages = useCallback(async () => {
 		try {
@@ -66,11 +65,9 @@ export default function ChatScreen() {
 		// Load message history via REST
 		fetchMessages();
 
-		// Connect Socket.io for real-time updates
-		const socket = io(BASE_URL, { auth: { token: accessToken } });
-		socketRef.current = socket;
+		if (!socket) return;
 
-		socket.on("new_message", (msg: ChatMessage) => {
+		const onNewMessage = (msg: ChatMessage) => {
 			if (msg.conversation_id === id) {
 				setMessages((prev) => {
 					// Deduplicate by id
@@ -78,13 +75,14 @@ export default function ChatScreen() {
 					return [...prev, msg];
 				});
 			}
-		});
+		};
+
+		socket.on("new_message", onNewMessage);
 
 		return () => {
-			socket.disconnect();
-			socketRef.current = null;
+			socket.off("new_message", onNewMessage);
 		};
-	}, [id, accessToken]);
+	}, [id, socket, fetchMessages]);
 
 	const handleSend = async () => {
 		if (!inputText.trim() || sending) return;

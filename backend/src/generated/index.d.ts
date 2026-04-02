@@ -132,8 +132,10 @@ export type EscrowEvent = (typeof EscrowEvent)[keyof typeof EscrowEvent]
 export const DeliveryStatus: {
   PENDING: 'PENDING',
   HARVESTED: 'HARVESTED',
+  IN_TRANSIT: 'IN_TRANSIT',
   DELIVERED: 'DELIVERED',
-  VERIFIED: 'VERIFIED'
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED'
 };
 
 export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]
@@ -155,6 +157,16 @@ export const TransactionType: {
 };
 
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+
+export const WalletTransactionStatus: {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  REVERSED: 'REVERSED'
+};
+
+export type WalletTransactionStatus = (typeof WalletTransactionStatus)[keyof typeof WalletTransactionStatus]
 
 
 export const NotificationType: {
@@ -208,6 +220,10 @@ export const DisputeStatus: typeof $Enums.DisputeStatus
 export type TransactionType = $Enums.TransactionType
 
 export const TransactionType: typeof $Enums.TransactionType
+
+export type WalletTransactionStatus = $Enums.WalletTransactionStatus
+
+export const WalletTransactionStatus: typeof $Enums.WalletTransactionStatus
 
 export type NotificationType = $Enums.NotificationType
 
@@ -11450,6 +11466,7 @@ export namespace Prisma {
     id: string | null
     user_id: string | null
     type: $Enums.TransactionType | null
+    status: $Enums.WalletTransactionStatus | null
     amount: number | null
     description: string | null
     balance_after: number | null
@@ -11461,6 +11478,7 @@ export namespace Prisma {
     id: string | null
     user_id: string | null
     type: $Enums.TransactionType | null
+    status: $Enums.WalletTransactionStatus | null
     amount: number | null
     description: string | null
     balance_after: number | null
@@ -11472,6 +11490,7 @@ export namespace Prisma {
     id: number
     user_id: number
     type: number
+    status: number
     amount: number
     description: number
     balance_after: number
@@ -11495,6 +11514,7 @@ export namespace Prisma {
     id?: true
     user_id?: true
     type?: true
+    status?: true
     amount?: true
     description?: true
     balance_after?: true
@@ -11506,6 +11526,7 @@ export namespace Prisma {
     id?: true
     user_id?: true
     type?: true
+    status?: true
     amount?: true
     description?: true
     balance_after?: true
@@ -11517,6 +11538,7 @@ export namespace Prisma {
     id?: true
     user_id?: true
     type?: true
+    status?: true
     amount?: true
     description?: true
     balance_after?: true
@@ -11615,6 +11637,7 @@ export namespace Prisma {
     id: string
     user_id: string
     type: $Enums.TransactionType
+    status: $Enums.WalletTransactionStatus
     amount: number
     description: string | null
     balance_after: number
@@ -11645,6 +11668,7 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
+    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
@@ -11657,6 +11681,7 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
+    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
@@ -11669,6 +11694,7 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
+    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
@@ -11681,6 +11707,7 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
+    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
@@ -11688,7 +11715,7 @@ export namespace Prisma {
     created_at?: boolean
   }
 
-  export type WalletTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "type" | "amount" | "description" | "balance_after" | "razorpay_payout_id" | "created_at", ExtArgs["result"]["walletTransaction"]>
+  export type WalletTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "type" | "status" | "amount" | "description" | "balance_after" | "razorpay_payout_id" | "created_at", ExtArgs["result"]["walletTransaction"]>
   export type WalletTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -11708,6 +11735,7 @@ export namespace Prisma {
       id: string
       user_id: string
       type: $Enums.TransactionType
+      status: $Enums.WalletTransactionStatus
       amount: number
       description: string | null
       balance_after: number
@@ -12140,6 +12168,7 @@ export namespace Prisma {
     readonly id: FieldRef<"WalletTransaction", 'String'>
     readonly user_id: FieldRef<"WalletTransaction", 'String'>
     readonly type: FieldRef<"WalletTransaction", 'TransactionType'>
+    readonly status: FieldRef<"WalletTransaction", 'WalletTransactionStatus'>
     readonly amount: FieldRef<"WalletTransaction", 'Float'>
     readonly description: FieldRef<"WalletTransaction", 'String'>
     readonly balance_after: FieldRef<"WalletTransaction", 'Float'>
@@ -17179,6 +17208,7 @@ export namespace Prisma {
     id: 'id',
     user_id: 'user_id',
     type: 'type',
+    status: 'status',
     amount: 'amount',
     description: 'description',
     balance_after: 'balance_after',
@@ -17474,6 +17504,20 @@ export namespace Prisma {
    * Reference to a field of type 'DisputeStatus[]'
    */
   export type ListEnumDisputeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisputeStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'WalletTransactionStatus'
+   */
+  export type EnumWalletTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WalletTransactionStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'WalletTransactionStatus[]'
+   */
+  export type ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WalletTransactionStatus[]'>
     
 
 
@@ -18331,6 +18375,7 @@ export namespace Prisma {
     id?: StringFilter<"WalletTransaction"> | string
     user_id?: StringFilter<"WalletTransaction"> | string
     type?: EnumTransactionTypeFilter<"WalletTransaction"> | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     amount?: FloatFilter<"WalletTransaction"> | number
     description?: StringNullableFilter<"WalletTransaction"> | string | null
     balance_after?: FloatFilter<"WalletTransaction"> | number
@@ -18343,6 +18388,7 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
     balance_after?: SortOrder
@@ -18358,6 +18404,7 @@ export namespace Prisma {
     NOT?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
     user_id?: StringFilter<"WalletTransaction"> | string
     type?: EnumTransactionTypeFilter<"WalletTransaction"> | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     amount?: FloatFilter<"WalletTransaction"> | number
     description?: StringNullableFilter<"WalletTransaction"> | string | null
     balance_after?: FloatFilter<"WalletTransaction"> | number
@@ -18370,6 +18417,7 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
     balance_after?: SortOrder
@@ -18389,6 +18437,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"WalletTransaction"> | string
     user_id?: StringWithAggregatesFilter<"WalletTransaction"> | string
     type?: EnumTransactionTypeWithAggregatesFilter<"WalletTransaction"> | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusWithAggregatesFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     amount?: FloatWithAggregatesFilter<"WalletTransaction"> | number
     description?: StringNullableWithAggregatesFilter<"WalletTransaction"> | string | null
     balance_after?: FloatWithAggregatesFilter<"WalletTransaction"> | number
@@ -19644,6 +19693,7 @@ export namespace Prisma {
   export type WalletTransactionCreateInput = {
     id?: string
     type: $Enums.TransactionType
+    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
@@ -19656,6 +19706,7 @@ export namespace Prisma {
     id?: string
     user_id: string
     type: $Enums.TransactionType
+    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
@@ -19666,6 +19717,7 @@ export namespace Prisma {
   export type WalletTransactionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
@@ -19678,6 +19730,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
@@ -19689,6 +19742,7 @@ export namespace Prisma {
     id?: string
     user_id: string
     type: $Enums.TransactionType
+    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
@@ -19699,6 +19753,7 @@ export namespace Prisma {
   export type WalletTransactionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
@@ -19710,6 +19765,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
@@ -21024,10 +21080,18 @@ export namespace Prisma {
     _max?: NestedEnumDisputeStatusFilter<$PrismaModel>
   }
 
+  export type EnumWalletTransactionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionStatus | EnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionStatusFilter<$PrismaModel> | $Enums.WalletTransactionStatus
+  }
+
   export type WalletTransactionCountOrderByAggregateInput = {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     amount?: SortOrder
     description?: SortOrder
     balance_after?: SortOrder
@@ -21044,6 +21108,7 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     amount?: SortOrder
     description?: SortOrder
     balance_after?: SortOrder
@@ -21055,6 +21120,7 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
+    status?: SortOrder
     amount?: SortOrder
     description?: SortOrder
     balance_after?: SortOrder
@@ -21065,6 +21131,16 @@ export namespace Prisma {
   export type WalletTransactionSumOrderByAggregateInput = {
     amount?: SortOrder
     balance_after?: SortOrder
+  }
+
+  export type EnumWalletTransactionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionStatus | EnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionStatusWithAggregatesFilter<$PrismaModel> | $Enums.WalletTransactionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWalletTransactionStatusFilter<$PrismaModel>
+    _max?: NestedEnumWalletTransactionStatusFilter<$PrismaModel>
   }
 
   export type ReviewContract_idReviewer_idCompoundUniqueInput = {
@@ -22269,6 +22345,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type EnumWalletTransactionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.WalletTransactionStatus
+  }
+
   export type UserUpdateOneRequiredWithoutWallet_transactionsNestedInput = {
     create?: XOR<UserCreateWithoutWallet_transactionsInput, UserUncheckedCreateWithoutWallet_transactionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutWallet_transactionsInput
@@ -22815,6 +22895,23 @@ export namespace Prisma {
     _max?: NestedEnumDisputeStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumWalletTransactionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionStatus | EnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionStatusFilter<$PrismaModel> | $Enums.WalletTransactionStatus
+  }
+
+  export type NestedEnumWalletTransactionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionStatus | EnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionStatus[] | ListEnumWalletTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionStatusWithAggregatesFilter<$PrismaModel> | $Enums.WalletTransactionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWalletTransactionStatusFilter<$PrismaModel>
+    _max?: NestedEnumWalletTransactionStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumNotificationTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
     in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
@@ -23109,6 +23206,7 @@ export namespace Prisma {
   export type WalletTransactionCreateWithoutUserInput = {
     id?: string
     type: $Enums.TransactionType
+    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
@@ -23119,6 +23217,7 @@ export namespace Prisma {
   export type WalletTransactionUncheckedCreateWithoutUserInput = {
     id?: string
     type: $Enums.TransactionType
+    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
@@ -23501,6 +23600,7 @@ export namespace Prisma {
     id?: StringFilter<"WalletTransaction"> | string
     user_id?: StringFilter<"WalletTransaction"> | string
     type?: EnumTransactionTypeFilter<"WalletTransaction"> | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     amount?: FloatFilter<"WalletTransaction"> | number
     description?: StringNullableFilter<"WalletTransaction"> | string | null
     balance_after?: FloatFilter<"WalletTransaction"> | number
@@ -27093,6 +27193,7 @@ export namespace Prisma {
   export type WalletTransactionCreateManyUserInput = {
     id?: string
     type: $Enums.TransactionType
+    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
@@ -27460,6 +27561,7 @@ export namespace Prisma {
   export type WalletTransactionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
@@ -27470,6 +27572,7 @@ export namespace Prisma {
   export type WalletTransactionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
@@ -27480,6 +27583,7 @@ export namespace Prisma {
   export type WalletTransactionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number

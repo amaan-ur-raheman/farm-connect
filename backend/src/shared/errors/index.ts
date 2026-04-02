@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
+import { ZodError } from 'zod';
 
 export class AppError extends Error {
   constructor(
     public statusCode: number,
     public message: string,
     public code?: string,
-    public isOperational = true
+    public isOperational = true,
+    public errors?: Array<{ field: string; message: string }>
   ) {
     super(message);
     Object.setPrototypeOf(this, AppError.prototype);
@@ -44,17 +46,33 @@ export class ConflictError extends AppError {
 }
 
 export const errorHandler = (
-  err: Error,
+  err: Error | any,
   _req: Request,
   res: Response,
   _next: NextFunction
 ) => {
+  // Handle Zod errors directly
+  if (err instanceof ZodError) {
+    return res.status(400).json({
+      success: false,
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Validation failed',
+        errors: err.errors.map((e: any) => ({
+          field: e.path.join('.'),
+          message: e.message,
+        })),
+      },
+    });
+  }
+
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       success: false,
       error: {
         code: err.code,
         message: err.message,
+        errors: err.errors,
       },
     });
   }

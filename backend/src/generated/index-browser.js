@@ -254,6 +254,7 @@ exports.Prisma.WalletTransactionScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   type: 'type',
+  status: 'status',
   amount: 'amount',
   description: 'description',
   balance_after: 'balance_after',
@@ -371,8 +372,10 @@ exports.TransactionType = exports.$Enums.TransactionType = {
 exports.DeliveryStatus = exports.$Enums.DeliveryStatus = {
   PENDING: 'PENDING',
   HARVESTED: 'HARVESTED',
+  IN_TRANSIT: 'IN_TRANSIT',
   DELIVERED: 'DELIVERED',
-  VERIFIED: 'VERIFIED'
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED'
 };
 
 exports.DisputeStatus = exports.$Enums.DisputeStatus = {
@@ -380,6 +383,13 @@ exports.DisputeStatus = exports.$Enums.DisputeStatus = {
   UNDER_REVIEW: 'UNDER_REVIEW',
   RESOLVED: 'RESOLVED',
   ESCALATED: 'ESCALATED'
+};
+
+exports.WalletTransactionStatus = exports.$Enums.WalletTransactionStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  REVERSED: 'REVERSED'
 };
 
 exports.NotificationType = exports.$Enums.NotificationType = {

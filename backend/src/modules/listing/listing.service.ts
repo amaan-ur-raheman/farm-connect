@@ -1,8 +1,20 @@
 import { prisma } from '@/config/database';
 import { NotFoundError, ForbiddenError } from '@/shared/errors';
+import sanitizeHtml from 'sanitize-html';
 import type { CreateListingInput, UpdateListingInput, ListingFiltersInput } from './listing.schema';
 import { cloudinary } from '@/config/cloudinary';
 import streamifier from 'streamifier';
+
+// Sanitize search input to prevent SQL injection
+const sanitizeSearchInput = (input: string): string => {
+  // Remove any HTML tags and escape special characters
+  const sanitized = sanitizeHtml(input, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+  // Remove SQL special characters
+  return sanitized.replace(/[';"\\()]/g, '').trim();
+};
 
 const EARTH_RADIUS_KM = 6371;
 
@@ -82,11 +94,15 @@ export const getListings = async (filters: ListingFiltersInput) => {
     where.crops = { hasSome: crops.split(',').map((c) => c.trim()) };
   }
   if (search) {
-    where.OR = [
-      { name: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } },
-      { location_name: { contains: search, mode: 'insensitive' } },
-    ];
+    // Sanitize search input to prevent SQL injection
+    const sanitizedSearch = sanitizeSearchInput(search);
+    if (sanitizedSearch.length > 0) {
+      where.OR = [
+        { name: { contains: sanitizedSearch, mode: 'insensitive' } },
+        { description: { contains: sanitizedSearch, mode: 'insensitive' } },
+        { location_name: { contains: sanitizedSearch, mode: 'insensitive' } },
+      ];
+    }
   }
 
   const listings = await prisma.farmListing.findMany({

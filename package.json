@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "mobile",
-    "backend"
+    "backend",
+    "admin-dashboard"
   ],
   "scripts": {
     "dev": "npm run dev:backend & npm run dev:mobile",
@@ -14,5 +15,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2"
+  },
+  "dependencies": {
+    "react-native-safe-area-context": "^5.7.0"
   }
 }

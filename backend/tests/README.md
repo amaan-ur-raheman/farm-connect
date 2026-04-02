@@ -1,367 +1,379 @@
-# FarmConnect API Testing Guide
+# 🧪 FarmConnect Backend - Complete API Testing Guide
 
-This guide provides comprehensive instructions for testing the FarmConnect backend APIs.
+## 🎯 Quick Start (Choose One Method)
 
----
+### Method 1: Interactive Test Script (Recommended for First Time) ⭐
 
-## 📋 Prerequisites
-
-Before testing, ensure you have:
-
-1. **Backend server running** on `http://localhost:3000`
-2. **PostgreSQL database** configured and migrated
-3. **Environment variables** set in `backend/.env`
-4. **Database seeded** with test data
-
----
-
-## 🚀 Quick Start
-
-### Option 1: Automated Test Script (Recommended)
-
-Run the comprehensive test script that tests all endpoints:
+This script will guide you through testing step-by-step:
 
 ```bash
 cd backend
-
-# Make sure server is running in another terminal
-npm run dev
-
-# In a new terminal, run the test script
-npx tsx tests/api-manual-test.ts
+./test-interactive.sh
 ```
 
-**What it tests:**
-- ✅ Health check
-- ✅ OTP authentication (send & verify)
-- ✅ Token refresh
-- ✅ User profile (get & update)
-- ✅ Farm listings (CRUD operations)
-- ✅ Contracts (create & manage)
-- ✅ Wallet balance & transactions
-- ✅ Notifications
-- ✅ Logout
+**What it does:**
+1. ✅ Checks server health
+2. ✅ Sends OTP and asks you to enter it from console
+3. ✅ Verifies OTP and logs in
+4. ✅ Tests user profile, listings, wallet, notifications
+5. ✅ Shows a summary of results
+
+**Duration:** ~2 minutes  
+**Best for:** Manual verification, learning the APIs
 
 ---
 
-### Option 2: Postman Collection (Manual Testing)
+### Method 2: cURL Commands (Full Control)
 
-**Import the collection:**
-1. Open Postman
-2. Click **Import**
-3. Select `backend/tests/FarmConnect-API.postman_collection.json`
-4. Collection will be imported with all endpoints
+Follow the step-by-step guide in [`RUN_TESTS_MANUALLY.md`](./RUN_TESTS_MANUALLY.md)
 
-**Using the collection:**
-1. Start with **Health Check** to verify server is running
-2. Proceed to **Authentication → Send OTP**
-3. Verify OTP (use `123456` in development mode)
-4. All subsequent requests will automatically use the access token
-5. Test each endpoint group systematically
-
-**Environment variables** (automatically set by collection):
-- `baseUrl` - API base URL (default: `http://localhost:3000`)
-- `accessToken` - JWT access token
-- `refreshToken` - JWT refresh token
-- `userId` - Current user ID
-- `listingId` - Last created listing ID
-- `contractId` - Last created contract ID
-- `testPhone` - Test phone number
+**Best for:** Understanding each API call, debugging
 
 ---
 
-### Option 3: cURL Commands (Quick Tests)
+### Method 3: Comprehensive Automated Test (Advanced)
 
-#### Health Check
+Tests all 40+ endpoints automatically:
+
 ```bash
-curl http://localhost:3000/health
+cd backend
+npx tsx tests/api-test-with-otp.ts
 ```
 
-#### Send OTP
-```bash
-curl -X POST http://localhost:3000/api/auth/otp/send \
-  -H "Content-Type: application/json" \
-  -d '{"phone": "+919999888877"}'
-```
+**What it does:**
+- Prompts for OTPs for both farmer and consumer
+- Tests all major business flows
+- Creates listings, contracts, deliveries, etc.
+- Provides detailed test report
 
-#### Verify OTP (Dev Mode)
-```bash
-curl -X POST http://localhost:3000/api/auth/otp/verify \
-  -H "Content-Type: application/json" \
-  -d '{"phone": "+919999888877", "otp": "123456"}'
-```
-
-#### Get User Profile
-```bash
-curl http://localhost:3000/api/users/me \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
-
-#### Create Listing
-```bash
-curl -X POST http://localhost:3000/api/listings \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
-  -d '{
-    "name": "Test Farm",
-    "description": "Organic farm",
-    "area_acres": 5,
-    "price_per_acre": 50000,
-    "crops": ["Tomato"],
-    "location_name": "Nashik",
-    "latitude": 19.9975,
-    "longitude": 73.7898,
-    "is_organic": true
-  }'
-```
+**Duration:** ~5 minutes  
+**Best for:** Full regression testing before deployment
 
 ---
 
-## 📁 Existing Integration Tests
+### Method 4: Unit & Integration Tests (Development)
 
-The project includes comprehensive Vitest integration tests:
+Run the Vitest test suite:
 
-### Run All Tests
 ```bash
 cd backend
 npm test
 ```
 
-### Run Specific Test Files
+**Tests:**
+- Authentication logic
+- Service layer functions
+- Business logic (contracts, escrow, payments)
+- Integration flows
 
-**Contract Lifecycle Tests:**
+**Duration:** ~15 seconds  
+**Best for:** Development workflow
+
+---
+
+## 📊 Test Coverage Overview
+
+| Test Type | Count | Coverage | Duration | When to Use |
+|-----------|-------|----------|----------|-------------|
+| **Interactive** | 7 | Core APIs | 2 min | First-time setup, demos |
+| **cURL Manual** | 15+ | All endpoints | 10 min | Debugging, exploration |
+| **Comprehensive** | 40+ | Full system | 5 min | Pre-deployment |
+| **Unit/Integration** | 25+ | Logic layer | 15 sec | Development |
+
+---
+
+## 🔑 Test Credentials
+
+All test users are available after running:
+
 ```bash
-npm test -- tests/integration/contract-lifecycle.test.ts
+npm run db:generate
+npm run db:push
 ```
 
-**Dispute Flow Tests:**
-```bash
-npm test -- tests/integration/dispute-flow.test.ts
-```
+### Test Users
 
-**Unit Tests:**
-```bash
-npm test -- tests/unit/
+| Role | Phone Number | Name | Default OTP |
+|------|-------------|------|-------------|
+| Farmer | +919876543210 | Rajesh Kumar | From console |
+| Investor | +919876543211 | Vikram Mehta | From console |
+| Farmer 2 | +919876543212 | Sunita Patil | From console |
+
+**Important:** In development mode, the OTP is logged to your backend server console:
+```
+[DEV] OTP for +919876543210: 123456
 ```
 
 ---
 
-## 🔍 API Endpoint Reference
+## 🚀 Running Each Test Method
 
-### Authentication (`/api/auth`)
+### Method 1: Interactive Script
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/otp/send` | Send OTP to phone | ❌ |
-| POST | `/otp/verify` | Verify OTP & login | ❌ |
-| POST | `/refresh` | Refresh access token | ❌ |
-| POST | `/logout` | Logout user | ✅ |
-
-### Users (`/api/users`)
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/me` | Get current user profile | ✅ |
-| PATCH | `/me` | Update user profile | ✅ |
-| POST | `/push-token` | Update push notification token | ✅ |
-
-### Listings (`/api/listings`)
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/` | Get all listings (paginated) | ❌ |
-| GET | `/:id` | Get listing by ID | ❌ |
-| POST | `/` | Create new listing | ✅ |
-| PATCH | `/:id` | Update listing | ✅ (owner) |
-| DELETE | `/:id` | Delete listing | ✅ (owner) |
-| GET | `/my-listings` | Get farmer's listings | ✅ |
-
-### Contracts (`/api/contracts`)
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/` | Create contract | ✅ |
-| GET | `/:id` | Get contract by ID | ✅ |
-| GET | `/farmer` | Get farmer's contracts | ✅ |
-| GET | `/consumer` | Get consumer's contracts | ✅ |
-| POST | `/:id/action` | Accept/Reject/Cancel/Complete | ✅ |
-
-### Wallet (`/api/wallet`)
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/balance` | Get wallet balance | ✅ |
-| GET | `/transactions` | Get transaction history | ✅ |
-
-### Payments (`/api/payments`)
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/order` | Create Razorpay order | ✅ |
-| POST | `/escrow/deposit` | Deposit to escrow | ✅ |
-| POST | `/webhook` | Razorpay webhook | ❌ |
-
-### Notifications (`/api/notifications`)
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/` | Get notifications (paginated) | ✅ |
-| POST | `/mark-read` | Mark notification as read | ✅ |
-| POST | `/mark-all-read` | Mark all as read | ✅ |
-
-### Chat (`/api/chat`)
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/conversations` | Get user conversations | ✅ |
-| POST | `/conversations` | Create conversation | ✅ |
-| GET | `/conversations/:id/messages` | Get messages | ✅ |
-| POST | `/conversations/:id/messages` | Send message | ✅ |
-
----
-
-## 🧪 Test Data
-
-### Default Test Users (from seed)
-
-**Farmer:**
-- Phone: `+919876543210`
-- Name: Rajesh Kumar
-- Role: FARMER
-
-**Investor:**
-- Phone: `+919876543211`
-- Name: Vikram Mehta
-- Role: CONSUMER
-
-**Farmer 2:**
-- Phone: `+919876543212`
-- Name: Sunita Patil
-- Role: FARMER
-
-### Development Mode OTP
-
-In development mode, the OTP is always: **`123456`**
-
-This is logged to the console when you send an OTP.
-
----
-
-## 🔧 Testing Tips
-
-### 1. Rate Limiting
-- Auth endpoints are rate-limited (10 requests per 15 minutes)
-- General API: 100 requests per 15 minutes
-- If you hit limits, wait or restart the server
-
-### 2. Token Management
-- Access token expires in 15 minutes
-- Refresh token expires in 7 days
-- Use the refresh endpoint to get new access tokens
-
-### 3. Database Cleanup
-After testing, you may want to clean up test data:
 ```bash
-# Reset database (WARNING: deletes all data)
-npm run db:push -- --force-reset
-
-# Re-seed
-npm run db:seed
+cd backend
+./test-interactive.sh
 ```
 
-### 4. WebSocket Testing (Chat)
-For real-time chat testing, use the Socket.IO client:
-```javascript
-import io from 'socket.io-client';
+**You'll be prompted to:**
+1. Check console for OTP
+2. Enter the OTP
+3. Watch as tests run automatically
 
-const socket = io('http://localhost:3000', {
-  auth: { token: 'YOUR_ACCESS_TOKEN' }
-});
-
-socket.on('new_message', (message) => {
-  console.log('New message:', message);
-});
+**Expected Output:**
 ```
+✅ Server Health
+✅ Send OTP
+✅ Verify OTP (with manual entry)
+✅ Get User Profile
+✅ Get Listings
+✅ Get Wallet Balance
+✅ Get Notifications
+
+All core API endpoints are working! 🎉
+```
+
+---
+
+### Method 2: Manual cURL
+
+See detailed instructions in [`RUN_TESTS_MANUALLY.md`](./RUN_TESTS_MANUALLY.md)
+
+Quick example:
+```bash
+# Health check
+curl http://localhost:3000/health | jq .
+
+# Send OTP
+curl -X POST http://localhost:3000/api/auth/otp/send \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"+919876543210"}' | jq .
+
+# Check console for OTP, then verify
+curl -X POST http://localhost:3000/api/auth/otp/verify \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"+919876543210","otp":"FROM_CONSOLE"}' | jq .
+```
+
+---
+
+### Method 3: Comprehensive Test
+
+```bash
+cd backend
+npx tsx tests/api-test-with-otp.ts
+```
+
+**You'll be prompted for:**
+1. OTP for Farmer (+919876543210)
+2. OTP for Consumer (+919876543211)
+
+**Test Modules:**
+- ✅ Health & Infrastructure
+- ✅ Authentication (both users)
+- ✅ User Management
+- ✅ Farm Listings (CRUD)
+- ✅ Contracts (creation, acceptance)
+- ✅ Wallet (balance, transactions)
+- ✅ Payments (order creation)
+- ✅ Escrow (ledger viewing)
+- ✅ Farm Updates
+- ✅ Deliveries
+- ✅ Notifications
+- ✅ KYC Status
+
+---
+
+### Method 4: Vitest Suite
+
+```bash
+cd backend
+npm test
+```
+
+**Test Files:**
+- `tests/unit/auth.test.ts` - Authentication
+- `tests/unit/contract.service.test.ts` - Contract logic
+- `tests/unit/escrow.service.test.ts` - Escrow calculations
+- `tests/unit/payment.service.test.ts` - Payment processing
+- `tests/unit/wallet.service.test.ts` - Wallet operations
+- `tests/unit/kyc.service.test.ts` - KYC verification
+- `tests/integration/contract-lifecycle.test.ts` - Full contract flow
+- `tests/integration/dispute-flow.test.ts` - Dispute handling
+
+---
+
+## 📝 Step-by-Step: First Time Testing
+
+### Step 1: Start Backend Server
+
+```bash
+cd backend
+npm run dev
+```
+
+Keep this terminal open!
+
+### Step 2: Run Interactive Test
+
+Open a **new terminal**:
+
+```bash
+cd backend
+./test-interactive.sh
+```
+
+### Step 3: Follow Prompts
+
+1. Script sends OTP automatically
+2. Check backend console for OTP
+3. Enter OTP when prompted
+4. Watch tests run
+
+### Step 4: Review Results
+
+All green ✅ = API is working perfectly!
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Server won't start
-```bash
-# Check if port 3000 is in use
-lsof -i :3000
+### Problem: "Invalid or expired OTP"
 
-# Kill the process
-kill -9 <PID>
+**Cause:** Using wrong OTP or OTP expired (5 min TTL)
 
-# Check .env configuration
-cat backend/.env
-```
+**Solution:**
+1. Send fresh OTP: `curl -X POST http://localhost:3000/api/auth/otp/send ...`
+2. Check console IMMEDIATELY for new OTP
+3. Use the latest OTP within 5 minutes
 
-### Database connection errors
-```bash
-# Verify PostgreSQL is running
-psql -U postgres -h localhost -c "\l"
+---
 
-# Check DATABASE_URL in .env
-grep DATABASE_URL backend/.env
-```
+### Problem: "Server not running"
 
-### Prisma client not generated
+**Solution:**
 ```bash
 cd backend
-npm run db:generate
+npm run dev
 ```
 
-### Tests fail with "Prisma Client not found"
-```bash
-# Regenerate Prisma Client
-npm run db:generate
+Wait for: `🚀 Server running on port 3000`
 
-# Run tests again
-npm test
+---
+
+### Problem: "Cannot find module 'tsx'"
+
+**Solution:**
+```bash
+npm install tsx --save-dev
 ```
 
 ---
 
-## 📊 Testing Checklist
+### Problem: "Prisma Client not found"
+
+**Solution:**
+```bash
+npm run db:generate
+```
+
+---
+
+### Problem: "Database connection error"
+
+**Solution:**
+1. Check `.env` file has correct `DATABASE_URL`
+2. Verify PostgreSQL is running
+3. Run: `npm run db:push`
+
+---
+
+## 📈 Interpreting Results
+
+### All Tests Pass ✅
+
+Your API is production-ready! You can:
+- Deploy with confidence
+- Show to stakeholders
+- Begin mobile app integration
+
+### Some Tests Fail ❌
+
+Check error messages:
+- **401 Unauthorized** → Authentication issue (wrong token)
+- **403 Forbidden** → Permission problem (wrong user role)
+- **404 Not Found** → Endpoint doesn't exist or wrong URL
+- **500 Internal Server Error** → Server-side bug (check logs)
+- **Network Error** → Server not running
+
+---
+
+## 🎯 Testing Checklist
 
 Before deployment, verify:
 
-- [ ] Health check returns 200
-- [ ] OTP authentication works
+- [ ] Health check works
+- [ ] OTP authentication works (both users)
 - [ ] Token refresh works
-- [ ] User CRUD operations work
-- [ ] Listing CRUD operations work
-- [ ] Contract creation works
-- [ ] Contract actions (accept/reject) work
-- [ ] Wallet balance displays correctly
-- [ ] Notifications are created and retrieved
-- [ ] Chat messaging works in real-time
-- [ ] Webhook signature verification works
-- [ ] Rate limiting is active
-- [ ] Error handling returns proper responses
-- [ ] All existing integration tests pass
+- [ ] Protected endpoints require auth
+- [ ] Public endpoints work without auth
+- [ ] Can create listings
+- [ ] Can create contracts
+- [ ] Can view wallet balance
+- [ ] Can get notifications
+- [ ] Database queries return data
+- [ ] All unit tests pass
+- [ ] Integration tests pass
 
 ---
 
-## 📝 Additional Resources
+## 📚 Additional Resources
 
-- **Postman Collection**: `backend/tests/FarmConnect-API.postman_collection.json`
-- **Automated Tests**: `backend/tests/`
-- **API Documentation**: See README.md
-- **Prisma Schema**: `backend/prisma/schema.prisma`
+| Document | Purpose |
+|----------|---------|
+| [`RUN_TESTS_MANUALLY.md`](./RUN_TESTS_MANUALLY.md) | Detailed cURL commands |
+| [`COMPREHENSIVE_TESTING_GUIDE.md`](./COMPREHENSIVE_TESTING_GUIDE.md) | Full testing documentation |
+| [`TEST_QUICK_START.md`](./TEST_QUICK_START.md) | Quick reference guide |
+| [`../API_DOCUMENTATION.md`](../API_DOCUMENTATION.md) | Complete API reference |
+| [`../../README.md`](../../README.md) | Main project README |
 
 ---
 
-## 🎯 Next Steps
+## 🔗 Postman Collection
 
-1. **Run automated tests**: `npx tsx tests/api-manual-test.ts`
-2. **Import Postman collection** for manual testing
-3. **Test critical flows**: Authentication → Listing → Contract → Payment
-4. **Verify WebSocket**: Test real-time chat
-5. **Test webhooks**: Use Razorpay test webhooks
-6. **Run integration tests**: `npm test`
+For manual testing with a GUI:
 
-Happy Testing! 🚀
+1. Import: `backend/tests/FarmConnect-API.postman_collection.json`
+2. Run requests in order
+3. Check console for OTPs
+4. Variables auto-manage tokens
+
+---
+
+## 💡 Pro Tips
+
+1. **Always check server logs** - They show OTPs and errors
+2. **Use the interactive script first** - It's the easiest
+3. **Save access tokens** - Reuse for multiple tests
+4. **Test both user roles** - Farmer and Investor have different permissions
+5. **Run unit tests frequently** - Catch bugs early
+
+---
+
+## 🎉 Success Criteria
+
+Your FarmConnect API is working correctly if:
+
+✅ Health endpoint returns status "ok"  
+✅ OTP is sent and logged to console  
+✅ OTP verification returns valid tokens  
+✅ Protected endpoints work with token  
+✅ Public endpoints work without token  
+✅ Database operations succeed  
+✅ All unit tests pass  
+
+**If all above pass → Production Ready!** 🚀
+
+---
+
+**Questions?** Check the server logs in your backend terminal for detailed error messages!

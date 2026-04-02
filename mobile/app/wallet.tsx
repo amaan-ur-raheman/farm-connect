@@ -144,7 +144,24 @@ export default function WalletScreen() {
                   )}
                 </View>
                 <View className="flex-1">
-                  <Text className="text-sm font-bold text-slate-900 dark:text-white">{tx.description}</Text>
+                  <View className="flex-row items-center gap-2">
+                    <Text className="text-sm font-bold text-slate-900 dark:text-white" numberOfLines={1}>{tx.description}</Text>
+                    {tx.status !== 'SUCCESS' && (
+                      <View className={`px-2 py-0.5 rounded-full ${
+                        tx.status === 'PENDING' ? 'bg-orange-100 dark:bg-orange-900/30' : 
+                        tx.status === 'FAILED' ? 'bg-red-100 dark:bg-red-900/30' : 
+                        'bg-gray-100 dark:bg-gray-800'
+                      }`}>
+                        <Text className={`text-[8px] font-black uppercase tracking-tighter ${
+                          tx.status === 'PENDING' ? 'text-orange-600' : 
+                          tx.status === 'FAILED' ? 'text-red-600' : 
+                          'text-gray-500'
+                        }`}>
+                          {tx.status}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                   <Text className="text-[10px] text-gray-400 mt-1">
                     {new Date(tx.created_at).toLocaleString()}
                   </Text>

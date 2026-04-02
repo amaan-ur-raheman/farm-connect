@@ -20,10 +20,19 @@ export const sendOtp = async (input: SendOtpInput): Promise<{ message: string }>
   const otp = generateOtp();
   await setOtp(input.phone, otp);
 
-  if (env.isDev) {
-    console.log(`[DEV] OTP for ${input.phone}: ${otp}`);
+  // Always send real SMS if Twilio is configured, otherwise log to console
+  const twilioConfigured = env.twilio.accountSid && env.twilio.authToken && env.twilio.phoneNumber;
+  
+  if (twilioConfigured) {
+    try {
+      await sendSmsOtp(input.phone, otp);
+      console.log(`📱 SMS sent to ${input.phone} via Twilio`);
+    } catch (smsError) {
+      console.error(`❌ Twilio SMS failed: ${smsError instanceof Error ? smsError.message : 'Unknown error'}`);
+      console.log(`💡 Fallback OTP for ${input.phone}: ${otp}`);
+    }
   } else {
-    await sendSmsOtp(input.phone, otp);
+    console.log(`[DEV] OTP for ${input.phone}: ${otp}`);
   }
 
   return { message: 'OTP sent successfully' };

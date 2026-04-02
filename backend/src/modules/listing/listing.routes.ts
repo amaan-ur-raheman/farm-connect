@@ -24,6 +24,7 @@ export const listingRouter = Router();
 
 listingRouter.get("/", getListingsHandler);
 listingRouter.get("/mine", authenticate, getFarmerListingsHandler);
+listingRouter.get("/my-listings", authenticate, getFarmerListingsHandler); // Alias for compatibility
 listingRouter.get("/:id", getListingHandler);
 listingRouter.post(
 	"/",

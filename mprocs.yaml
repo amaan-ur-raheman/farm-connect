@@ -7,22 +7,19 @@ procs:
   backend:
     cwd: backend
     shell: npm run dev
-    color: blue
-    restart: on_failure
-    restart_delay: 2000
-    env:
-      NODE_ENV: development
-      PORT: 3000
+
+  # Admin Dashboard
+  admin:
+    cwd: admin-dashboard
+    shell: npm run dev
 
   # ngrok Tunnel for Webhooks
   ngrok:
     cwd: backend
     shell: ngrok http 3000 --log=stdout
-    color: green
-    restart: on_failure
 
   # Mobile App (Expo)
   mobile:
     cwd: mobile
-    shell: npm start
-    color: yellow
+    shell: EXPO_USE_METRO_WORKSPACE_ROOT=1 EXPO_ROUTER_APP_ROOT=mobile/app npx expo start --clear
+

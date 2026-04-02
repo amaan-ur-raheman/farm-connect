@@ -2,10 +2,20 @@ import { Router } from "express";
 import { authenticate, requireRole } from "@/shared/middleware/auth";
 import { asyncHandler } from "@/shared/middleware/handlers";
 import { validate } from "@/shared/middleware/validate";
-import { getPendingKyc, verifyKyc, rejectKyc } from "./kyc.service";
+import { getPendingKyc, verifyKyc, rejectKyc, getUserKycStatus } from "./kyc.service";
 import { rejectKycSchema } from "./kyc.schema";
 
 export const kycRouter = Router();
+
+// Get current user's KYC status
+kycRouter.get(
+	"/status",
+	authenticate,
+	asyncHandler(async (req, res) => {
+		const kyc = await getUserKycStatus(req.user!.userId);
+		res.json({ success: true, data: kyc });
+	}),
+);
 
 kycRouter.get(
 	"/pending",

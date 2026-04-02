@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DeliveryStatus } from '@/generated';
 
 export const createDeliverySchema = z.object({
   contract_id: z.string().uuid(),
@@ -10,4 +11,14 @@ export const createDeliverySchema = z.object({
   organic_verified: z.boolean().default(false),
 });
 
+export const updateDeliveryStatusSchema = z.object({
+  status: z.nativeEnum(DeliveryStatus),
+});
+
+export const verifyDeliverySchema = z.object({
+  status: z.enum(['VERIFIED', 'REJECTED']),
+});
+
 export type CreateDeliveryInput = z.infer<typeof createDeliverySchema>;
+export type UpdateDeliveryStatusInput = z.infer<typeof updateDeliveryStatusSchema>;
+export type VerifyDeliveryInput = z.infer<typeof verifyDeliverySchema>;

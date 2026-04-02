@@ -27,3 +27,5 @@ export type {
 
 export { useUiStore } from './uiStore';
 export type { Theme, Toast } from './uiStore';
+
+export { useSocketStore } from './socketStore';
