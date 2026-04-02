@@ -182,13 +182,13 @@ Four-phase implementation covering critical correctness fixes, real-time feature
     - [x] 3.8 Checkpoint — Phase 3 complete
         - Ensure all tests pass, ask the user if questions arise.
 
-- [ ]   4. Phase 4 — Testing
-    - [ ] 4.1 Set up test infrastructure
+- [x]   4. Phase 4 — Testing
+    - [x] 4.1 Set up test infrastructure
         - Create `backend/vitest.config.ts` with `globals: true`, `environment: 'node'`, and `alias: { '@': '/src' }`
         - Create `backend/tests/unit/` and `backend/tests/integration/` directories (add `.gitkeep` if needed)
         - _Requirements: 10, 11, 12, 13, 14, 15_
 
-    - [ ] 4.2 Write unit tests for escrow service
+    - [x] 4.2 Write unit tests for escrow service
         - Create `backend/tests/unit/escrow.service.test.ts`
         - Mock `@/config/database` with `vi.mock`
         - Write example-based tests for:
@@ -199,7 +199,7 @@ Four-phase implementation covering critical correctness fixes, real-time feature
             - `freezeEscrow` sets `status = 'DISPUTED'` and does NOT call `prisma.dispute.create` (Req 10.5)
         - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-    - [ ] 4.3 Write property tests for escrow service (Properties 16, 17, 18)
+    - [x] 4.3 Write property tests for escrow service (Properties 16, 17, 18)
         - **Property 16: Escrow Deposit Increments escrow_held**
         - **Validates: Requirements 10.1**
         - **Property 17: Wage Release Updates Escrow and Farmer Paid**
@@ -211,7 +211,7 @@ Four-phase implementation covering critical correctness fixes, real-time feature
         - P17: `fc.float({ min: 0.01 })` for wage; assert `escrow_held` decrements and `farmer_paid` increments by same value
         - P18: generate amount > `escrow_held - farmer_paid`; assert `BadRequestError` is thrown
 
-    - [ ] 4.4 Write unit tests for contract service
+    - [x] 4.4 Write unit tests for contract service
         - Create `backend/tests/unit/contract.service.test.ts`
         - Mock `@/config/database` with `vi.mock`
         - Write example-based tests for:
@@ -222,13 +222,13 @@ Four-phase implementation covering critical correctness fixes, real-time feature
             - `completeContract` transitions `ACTIVE → COMPLETED` (Req 11.5)
         - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
 
-    - [ ] 4.5 Write property test for contract state machine (Property 19)
+    - [x] 4.5 Write property test for contract state machine (Property 19)
         - **Property 19: Contract State Machine Transitions**
         - **Validates: Requirements 11.1, 11.2, 11.3, 11.4, 11.5**
         - File: `backend/tests/unit/contract.service.test.ts`
         - Use `fc.constantFrom('ACTIVE', 'COMPLETED', 'DISPUTED', 'CANCELLED')` to generate non-PENDING statuses; assert `acceptContract` throws `BadRequestError` for all of them
 
-    - [ ] 4.6 Write unit tests for payment signature verification
+    - [x] 4.6 Write unit tests for payment signature verification
         - Create `backend/tests/unit/payment.service.test.ts`
         - Import `verifyRazorpaySignature` directly (no Prisma mock needed for this function)
         - Write tests for:
@@ -237,13 +237,13 @@ Four-phase implementation covering critical correctness fixes, real-time feature
             - Missing/empty signature returns `false` (Req 12.3)
         - _Requirements: 12.1, 12.2, 12.3_
 
-    - [ ] 4.7 Write property test for payment signature (Property 20)
+    - [x] 4.7 Write property test for payment signature (Property 20)
         - **Property 20: Payment Signature Verification**
         - **Validates: Requirements 12.1, 12.2**
         - File: `backend/tests/unit/payment.service.test.ts`
         - Use `fc.string()` for `orderId` and `paymentId`; compute expected HMAC in the test; assert `verifyRazorpaySignature` returns `true` for correct signature and `false` for any other string
 
-    - [ ] 4.8 Write unit tests for OTP rate limiting
+    - [x] 4.8 Write unit tests for OTP rate limiting
         - Create `backend/tests/unit/redis.test.ts`
         - Mock `@upstash/redis` with `vi.mock` to simulate in-memory counter behavior
         - Write tests for:
@@ -252,13 +252,13 @@ Four-phase implementation covering critical correctness fixes, real-time feature
             - After TTL expiry (reset mock counter), returns `true` again (Req 13.3)
         - _Requirements: 13.1, 13.2, 13.3_
 
-    - [ ] 4.9 Write property test for OTP rate limit (Property 21)
+    - [x] 4.9 Write property test for OTP rate limit (Property 21)
         - **Property 21: OTP Rate Limit Enforcement**
         - **Validates: Requirements 13.1, 13.2, 13.3**
         - File: `backend/tests/unit/redis.test.ts`
         - Use `fc.string({ minLength: 7, maxLength: 15 })` for phone numbers; mock Redis with a fresh counter per run; assert first 5 calls return `true` and 6th returns `false`
 
-    - [ ] 4.10 Write integration tests for contract lifecycle
+    - [x] 4.10 Write integration tests for contract lifecycle
         - Create `backend/tests/integration/contract-lifecycle.test.ts`
         - Use a real test database (read `DATABASE_URL` from `.env.test`)
         - Seed: create two users (farmer + consumer), create a listing
@@ -270,7 +270,7 @@ Four-phase implementation covering critical correctness fixes, real-time feature
         - Clean up seeded data in `afterAll`
         - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
 
-    - [ ] 4.11 Write integration tests for dispute flow
+    - [x] 4.11 Write integration tests for dispute flow
         - Create `backend/tests/integration/dispute-flow.test.ts`
         - Use a real test database (read `DATABASE_URL` from `.env.test`)
         - Seed: create active contract with deposited escrow, create admin user
@@ -282,7 +282,7 @@ Four-phase implementation covering critical correctness fixes, real-time feature
         - Clean up seeded data in `afterAll`
         - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5_
 
-    - [ ] 4.12 Final checkpoint — Ensure all tests pass
+    - [x] 4.12 Final checkpoint — Ensure all tests pass
         - Run `npx vitest --run` in the `backend` directory and confirm all unit tests pass.
         - Ensure all tests pass, ask the user if questions arise.
 
