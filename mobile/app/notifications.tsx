@@ -31,7 +31,9 @@ export default function NotificationsScreen() {
     try {
       const res = await api.get<{ data: Notification[] }>('/api/notifications');
       setNotifications(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch notifications:', err);
+    } finally {
       setLoading(false);
     }
   }, []);
@@ -42,14 +44,18 @@ export default function NotificationsScreen() {
     try {
       await api.patch(`/api/notifications/${id}/read`);
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-    } catch {}
+    } catch (err) {
+      console.error('Failed to mark notification as read:', err);
+    }
   };
 
   const markAllAsRead = async () => {
     try {
       await api.patch('/api/notifications/read-all');
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    } catch {}
+    } catch (err) {
+      console.error('Failed to mark all notifications as read:', err);
+    }
   };
 
   const onRefresh = () => {

@@ -4,11 +4,7 @@
     "strict": true,
     "jsx": "react-native",
     "moduleResolution": "bundler",
-    "skipLibCheck": true,
-    "noEmit": true,
-    "paths": {
-      "react-native": ["./node_modules/react-native"]
-    }
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",

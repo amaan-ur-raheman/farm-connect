@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '@/shared/middleware/handlers';
 import { createContract, getContractById, getFarmerContracts, getConsumerContracts, acceptContract, rejectContract, cancelContract, completeContract } from './contract.service';
+import { releaseWageToFarmer, finalSettlement } from '@/modules/escrow/escrow.service';
 import { authenticate } from '@/shared/middleware/auth';
 import { validate } from '@/shared/middleware/validate';
 import { createContractSchema, contractActionSchema } from './contract.schema';
@@ -26,7 +27,7 @@ export const getConsumerContractsHandler = asyncHandler(async (req: Request, res
 });
 
 export const contractActionHandler = asyncHandler(async (req: Request, res: Response) => {
-  const { action } = contractActionSchema.parse(req.body);
+  const { action, amount, description } = req.body;
   const { id } = req.params as { id: string };
   const userId = req.user!.userId;
 
@@ -36,6 +37,9 @@ export const contractActionHandler = asyncHandler(async (req: Request, res: Resp
     case 'reject': result = await rejectContract(id, userId); break;
     case 'cancel': result = await cancelContract(id, userId); break;
     case 'complete': result = await completeContract(id, userId); break;
+    case 'release_wage': result = await releaseWageToFarmer(id, userId, amount, description); break;
+    case 'settlement': result = await finalSettlement(id); break;
+    default: throw new Error('Invalid action');
   }
 
   res.json({ success: true, data: result });

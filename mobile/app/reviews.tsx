@@ -21,7 +21,9 @@ export default function ReviewsScreen() {
       const endpoint = `/api/reviews/listing/${id}`;
       const res = await api.get<{ data: Review[] }>(endpoint).catch(() => ({ data: { data: [] } }));
       setReviews(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch reviews:', err);
+    } finally {
       setLoading(false);
     }
   }, [listingId, contractId]);

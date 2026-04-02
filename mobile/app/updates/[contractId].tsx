@@ -22,7 +22,9 @@ export default function UpdatesScreen() {
     try {
       const res = await api.get<{ data: FarmUpdate[] }>(`/api/updates/${contractId}`);
       setUpdates(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch farm updates:', err);
+    } finally {
       setLoading(false);
     }
   }, [contractId]);

@@ -20,7 +20,9 @@ export default function DeliveriesScreen() {
       const endpoint = contractId ? `/api/deliveries/contract/${contractId}` : '/api/deliveries';
       const res = await api.get<{ data: Delivery[] }>(endpoint).catch(() => ({ data: { data: [] } }));
       setDeliveries(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch deliveries:', err);
+    } finally {
       setLoading(false);
     }
   }, [contractId]);

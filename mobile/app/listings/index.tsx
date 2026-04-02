@@ -14,7 +14,9 @@ export default function MyListingsScreen() {
     try {
       const res = await api.get<{ data: Listing[] }>('/api/listings/mine');
       setListings(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch listings:', err);
+    } finally {
       setLoading(false);
     }
   }, []);

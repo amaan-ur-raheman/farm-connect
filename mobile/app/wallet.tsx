@@ -22,7 +22,9 @@ export default function WalletScreen() {
       ]);
       setBalance(balRes.data.data || { balance: 0, currency: 'INR' });
       setTransactions(txRes.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch wallet data:', err);
+    } finally {
       setLoading(false);
     }
   }, []);

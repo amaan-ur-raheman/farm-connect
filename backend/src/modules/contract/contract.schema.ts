@@ -16,7 +16,9 @@ export const contractFiltersSchema = z.object({
 });
 
 export const contractActionSchema = z.object({
-  action: z.enum(['accept', 'reject', 'cancel', 'complete']),
+  action: z.enum(['accept', 'reject', 'cancel', 'complete', 'release_wage', 'settlement']),
+  amount: z.number().positive().optional(),
+  description: z.string().optional(),
 });
 
 export const releaseWageSchema = z.object({

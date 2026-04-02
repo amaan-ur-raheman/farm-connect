@@ -11,5 +11,8 @@
     "dev:backend": "npm run dev -w backend",
     "build:mobile": "npm run build -w mobile",
     "build:backend": "npm run build -w backend"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2"
   }
 }

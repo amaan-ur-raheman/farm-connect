@@ -3,14 +3,14 @@ import { useAuthStore } from "../stores/authStore";
 import Constants from "expo-constants";
 
 const getBaseUrl = (): string => {
-  const extra = Constants.expoConfig?.extra;
-  if (extra?.apiUrl) {
-    return extra.apiUrl;
-  }
-  if (process.env.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
-  }
-  return "http://localhost:3000";
+	const extra = Constants.expoConfig?.extra;
+	if (extra?.apiUrl) {
+		return extra.apiUrl;
+	}
+	if (process.env.EXPO_PUBLIC_API_URL) {
+		return process.env.EXPO_PUBLIC_API_URL;
+	}
+	return "http://localhost:3000";
 };
 
 export const BASE_URL = getBaseUrl();
@@ -192,6 +192,8 @@ export interface Contract {
 	listing_id: string;
 	amount_per_cycle: number;
 	total_cycles: number;
+	escrow_held: number;
+	farmer_paid: number;
 	status: string;
 	created_at: string;
 	listing?: Listing;

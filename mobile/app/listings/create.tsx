@@ -76,7 +76,9 @@ export default function CreateListingScreen() {
           await api.post(`/api/listings/${listingId}/upload-image`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
-        } catch {}
+        } catch (err) {
+          console.error('Failed to upload image:', err);
+        }
       }
 
       Alert.alert('Success', 'Listing created successfully!', [

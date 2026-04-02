@@ -14,7 +14,9 @@ export default function ChatListScreen() {
     try {
       const res = await api.get<{ data: Conversation[] }>('/api/chat/conversations');
       setConversations(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch conversations:', err);
+    } finally {
       setLoading(false);
     }
   }, []);

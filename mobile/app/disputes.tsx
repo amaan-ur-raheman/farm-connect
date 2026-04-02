@@ -20,7 +20,9 @@ export default function DisputesScreen() {
     try {
       const res = await api.get<{ data: Dispute[] }>('/api/disputes');
       setDisputes(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch disputes:', err);
+    } finally {
       setLoading(false);
     }
   }, []);

@@ -8,6 +8,8 @@ import {
   StatusBar,
   RefreshControl,
   ActivityIndicator,
+  TextInput,
+  Alert,
 } from 'react-native';
 import {
   MapPin,
@@ -38,6 +40,7 @@ export default function DashboardScreen() {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [loadingContracts, setLoadingContracts] = useState(true);
   const [payingWage, setPayingWage] = useState(false);
+  const [wageAmount, setWageAmount] = useState('');
 
   const fetchData = useCallback(async () => {
     setLoadingContracts(true);
@@ -60,10 +63,12 @@ export default function DashboardScreen() {
         try {
           const updatesRes = await api.get<{ data: FarmUpdate[] }>(`/api/updates/${contractId}`);
           setUpdates(updatesRes.data.data || []);
-        } catch {}
+        } catch (err) {
+          console.error('Failed to fetch farm updates:', err);
+        }
       }
-    } catch {
-      // silent fail
+    } catch (err) {
+      console.error('Failed to fetch dashboard data:', err);
     } finally {
       setLoadingContracts(false);
     }
@@ -75,12 +80,18 @@ export default function DashboardScreen() {
 
   const handlePayWage = async () => {
     if (!selectedContract) return;
+    const amount = parseFloat(wageAmount);
+    if (!amount || amount <= 0) {
+      Alert.alert('Invalid Amount', 'Please enter a valid wage amount.');
+      return;
+    }
     setPayingWage(true);
     try {
-      await api.post(`/api/contracts/${selectedContract.id}/action`, { action: 'RELEASE_WAGE' });
+      await api.post(`/api/contracts/${selectedContract.id}/action`, { action: 'release_wage', amount });
+      setWageAmount('');
       await fetchData();
-    } catch {
-      // silent fail
+    } catch (err: any) {
+      Alert.alert('Error', err.response?.data?.message || 'Failed to release wage.');
     } finally {
       setPayingWage(false);
     }

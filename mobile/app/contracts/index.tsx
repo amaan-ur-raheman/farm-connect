@@ -25,7 +25,9 @@ export default function ContractsScreen() {
       const endpoint = userRole === 'farmer' ? '/api/contracts/farmer' : '/api/contracts/consumer';
       const res = await api.get<{ data: Contract[] }>(endpoint);
       setContracts(res.data.data || []);
-    } catch {} finally {
+    } catch (err) {
+      console.error('Failed to fetch contracts:', err);
+    } finally {
       setLoading(false);
     }
   }, [userRole]);
