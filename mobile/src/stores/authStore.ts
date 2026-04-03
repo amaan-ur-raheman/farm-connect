@@ -40,12 +40,14 @@ interface AuthState {
 	accessToken: string | null;
 	refreshToken: string | null;
 	phone: string | null;
+	pushToken: string | null;
 	authUser: AuthUser | null;
 	isLoading: boolean;
 	error: string | null;
 
 	setAuthenticated: (isAuthenticated: boolean) => void;
 	setUserRole: (role: UserRole) => void;
+	setPushToken: (token: string | null) => void;
 	loginWithOtp: (phone: string, otp: string) => Promise<boolean>;
 	sendOtp: (phone: string) => Promise<boolean>;
 	refreshTokens: () => Promise<string | null>;
@@ -62,6 +64,7 @@ export const useAuthStore = create<AuthState>()(
 			accessToken: null,
 			refreshToken: null,
 			phone: null,
+			pushToken: null,
 			authUser: null,
 			isLoading: false,
 			error: null,
@@ -69,6 +72,8 @@ export const useAuthStore = create<AuthState>()(
 			setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
 
 			setUserRole: (userRole) => set({ userRole }),
+
+			setPushToken: (pushToken) => set({ pushToken }),
 
 			setPhone: (phone) => set({ phone }),
 
@@ -91,9 +96,11 @@ export const useAuthStore = create<AuthState>()(
 			loginWithOtp: async (phone: string, otp: string) => {
 				set({ isLoading: true, error: null });
 				try {
+					const { pushToken } = get();
 					const response = await api.post("/api/auth/otp/verify", {
 						phone,
 						otp,
+						fcmToken: pushToken,
 					});
 					const { user, accessToken, refreshToken } = (
 						response.data as any

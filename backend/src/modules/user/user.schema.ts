@@ -17,8 +17,15 @@ export const updateProfileSchema = z.object({
 	crops_grown: z.array(z.string().max(100)).optional(),
 	irrigation_type: z.string().max(100).optional(),
 	years_of_experience: z.number().int().nonnegative().optional(),
-	land_records_url: z.string().url().optional(),
+	land_records_url: z.string().url().optional().or(z.literal("")),
 	soil_type: z.string().max(100).optional(),
+	investment_range: z.string().max(100).optional(),
+	investment_goals: z.array(z.string().max(100)).optional(),
+	preferred_farm_types: z.array(z.string().max(100)).optional(),
+	bank_name: z.string().max(100).optional(),
+	bank_account_number: z.string().max(50).optional(),
+	bank_ifsc: z.string().max(20).optional(),
+	farm_name: z.string().max(100).optional(),
 });
 
 export const getProfileSchema = z.object({});

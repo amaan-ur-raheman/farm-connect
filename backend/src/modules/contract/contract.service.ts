@@ -1,5 +1,6 @@
 import { prisma } from '@/config/database';
 import { NotFoundError, ForbiddenError, BadRequestError } from '@/shared/errors';
+import { io } from '@/server';
 import type { CreateContractInput } from './contract.schema';
 
 export const createContract = async (consumerId: string, input: CreateContractInput) => {
@@ -14,7 +15,7 @@ export const createContract = async (consumerId: string, input: CreateContractIn
 
   if (endDate <= startDate) throw new BadRequestError('End date must be after start date');
 
-  return prisma.contract.create({
+  const contract = await prisma.contract.create({
     data: {
       listing_id: listing.id,
       farmer_id: listing.farmer_id,
@@ -28,6 +29,9 @@ export const createContract = async (consumerId: string, input: CreateContractIn
       status: 'PENDING',
     },
   });
+
+  io.to(listing.farmer_id).emit('contract_update', { type: 'new_contract', id: contract.id });
+  return contract;
 };
 
 export const getContractById = async (contractId: string) => {
@@ -71,10 +75,13 @@ export const acceptContract = async (contractId: string, farmerId: string) => {
   if (contract.farmer_id !== farmerId) throw new ForbiddenError('Not your contract');
   if (contract.status !== 'PENDING') throw new BadRequestError('Contract is not pending');
 
-  return prisma.contract.update({
+  const updated = await prisma.contract.update({
     where: { id: contractId },
     data: { status: 'ACTIVE' },
   });
+
+  io.to(contract.consumer_id).emit('contract_update', { type: 'accepted', id: contractId });
+  return updated;
 };
 
 export const rejectContract = async (contractId: string, farmerId: string) => {
@@ -83,10 +90,13 @@ export const rejectContract = async (contractId: string, farmerId: string) => {
   if (contract.farmer_id !== farmerId) throw new ForbiddenError('Not your contract');
   if (contract.status !== 'PENDING') throw new BadRequestError('Contract is not pending');
 
-  return prisma.contract.update({
+  const updated = await prisma.contract.update({
     where: { id: contractId },
     data: { status: 'CANCELLED' },
   });
+
+  io.to(contract.consumer_id).emit('contract_update', { type: 'rejected', id: contractId });
+  return updated;
 };
 
 export const cancelContract = async (contractId: string, userId: string) => {
@@ -103,10 +113,14 @@ export const cancelContract = async (contractId: string, userId: string) => {
     throw new BadRequestError('Cancel active contracts through dispute resolution');
   }
 
-  return prisma.contract.update({
+  const updated = await prisma.contract.update({
     where: { id: contractId },
     data: { status: 'CANCELLED' },
   });
+
+  const otherUser = contract.farmer_id === userId ? contract.consumer_id : contract.farmer_id;
+  io.to(otherUser).emit('contract_update', { type: 'cancelled', id: contractId });
+  return updated;
 };
 
 export const completeContract = async (contractId: string, farmerId: string) => {
@@ -115,8 +129,11 @@ export const completeContract = async (contractId: string, farmerId: string) => 
   if (contract.farmer_id !== farmerId) throw new ForbiddenError('Not your contract');
   if (contract.status !== 'ACTIVE') throw new BadRequestError('Contract is not active');
 
-  return prisma.contract.update({
+  const updated = await prisma.contract.update({
     where: { id: contractId },
     data: { status: 'COMPLETED' },
   });
+
+  io.to(contract.consumer_id).emit('contract_update', { type: 'completed', id: contractId });
+  return updated;
 };

@@ -4,6 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 import Constants from "expo-constants";
 import "../src/global.css";
 import { useAuthStore, useSocketStore } from "../src/stores";
@@ -13,20 +14,24 @@ import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 SplashScreen.preventAutoHideAsync();
 
 // Show notifications when app is in foreground
-Notifications.setNotificationHandler({
-	handleNotification: async () => ({
-		shouldShowAlert: true,
-		shouldPlaySound: true,
-		shouldSetBadge: false,
-		shouldShowBanner: true,
-		shouldShowList: true,
-	}),
-});
+try {
+	Notifications.setNotificationHandler({
+		handleNotification: async () => ({
+			shouldShowAlert: true,
+			shouldPlaySound: true,
+			shouldSetBadge: false,
+			shouldShowBanner: true,
+			shouldShowList: true,
+		}),
+	});
+} catch (err) {
+	console.warn("Notifications setup failed:", err);
+}
 
 function RootLayoutNav() {
 	const router = useRouter();
 	const segments = useSegments();
-	const { isAuthenticated, userRole } = useAuthStore();
+	const { isAuthenticated, userRole, setPushToken } = useAuthStore();
 	const { connect, disconnect } = useSocketStore();
 
 	useEffect(() => {
@@ -36,6 +41,42 @@ function RootLayoutNav() {
 			disconnect();
 		}
 	}, [isAuthenticated, connect, disconnect]);
+
+	useEffect(() => {
+		// Register push notifications silently
+		(async () => {
+			if (!Device.isDevice) return;
+
+			try {
+				const { status: existingStatus } = await Notifications.getPermissionsAsync();
+				let finalStatus = existingStatus;
+
+				if (existingStatus !== "granted") {
+					const { status } = await Notifications.requestPermissionsAsync();
+					finalStatus = status;
+				}
+
+				if (finalStatus !== "granted") return;
+
+				const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+				const tokenData = await Notifications.getExpoPushTokenAsync(
+					projectId ? { projectId } : undefined,
+				);
+
+				// Set in store for login flow
+				setPushToken(tokenData.data);
+
+				// Register with backend if authenticated
+				if (isAuthenticated) {
+					await api.post("/api/users/push-token", {
+						expo_push_token: tokenData.data,
+					});
+				}
+			} catch (err) {
+				console.log("Push registration failed:", err);
+			}
+		})();
+	}, [isAuthenticated, setPushToken]);
 
 	useEffect(() => {
 		if (!isAuthenticated) return;
@@ -92,32 +133,6 @@ export default function RootLayout() {
 			SplashScreen.hideAsync();
 		}
 	}, [loaded, error]);
-
-	useEffect(() => {
-		// Register push notifications silently — do not block app startup
-		(async () => {
-			try {
-				const { status } =
-					await Notifications.requestPermissionsAsync();
-				if (status === "granted") {
-					const projectId =
-						Constants.expoConfig?.extra?.eas?.projectId;
-					const tokenData =
-						await Notifications.getExpoPushTokenAsync(
-							projectId ? { projectId } : undefined,
-						);
-					await api.post("/api/users/push-token", {
-						expo_push_token: tokenData.data,
-					});
-				}
-			} catch (err) {
-				console.log(
-					"Push notification registration failed (non-fatal):",
-					err,
-				);
-			}
-		})();
-	}, []);
 
 	if (!loaded && !error) {
 		return null;

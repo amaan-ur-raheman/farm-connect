@@ -5,6 +5,7 @@ import {
 	BadRequestError,
 } from "@/shared/errors";
 import { createNotification } from "@/modules/notification/notification.service";
+import { io } from "@/server";
 import type { CreateDisputeInput, ResolveDisputeInput } from "./dispute.schema";
 
 export const createDispute = async (
@@ -33,7 +34,7 @@ export const createDispute = async (
 	});
 	if (existing) throw new ForbiddenError("Active dispute already exists");
 
-	return prisma.dispute.create({
+	const dispute = await prisma.dispute.create({
 		data: {
 			contract_id: input.contract_id,
 			reporter_id: reporterId,
@@ -42,6 +43,18 @@ export const createDispute = async (
 			escrow_frozen: contract.escrow_held,
 		},
 	});
+
+	const otherUser =
+		contract.farmer_id === reporterId
+			? contract.consumer_id
+			: contract.farmer_id;
+	io.to(otherUser).emit("dispute_alert", {
+		type: "new_dispute",
+		id: dispute.id,
+		contract_id: contract.id,
+	});
+
+	return dispute;
 };
 
 export const getUserDisputes = async (userId: string) => {
@@ -150,6 +163,10 @@ export const resolveDispute = async (
 			input.resolution,
 		),
 	]);
+
+	io.to(resolved.farmer_id)
+		.to(resolved.consumer_id)
+		.emit("dispute_alert", { type: "resolved", id: disputeId });
 
 	return resolved.updatedDispute;
 };

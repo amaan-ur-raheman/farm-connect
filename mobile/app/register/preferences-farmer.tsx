@@ -56,6 +56,14 @@ const EXPERIENCE_MAP: Record<string, number> = {
   'Expert': 12,
 };
 
+const FARM_SIZE_MAP: Record<string, number> = {
+  '<1': 0.5,
+  '1-10': 5,
+  '10-50': 25,
+  '50-100': 75,
+  '100+': 150,
+};
+
 export default function FarmerPreferences() {
   const { farmerDetails, setFarmerDetails, bankDetails, setBankDetails, formData, reset } = useRegistrationStore();
   
@@ -123,7 +131,7 @@ export default function FarmerPreferences() {
         bank_account_number: bankDetails.accountNumber,
         bank_ifsc: bankDetails.ifscCode,
         farm_name: localFarmDetails.farmName,
-        farm_size_acres: parseFloat(localFarmDetails.farmSize) || 0,
+        farm_size_acres: FARM_SIZE_MAP[localFarmDetails.farmSize] || 0,
         farm_type: localFarmDetails.farmingType,
         years_of_experience: EXPERIENCE_MAP[localFarmDetails.experience] || 0,
       });

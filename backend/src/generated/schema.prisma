@@ -120,6 +120,15 @@ model User {
   land_records_url    String?
   soil_type           String?
 
+  investment_range     String?
+  investment_goals     String[]
+  preferred_farm_types String[]
+
+  bank_name           String?
+  bank_account_number String?
+  bank_ifsc           String?
+  farm_name           String?
+
   farm_listings         FarmListing[]
   contracts_as_farmer   Contract[]          @relation("FarmerContracts")
   contracts_as_consumer Contract[]          @relation("ConsumerContracts")

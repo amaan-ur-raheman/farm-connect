@@ -524,7 +524,7 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.19.2
+   * Prisma Client JS version: 6.19.3
    * Query Engine version: c2990dca591cba766e3b7ef5d9e8a84796e47ab7
    */
   export type PrismaVersion = {
@@ -2329,6 +2329,11 @@ export namespace Prisma {
     years_of_experience: number | null
     land_records_url: string | null
     soil_type: string | null
+    investment_range: string | null
+    bank_name: string | null
+    bank_account_number: string | null
+    bank_ifsc: string | null
+    farm_name: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2359,6 +2364,11 @@ export namespace Prisma {
     years_of_experience: number | null
     land_records_url: string | null
     soil_type: string | null
+    investment_range: string | null
+    bank_name: string | null
+    bank_account_number: string | null
+    bank_ifsc: string | null
+    farm_name: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2391,6 +2401,13 @@ export namespace Prisma {
     years_of_experience: number
     land_records_url: number
     soil_type: number
+    investment_range: number
+    investment_goals: number
+    preferred_farm_types: number
+    bank_name: number
+    bank_account_number: number
+    bank_ifsc: number
+    farm_name: number
     _all: number
   }
 
@@ -2437,6 +2454,11 @@ export namespace Prisma {
     years_of_experience?: true
     land_records_url?: true
     soil_type?: true
+    investment_range?: true
+    bank_name?: true
+    bank_account_number?: true
+    bank_ifsc?: true
+    farm_name?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2467,6 +2489,11 @@ export namespace Prisma {
     years_of_experience?: true
     land_records_url?: true
     soil_type?: true
+    investment_range?: true
+    bank_name?: true
+    bank_account_number?: true
+    bank_ifsc?: true
+    farm_name?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2499,6 +2526,13 @@ export namespace Prisma {
     years_of_experience?: true
     land_records_url?: true
     soil_type?: true
+    investment_range?: true
+    investment_goals?: true
+    preferred_farm_types?: true
+    bank_name?: true
+    bank_account_number?: true
+    bank_ifsc?: true
+    farm_name?: true
     _all?: true
   }
 
@@ -2618,6 +2652,13 @@ export namespace Prisma {
     years_of_experience: number | null
     land_records_url: string | null
     soil_type: string | null
+    investment_range: string | null
+    investment_goals: string[]
+    preferred_farm_types: string[]
+    bank_name: string | null
+    bank_account_number: string | null
+    bank_ifsc: string | null
+    farm_name: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -2669,6 +2710,13 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
+    investment_range?: boolean
+    investment_goals?: boolean
+    preferred_farm_types?: boolean
+    bank_name?: boolean
+    bank_account_number?: boolean
+    bank_ifsc?: boolean
+    farm_name?: boolean
     farm_listings?: boolean | User$farm_listingsArgs<ExtArgs>
     contracts_as_farmer?: boolean | User$contracts_as_farmerArgs<ExtArgs>
     contracts_as_consumer?: boolean | User$contracts_as_consumerArgs<ExtArgs>
@@ -2714,6 +2762,13 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
+    investment_range?: boolean
+    investment_goals?: boolean
+    preferred_farm_types?: boolean
+    bank_name?: boolean
+    bank_account_number?: boolean
+    bank_ifsc?: boolean
+    farm_name?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2746,6 +2801,13 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
+    investment_range?: boolean
+    investment_goals?: boolean
+    preferred_farm_types?: boolean
+    bank_name?: boolean
+    bank_account_number?: boolean
+    bank_ifsc?: boolean
+    farm_name?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -2778,9 +2840,16 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
+    investment_range?: boolean
+    investment_goals?: boolean
+    preferred_farm_types?: boolean
+    bank_name?: boolean
+    bank_account_number?: boolean
+    bank_ifsc?: boolean
+    farm_name?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "phone" | "name" | "email" | "avatar_url" | "role" | "kyc_status" | "kyc_documents" | "razorpay_customer_id" | "razorpay_fund_account_id" | "address" | "city" | "state" | "pincode" | "latitude" | "longitude" | "refresh_token" | "expo_push_token" | "otp" | "otp_expires_at" | "created_at" | "updated_at" | "farm_size_acres" | "farm_type" | "crops_grown" | "irrigation_type" | "years_of_experience" | "land_records_url" | "soil_type", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "phone" | "name" | "email" | "avatar_url" | "role" | "kyc_status" | "kyc_documents" | "razorpay_customer_id" | "razorpay_fund_account_id" | "address" | "city" | "state" | "pincode" | "latitude" | "longitude" | "refresh_token" | "expo_push_token" | "otp" | "otp_expires_at" | "created_at" | "updated_at" | "farm_size_acres" | "farm_type" | "crops_grown" | "irrigation_type" | "years_of_experience" | "land_records_url" | "soil_type" | "investment_range" | "investment_goals" | "preferred_farm_types" | "bank_name" | "bank_account_number" | "bank_ifsc" | "farm_name", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     farm_listings?: boolean | User$farm_listingsArgs<ExtArgs>
     contracts_as_farmer?: boolean | User$contracts_as_farmerArgs<ExtArgs>
@@ -2845,6 +2914,13 @@ export namespace Prisma {
       years_of_experience: number | null
       land_records_url: string | null
       soil_type: string | null
+      investment_range: string | null
+      investment_goals: string[]
+      preferred_farm_types: string[]
+      bank_name: string | null
+      bank_account_number: string | null
+      bank_ifsc: string | null
+      farm_name: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -3309,6 +3385,13 @@ export namespace Prisma {
     readonly years_of_experience: FieldRef<"User", 'Int'>
     readonly land_records_url: FieldRef<"User", 'String'>
     readonly soil_type: FieldRef<"User", 'String'>
+    readonly investment_range: FieldRef<"User", 'String'>
+    readonly investment_goals: FieldRef<"User", 'String[]'>
+    readonly preferred_farm_types: FieldRef<"User", 'String[]'>
+    readonly bank_name: FieldRef<"User", 'String'>
+    readonly bank_account_number: FieldRef<"User", 'String'>
+    readonly bank_ifsc: FieldRef<"User", 'String'>
+    readonly farm_name: FieldRef<"User", 'String'>
   }
     
 
@@ -17083,7 +17166,14 @@ export namespace Prisma {
     irrigation_type: 'irrigation_type',
     years_of_experience: 'years_of_experience',
     land_records_url: 'land_records_url',
-    soil_type: 'soil_type'
+    soil_type: 'soil_type',
+    investment_range: 'investment_range',
+    investment_goals: 'investment_goals',
+    preferred_farm_types: 'preferred_farm_types',
+    bank_name: 'bank_name',
+    bank_account_number: 'bank_account_number',
+    bank_ifsc: 'bank_ifsc',
+    farm_name: 'farm_name'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -17571,6 +17661,13 @@ export namespace Prisma {
     years_of_experience?: IntNullableFilter<"User"> | number | null
     land_records_url?: StringNullableFilter<"User"> | string | null
     soil_type?: StringNullableFilter<"User"> | string | null
+    investment_range?: StringNullableFilter<"User"> | string | null
+    investment_goals?: StringNullableListFilter<"User">
+    preferred_farm_types?: StringNullableListFilter<"User">
+    bank_name?: StringNullableFilter<"User"> | string | null
+    bank_account_number?: StringNullableFilter<"User"> | string | null
+    bank_ifsc?: StringNullableFilter<"User"> | string | null
+    farm_name?: StringNullableFilter<"User"> | string | null
     farm_listings?: FarmListingListRelationFilter
     contracts_as_farmer?: ContractListRelationFilter
     contracts_as_consumer?: ContractListRelationFilter
@@ -17615,6 +17712,13 @@ export namespace Prisma {
     years_of_experience?: SortOrderInput | SortOrder
     land_records_url?: SortOrderInput | SortOrder
     soil_type?: SortOrderInput | SortOrder
+    investment_range?: SortOrderInput | SortOrder
+    investment_goals?: SortOrder
+    preferred_farm_types?: SortOrder
+    bank_name?: SortOrderInput | SortOrder
+    bank_account_number?: SortOrderInput | SortOrder
+    bank_ifsc?: SortOrderInput | SortOrder
+    farm_name?: SortOrderInput | SortOrder
     farm_listings?: FarmListingOrderByRelationAggregateInput
     contracts_as_farmer?: ContractOrderByRelationAggregateInput
     contracts_as_consumer?: ContractOrderByRelationAggregateInput
@@ -17662,6 +17766,13 @@ export namespace Prisma {
     years_of_experience?: IntNullableFilter<"User"> | number | null
     land_records_url?: StringNullableFilter<"User"> | string | null
     soil_type?: StringNullableFilter<"User"> | string | null
+    investment_range?: StringNullableFilter<"User"> | string | null
+    investment_goals?: StringNullableListFilter<"User">
+    preferred_farm_types?: StringNullableListFilter<"User">
+    bank_name?: StringNullableFilter<"User"> | string | null
+    bank_account_number?: StringNullableFilter<"User"> | string | null
+    bank_ifsc?: StringNullableFilter<"User"> | string | null
+    farm_name?: StringNullableFilter<"User"> | string | null
     farm_listings?: FarmListingListRelationFilter
     contracts_as_farmer?: ContractListRelationFilter
     contracts_as_consumer?: ContractListRelationFilter
@@ -17706,6 +17817,13 @@ export namespace Prisma {
     years_of_experience?: SortOrderInput | SortOrder
     land_records_url?: SortOrderInput | SortOrder
     soil_type?: SortOrderInput | SortOrder
+    investment_range?: SortOrderInput | SortOrder
+    investment_goals?: SortOrder
+    preferred_farm_types?: SortOrder
+    bank_name?: SortOrderInput | SortOrder
+    bank_account_number?: SortOrderInput | SortOrder
+    bank_ifsc?: SortOrderInput | SortOrder
+    farm_name?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -17746,6 +17864,13 @@ export namespace Prisma {
     years_of_experience?: IntNullableWithAggregatesFilter<"User"> | number | null
     land_records_url?: StringNullableWithAggregatesFilter<"User"> | string | null
     soil_type?: StringNullableWithAggregatesFilter<"User"> | string | null
+    investment_range?: StringNullableWithAggregatesFilter<"User"> | string | null
+    investment_goals?: StringNullableListFilter<"User">
+    preferred_farm_types?: StringNullableListFilter<"User">
+    bank_name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    bank_account_number?: StringNullableWithAggregatesFilter<"User"> | string | null
+    bank_ifsc?: StringNullableWithAggregatesFilter<"User"> | string | null
+    farm_name?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type FarmListingWhereInput = {
@@ -18756,6 +18881,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -18800,6 +18932,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -18844,6 +18983,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -18888,6 +19034,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -18932,6 +19085,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -18964,6 +19124,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -18996,6 +19163,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type FarmListingCreateInput = {
@@ -20311,6 +20485,13 @@ export namespace Prisma {
     years_of_experience?: SortOrder
     land_records_url?: SortOrder
     soil_type?: SortOrder
+    investment_range?: SortOrder
+    investment_goals?: SortOrder
+    preferred_farm_types?: SortOrder
+    bank_name?: SortOrder
+    bank_account_number?: SortOrder
+    bank_ifsc?: SortOrder
+    farm_name?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -20348,6 +20529,11 @@ export namespace Prisma {
     years_of_experience?: SortOrder
     land_records_url?: SortOrder
     soil_type?: SortOrder
+    investment_range?: SortOrder
+    bank_name?: SortOrder
+    bank_account_number?: SortOrder
+    bank_ifsc?: SortOrder
+    farm_name?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -20378,6 +20564,11 @@ export namespace Prisma {
     years_of_experience?: SortOrder
     land_records_url?: SortOrder
     soil_type?: SortOrder
+    investment_range?: SortOrder
+    bank_name?: SortOrder
+    bank_account_number?: SortOrder
+    bank_ifsc?: SortOrder
+    farm_name?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -21313,6 +21504,14 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type UserCreateinvestment_goalsInput = {
+    set: string[]
+  }
+
+  export type UserCreatepreferred_farm_typesInput = {
+    set: string[]
+  }
+
   export type FarmListingCreateNestedManyWithoutFarmerInput = {
     create?: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput> | FarmListingCreateWithoutFarmerInput[] | FarmListingUncheckedCreateWithoutFarmerInput[]
     connectOrCreate?: FarmListingCreateOrConnectWithoutFarmerInput | FarmListingCreateOrConnectWithoutFarmerInput[]
@@ -21524,6 +21723,16 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type UserUpdateinvestment_goalsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdatepreferred_farm_typesInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type FarmListingUpdateManyWithoutFarmerNestedInput = {
@@ -23771,6 +23980,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
     farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
@@ -23814,6 +24030,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
     farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
@@ -23929,6 +24152,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
     farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
@@ -23972,6 +24202,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
     farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
@@ -24084,6 +24321,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
     farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
@@ -24127,6 +24371,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
     farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
@@ -24175,6 +24426,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
@@ -24218,6 +24476,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
@@ -24508,6 +24773,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
     farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
@@ -24551,6 +24823,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
     farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
@@ -24605,6 +24884,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
@@ -24648,6 +24934,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
@@ -24839,6 +25132,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -24882,6 +25182,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -24998,6 +25305,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -25041,6 +25355,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -25135,6 +25456,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -25178,6 +25506,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -25294,6 +25629,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -25337,6 +25679,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -25539,6 +25888,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -25582,6 +25938,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -25698,6 +26061,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -25741,6 +26111,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -25784,6 +26161,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -25827,6 +26211,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -25886,6 +26277,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -25929,6 +26327,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -25972,6 +26377,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -26015,6 +26427,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -26074,6 +26493,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -26117,6 +26543,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -26160,6 +26593,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -26203,6 +26643,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -26262,6 +26709,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -26305,6 +26759,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -26348,6 +26809,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -26391,6 +26859,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -26439,6 +26914,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -26482,6 +26964,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -26620,6 +27109,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -26663,6 +27159,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -26717,6 +27220,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -26760,6 +27270,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
@@ -26903,6 +27420,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
@@ -26946,6 +27470,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
+    investment_range?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    farm_name?: string | null
     farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
@@ -27038,6 +27569,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
@@ -27081,6 +27619,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput

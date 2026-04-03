@@ -147,13 +147,13 @@ export const handleWebhookEvent = async (
           where: { razorpay_payout_id: payoutId },
         });
 
-        if (transaction && transaction.status === 'PENDING') {
+        if (transaction && (transaction as any).status === 'PENDING') {
           await prisma.walletTransaction.update({
             where: { id: transaction.id },
             data: {
-              status: 'SUCCESS',
+              status: 'SUCCESS' as any,
               description: 'Payout successful',
-            },
+            } as any,
           });
           
           await createNotification(
@@ -180,7 +180,7 @@ export const handleWebhookEvent = async (
           where: { razorpay_payout_id: payoutId },
         });
 
-        if (transaction && transaction.status === 'PENDING') {
+        if (transaction && (transaction as any).status === 'PENDING') {
           // Revert balance by creating a credit transaction
           const lastTransaction = await prisma.walletTransaction.findFirst({
             where: { user_id: transaction.user_id },
@@ -191,17 +191,17 @@ export const handleWebhookEvent = async (
           await prisma.$transaction([
             prisma.walletTransaction.update({
               where: { id: transaction.id },
-              data: { status: status as any },
+              data: { status: status as any } as any,
             }),
             prisma.walletTransaction.create({
               data: {
                 user_id: transaction.user_id,
                 type: 'CREDIT',
-                status: 'SUCCESS',
+                status: 'SUCCESS' as any,
                 amount: transaction.amount,
                 description: `Reversal for failed payout ${payoutId}`,
                 balance_after: currentBalance + transaction.amount,
-              },
+              } as any,
             }),
           ]);
 
@@ -304,12 +304,12 @@ export const initiatePayout = async (userId: string, amount: number, fundAccount
     data: {
       user_id: userId,
       type: 'DEBIT',
-      status: 'PENDING',
+      status: 'PENDING' as any,
       amount,
       description: 'Payout initiated',
-      balance_after: newBalance,
-      razorpay_payout_id: payout.id,
-    },
+      balance_after: currentBalance - amount,
+      razorpay_payout_id: (payout as any).id,
+    } as any,
   });
 
   // Invalidate wallet cache

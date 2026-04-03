@@ -1,15 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../config/api';
+import api, { AuthUser } from '../config/api';
 import { useAuthStore } from './authStore';
 
-export interface UserProfile {
-  id: string;
+export interface UserProfile extends AuthUser {
   firstName: string;
   lastName: string;
-  email: string;
-  phone: string;
   avatar?: string;
 }
 
@@ -73,16 +70,14 @@ export const useUserStore = create<UserState>()(
       fetchProfile: async () => {
         set({ isLoading: true });
         try {
-          const response = await api.get<{ data: { id: string; name: string; email: string | null; phone: string; avatar_url: string | null } }>('/api/users/me');
+          const response = await api.get<{ data: AuthUser }>('/api/users/me');
           const user = response.data.data;
           const nameParts = (user.name || '').trim().split(' ');
           set({
             profile: {
-              id: user.id,
+              ...user,
               firstName: nameParts[0] || '',
               lastName: nameParts.slice(1).join(' ') || '',
-              email: user.email || '',
-              phone: user.phone,
               avatar: user.avatar_url ?? undefined,
             },
             isLoading: false,

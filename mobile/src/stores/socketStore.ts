@@ -51,10 +51,24 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 			set({ isConnected: false });
 		});
 
-		// Global message listener example
-		newSocket.on("new_message", (message: ChatMessage) => {
-			// You could trigger a local notification or update a global unread count here
-			console.log("📨 New message received globally:", message.id);
+		// Global notification listener
+		newSocket.on("new_notification", (notification: any) => {
+			console.log("🔔 New notification received:", notification.title);
+		});
+
+		// Contract updates
+		newSocket.on("contract_update", (data: { type: string; id: string }) => {
+			console.log("📝 Contract update:", data.type, data.id);
+		});
+
+		// Delivery updates
+		newSocket.on("delivery_update", (data: { type: string; id: string; contract_id: string }) => {
+			console.log("📦 Delivery update:", data.type, data.id);
+		});
+
+		// Dispute alerts
+		newSocket.on("dispute_alert", (data: { type: string; id: string; contract_id: string }) => {
+			console.log("⚖️ Dispute alert:", data.type, data.id);
 		});
 
 		set({ socket: newSocket });

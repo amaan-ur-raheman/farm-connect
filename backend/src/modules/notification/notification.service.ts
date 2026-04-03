@@ -1,6 +1,7 @@
 import { prisma } from "@/config/database";
 import { NotificationType, Prisma } from "@prisma/client";
 import { Expo } from "expo-server-sdk";
+import { io } from "@/server";
 
 const expo = new Expo();
 
@@ -21,6 +22,9 @@ export const createNotification = async (
 		data: data ? (data as any) : Prisma.JsonNull,
 		},
 	});
+
+	// Emit Socket.io event for real-time update
+	io.to(userId).emit("new_notification", notification);
 
 	// Send push notification if user has a token
 	const user = await prisma.user.findUnique({

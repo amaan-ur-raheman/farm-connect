@@ -59,7 +59,13 @@ export const verifyOtpAndLogin = async (input: VerifyOtpInput): Promise<{
         phone: input.phone,
         name: null,
         email: null,
+        expo_push_token: input.fcmToken,
       },
+    });
+  } else if (input.fcmToken) {
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { expo_push_token: input.fcmToken },
     });
   }
 

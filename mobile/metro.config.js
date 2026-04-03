@@ -15,4 +15,8 @@ config.resolver.nodeModulesPaths = [
 
 config.resolver.disableHierarchicalLookup = true;
 
-module.exports = withNativeWind(config, { input: "./src/global.css" });
+module.exports = withNativeWind(config, { 
+  input: "./src/global.css",
+  projectRoot,
+  inlineAds: true 
+});

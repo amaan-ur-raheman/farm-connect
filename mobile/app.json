@@ -35,10 +35,11 @@
       }
     },
     "plugins": [
+      "nativewind",
       [
         "expo-router",
         {
-          "root": "mobile/app"
+          "root": "./app"
         }
       ],
       [

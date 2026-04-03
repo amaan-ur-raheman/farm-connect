@@ -1,6 +1,7 @@
 import { prisma } from '@/config/database';
 import { NotFoundError, ForbiddenError } from '@/shared/errors';
 import { createNotification } from '@/modules/notification/notification.service';
+import { io } from '@/server';
 import type { CreateDeliveryInput } from './delivery.schema';
 import { DeliveryStatus } from '@/generated';
 
@@ -28,6 +29,8 @@ export const createDelivery = async (farmerId: string, input: CreateDeliveryInpu
     { contract_id: contract.id, delivery_id: delivery.id }
   );
 
+  io.to(contract.consumer_id).emit('delivery_update', { type: 'new_delivery', id: delivery.id, contract_id: contract.id });
+
   return delivery;
 };
 
@@ -41,7 +44,7 @@ export const updateDeliveryStatus = async (deliveryId: string, farmerId: string,
 
   const updated = await prisma.delivery.update({
     where: { id: deliveryId },
-    data: { status }
+    data: { status: status as any }
   });
 
   await createNotification(
@@ -51,6 +54,8 @@ export const updateDeliveryStatus = async (deliveryId: string, farmerId: string,
     `Delivery Batch #${delivery.batch_number} status updated to ${status}.`,
     { contract_id: contract.id, delivery_id: deliveryId }
   );
+
+  io.to(contract.consumer_id).emit('delivery_update', { type: 'status_updated', id: deliveryId, contract_id: contract.id, status });
 
   return updated;
 };
@@ -88,7 +93,7 @@ export const verifyDelivery = async (deliveryId: string, consumerId: string, sta
   if (!contract) throw new NotFoundError('Contract');
   if (contract.consumer_id !== consumerId) throw new ForbiddenError('Not your contract');
 
-  const updated = await prisma.delivery.update({ where: { id: deliveryId }, data: { status } });
+  const updated = await prisma.delivery.update({ where: { id: deliveryId }, data: { status: status as any } });
 
   await createNotification(
     contract.farmer_id,
@@ -97,6 +102,8 @@ export const verifyDelivery = async (deliveryId: string, consumerId: string, sta
     `Consumer has ${status === 'VERIFIED' ? 'verified' : 'rejected'} delivery Batch #${delivery.batch_number}.`,
     { contract_id: contract.id, delivery_id: deliveryId }
   );
+
+  io.to(contract.farmer_id).emit('delivery_update', { type: 'verified', id: deliveryId, contract_id: contract.id, status });
 
   return updated;
 };

@@ -21,11 +21,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.19.2
+ * Prisma Client JS version: 6.19.3
  * Query Engine version: c2990dca591cba766e3b7ef5d9e8a84796e47ab7
  */
 Prisma.prismaVersion = {
-  client: "6.19.2",
+  client: "6.19.3",
   engine: "c2990dca591cba766e3b7ef5d9e8a84796e47ab7"
 }
 
@@ -150,7 +150,14 @@ exports.Prisma.UserScalarFieldEnum = {
   irrigation_type: 'irrigation_type',
   years_of_experience: 'years_of_experience',
   land_records_url: 'land_records_url',
-  soil_type: 'soil_type'
+  soil_type: 'soil_type',
+  investment_range: 'investment_range',
+  investment_goals: 'investment_goals',
+  preferred_farm_types: 'preferred_farm_types',
+  bank_name: 'bank_name',
+  bank_account_number: 'bank_account_number',
+  bank_ifsc: 'bank_ifsc',
+  farm_name: 'farm_name'
 };
 
 exports.Prisma.FarmListingScalarFieldEnum = {

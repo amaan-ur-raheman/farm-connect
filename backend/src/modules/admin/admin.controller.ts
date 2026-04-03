@@ -15,7 +15,7 @@ export const getKycHandler = asyncHandler(async (req: Request, res: Response) =>
 export const handleKycActionHandler = asyncHandler(async (req: Request, res: Response) => {
 	const { userId } = req.params;
 	const { action, reason } = req.body;
-	const result = await adminService.handleKycAction(userId, action, reason);
+	const result = await adminService.handleKycAction(userId as string, action, reason);
 	res.json({ success: true, data: result });
 });
 
@@ -26,6 +26,6 @@ export const getDisputesHandler = asyncHandler(async (req: Request, res: Respons
 
 export const resolveDisputeHandler = asyncHandler(async (req: Request, res: Response) => {
 	const { disputeId } = req.params;
-	const result = await adminService.resolveAdminDispute(disputeId, req.user!.userId, req.body);
+	const result = await adminService.resolveAdminDispute(disputeId as string, req.user!.userId, req.body);
 	res.json({ success: true, data: result });
 });
