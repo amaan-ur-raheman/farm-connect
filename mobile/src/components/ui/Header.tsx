@@ -35,6 +35,7 @@ interface HeaderProps {
   onSearchToggle?: () => void;
   onSearchChange?: (text: string) => void;
   searchPlaceholder?: string;
+  notificationCount?: number;
 }
 
 export function Header({
@@ -51,6 +52,7 @@ export function Header({
   onSearchToggle,
   onSearchChange,
   searchPlaceholder = 'Search farms, crops, or reports...',
+  notificationCount = 0,
 }: HeaderProps) {
   const { searchVisible, setSearchVisible, setGlobalSearchQuery } = useUiStore();
   const { profile } = useUserStore();
@@ -161,7 +163,13 @@ export function Header({
                 </TouchableOpacity>
                 <TouchableOpacity className="p-2 relative">
                   <Bell size={20} color="#608562" />
-                  <View className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full" />
+                  {notificationCount > 0 && (
+                    <View className="absolute top-1 right-1 min-w-[12px] h-4 bg-red-500 rounded-full items-center justify-center px-1">
+                      <Text style={{ fontSize: 8, color: 'white', fontWeight: 'bold' }}>
+                        {notificationCount > 99 ? '99+' : notificationCount}
+                      </Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
                 <TouchableOpacity 
                   onPress={onAvatarPress || (() => router.push('/profile'))} 

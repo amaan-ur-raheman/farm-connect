@@ -13,12 +13,15 @@ import {
 	TouchableWithoutFeedback,
 	TextInput as RNTextInput,
 	StyleSheet,
+	ActivityIndicator,
 } from "react-native";
-import { Phone, Sprout, Lock, ShieldCheck } from "lucide-react-native";
+import { Phone, Sprout, Lock, ShieldCheck, Fingerprint } from "lucide-react-native";
 import { router } from "expo-router";
 import { Input } from "../src/components/ui/Input";
 import { useAuthStore } from "../src/stores";
 import { validatePhone, validateOtp } from "../src/utils/validation";
+import { haptic } from "../src/utils/haptics";
+import { biometric } from "../src/utils/biometric";
 import { BASE_URL, testConnection } from "../src/config/api";
 
 const styles = StyleSheet.create({
@@ -107,6 +110,8 @@ export default function LoginScreen() {
 	const [touchedPhone, setTouchedPhone] = useState(false);
 	const [touchedOtp, setTouchedOtp] = useState(false);
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
+	const [showBiometric, setShowBiometric] = useState(false);
+	const [biometricLoading, setBiometricLoading] = useState(false);
 
 	const {
 		userRole,
@@ -123,6 +128,18 @@ export default function LoginScreen() {
 	const scrollViewRef = useRef<ScrollView>(null);
 
 	useEffect(() => {
+		// Check if biometric login is available and enabled
+		const checkBiometric = async () => {
+			const enabled = await biometric.isBiometricEnabled();
+			const compatible = await biometric.isCompatible();
+			const enrolled = await biometric.isEnrolled();
+			
+			if (enabled && compatible && enrolled) {
+				setShowBiometric(true);
+			}
+		};
+		checkBiometric();
+
 		// Test API connection on mount
 		testConnection().then(result => {
 			console.log('[Login] API Connection:', result.message);
@@ -213,17 +230,40 @@ export default function LoginScreen() {
 
 		const success = await loginWithOtp(phone, otp);
 		if (success) {
-			if (userRole === "farmer") {
-				router.replace("/dashboard");
-			} else {
-				router.replace("/marketplace");
-			}
+			haptic.success();
+			// Navigate to tab-based navigation
+			router.replace("/(tabs)/dashboard");
 		} else {
 			Alert.alert("Error", error || "Invalid OTP. Please try again.");
 		}
 	};
 
+	const handleBiometricLogin = async () => {
+		setBiometricLoading(true);
+		try {
+			const success = await biometric.authenticate('Login to FarmConnect');
+			
+			if (success) {
+				haptic.success();
+				// Get stored phone number and login
+				const { authUser } = useAuthStore.getState();
+				if (authUser?.phone) {
+					// We need to verify OTP silently or use a refresh token
+					// For now, we'll just navigate if already authenticated
+					router.replace("/(tabs)/dashboard");
+				} else {
+					Alert.alert('Session Expired', 'Please login with OTP again.');
+				}
+			}
+		} catch (error) {
+			console.error('Biometric login failed:', error);
+		} finally {
+			setBiometricLoading(false);
+		}
+	};
+
 	const handleRoleSelect = (role: "farmer" | "investor") => {
+		haptic.light();
 		setUserRole(role);
 		clearError();
 	};
@@ -517,6 +557,47 @@ export default function LoginScreen() {
 										{error}
 									</Text>
 								</View>
+							)}
+
+							{/* Biometric Login Button */}
+							{showBiometric && !otpSent && (
+								<>
+									<View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 16 }}>
+										<View style={{ flex: 1, height: 1, backgroundColor: '#e5e7eb' }} />
+										<Text style={{ marginHorizontal: 12, fontSize: 12, color: '#6b7280', fontWeight: '500' }}>
+											Or login with
+										</Text>
+										<View style={{ flex: 1, height: 1, backgroundColor: '#e5e7eb' }} />
+									</View>
+									<TouchableOpacity
+										onPress={handleBiometricLogin}
+										disabled={biometricLoading}
+										activeOpacity={0.8}
+										style={{
+											width: '100%',
+											paddingVertical: 16,
+											borderRadius: 16,
+											backgroundColor: 'white',
+											borderWidth: 2,
+											borderColor: '#4cae4f',
+											flexDirection: 'row',
+											alignItems: 'center',
+											justifyContent: 'center',
+											gap: 10,
+										}}
+									>
+										{biometricLoading ? (
+											<ActivityIndicator size="small" color="#4cae4f" />
+										) : (
+											<>
+												<Fingerprint size={24} color="#4cae4f" />
+												<Text style={{ color: '#4cae4f', fontWeight: 'bold', fontSize: 16 }}>
+													Use Biometric
+												</Text>
+											</>
+										)}
+									</TouchableOpacity>
+								</>
 							)}
 
 							{/* Submit Button */}

@@ -7,7 +7,7 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { startRazorpayPayment } from '../../src/utils/razorpay';
 
 const statusColors: Record<string, string> = {
-  PENDING: '#f59e0b', ACTIVE: '#4cae4f', COMPLETED: '#3b82f6', CANCELLED: '#ef4444', DISPUTED: '#ef4444',
+  PENDING: '#f59e0b', ACTIVE: '#4cae4f', COMPLETED: '#3b82f6', CANCELLED: '#ef4444', DISPUTED: '#a855f7',
 };
 
 export default function ContractDetailScreen() {

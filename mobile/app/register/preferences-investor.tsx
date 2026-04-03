@@ -163,7 +163,7 @@ export default function InvestorPreferences() {
           <View className="h-full w-full bg-primary rounded-full" />
         </View>
         <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
-          Step 3 of 3 • Investor Profile
+          Step 3 of 4 • Investor Profile
         </Text>
       </View>
 
@@ -284,7 +284,7 @@ export default function InvestorPreferences() {
           <View className="h-full w-full bg-primary rounded-full" />
         </View>
         <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
-          Step 3 of 3 • Settlement Details
+          Step 4 of 4 • Settlement Details
         </Text>
       </View>
 

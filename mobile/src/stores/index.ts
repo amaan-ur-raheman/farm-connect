@@ -29,3 +29,7 @@ export { useUiStore } from './uiStore';
 export type { Theme, Toast } from './uiStore';
 
 export { useSocketStore } from './socketStore';
+
+// Toast system
+export { useToastStore, toast } from './toastStore';
+export type { Toast } from './toastStore';

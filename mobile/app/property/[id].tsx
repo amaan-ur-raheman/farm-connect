@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   StatusBar,
   ActivityIndicator,
   Alert,
+  Dimensions,
 } from 'react-native';
 import {
   Heart,
@@ -28,6 +29,7 @@ import { Header } from '../../src/components/ui/Header';
 import { useMarketplaceStore } from '../../src/stores';
 import api, { Listing, Review } from '../../src/config/api';
 import { useAuthStore } from '../../src/stores/authStore';
+import { haptic } from '../../src/utils/haptics';
 
 const cropIcons: Record<string, any> = {
   Cotton: Grape,
@@ -47,7 +49,10 @@ export default function PropertyDetailScreen() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [creatingContract, setCreatingContract] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
   const isPropertyFavorite = isFavorite(id as string);
+  const { width } = Dimensions.get('window');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -167,23 +172,59 @@ export default function PropertyDetailScreen() {
           </Text>
         </View>
 
-        {/* Hero Image */}
-        <View className="px-4">
-          <Image
-            source={{ uri: listing.images?.[0] || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940&auto=format&fit=crop' }}
-            className="h-[300px] rounded-3xl"
-            resizeMode="cover"
-          />
-          <View className="absolute top-4 left-4 flex-row gap-2">
-            {listing.is_organic && (
-              <View className="bg-[#4cae4f] px-3 py-1.5 rounded-full flex-row items-center">
-                <CheckCircle2 size={12} color="black" />
-                <Text className="text-[10px] font-black text-black ml-1">Organic</Text>
-              </View>
-            )}
-            {listing.status === 'ACTIVE' && (
-              <View className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                <Text className="text-[10px] font-black text-white">Active</Text>
+        {/* Image Carousel */}
+        <View className="px-4 mb-4">
+          <View className="relative">
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={(e) => {
+                const index = Math.round(e.nativeEvent.contentOffset.x / width);
+                setCurrentImageIndex(index);
+              }}
+              contentContainerStyle={{ paddingHorizontal: 0 }}
+            >
+              {(listing.images?.length > 0 ? listing.images : ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940&auto=format&fit=crop']).map((img, idx) => (
+                <Image
+                  key={idx}
+                  source={{ uri: img }}
+                  style={{ width: width - 32, height: 300, borderRadius: 24 }}
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
+            
+            {/* Badges */}
+            <View className="absolute top-4 left-4 flex-row gap-2">
+              {listing.is_organic && (
+                <View className="bg-[#4cae4f] px-3 py-1.5 rounded-full flex-row items-center">
+                  <CheckCircle2 size={12} color="black" />
+                  <Text className="text-[10px] font-black text-black ml-1">Organic</Text>
+                </View>
+              )}
+              {listing.status === 'ACTIVE' && (
+                <View className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                  <Text className="text-[10px] font-black text-white">Active</Text>
+                </View>
+              )}
+            </View>
+            
+            {/* Page Indicators */}
+            {listing.images?.length > 1 && (
+              <View className="absolute bottom-4 left-0 right-0 flex-row justify-center gap-1.5">
+                {listing.images.map((_, idx) => (
+                  <View
+                    key={idx}
+                    style={{
+                      width: currentImageIndex === idx ? 24 : 8,
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: currentImageIndex === idx ? '#4cae4f' : 'rgba(255,255,255,0.5)',
+                    }}
+                  />
+                ))}
               </View>
             )}
           </View>
@@ -345,24 +386,6 @@ export default function PropertyDetailScreen() {
                   )}
                 </View>
 
-                <TouchableOpacity
-                  onPress={handleCreateContract}
-                  disabled={creatingContract}
-                  className="bg-[#4cae4f] py-4 rounded-2xl items-center mb-3"
-                >
-                  <Text className="text-base font-black text-black">
-                    {creatingContract ? 'Processing...' : 'Acquire Digital Lease'}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleStartChat}
-                  className="bg-slate-100 dark:bg-slate-800 py-4 rounded-2xl items-center"
-                >
-                  <Text className="text-base font-black text-slate-900 dark:text-white">
-                    Contact Farmer
-                  </Text>
-                </TouchableOpacity>
-
                 {/* Farmer Card */}
                 {listing.farmer && (
                   <View className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
@@ -386,15 +409,6 @@ export default function PropertyDetailScreen() {
                         </View>
                       </View>
                     </View>
-                    <View className="flex-row gap-3 mt-4">
-                      <TouchableOpacity
-                        onPress={handleStartChat}
-                        className="flex-1 flex-row items-center justify-center py-3 bg-[#4cae4f] rounded-xl gap-2"
-                      >
-                        <MessageSquare size={16} color="white" />
-                        <Text className="text-xs font-bold text-white">Chat with Farmer</Text>
-                      </TouchableOpacity>
-                    </View>
                   </View>
                 )}
               </View>
@@ -411,6 +425,59 @@ export default function PropertyDetailScreen() {
           <Text className="text-center text-xs text-gray-500">Alpha v2.4.0 — Connecting Farmers with Investors</Text>
         </View>
       </ScrollView>
+
+      {/* Sticky Bottom Action Bar */}
+      <View className="bg-white dark:bg-[#1e291e] border-t border-gray-200 dark:border-[#2a382a] px-4 py-3 pb-6">
+        <View className="flex-row items-center justify-between mb-3">
+          <View>
+            <Text className="text-xs text-gray-500 dark:text-gray-400">Total Lease Value</Text>
+            <Text className="text-2xl font-black text-[#4cae4f]">
+              ₹{totalPrice.toLocaleString('en-IN')}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              haptic.medium();
+              toggleFavorite(id as string);
+            }}
+            className="p-2"
+          >
+            <Heart
+              size={24}
+              color={isPropertyFavorite ? '#ef4444' : '#94a3b8'}
+              fill={isPropertyFavorite ? '#ef4444' : 'transparent'}
+            />
+          </TouchableOpacity>
+        </View>
+        <View className="flex-row gap-3">
+          <TouchableOpacity
+            onPress={() => {
+              haptic.medium();
+              handleStartChat();
+            }}
+            className="flex-1 bg-slate-100 dark:bg-slate-800 py-3.5 rounded-xl items-center"
+          >
+            <View className="flex-row items-center gap-2">
+              <MessageSquare size={18} color="#1e293b" className="dark:text-white" />
+              <Text className="text-sm font-black text-slate-900 dark:text-white">
+                Contact Farmer
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              haptic.medium();
+              handleCreateContract();
+            }}
+            disabled={creatingContract}
+            className="flex-1 bg-[#4cae4f] py-3.5 rounded-xl items-center"
+          >
+            <Text className="text-sm font-black text-black">
+              {creatingContract ? 'Processing...' : 'Acquire Lease'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }

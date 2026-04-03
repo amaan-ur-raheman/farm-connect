@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, Alert } from 'react-native';
 import { Image } from 'expo-image';
-import { ChevronLeft, MessageSquare } from 'lucide-react-native';
+import { ChevronLeft, MessageSquare, Sprout } from 'lucide-react-native';
 import { router, useFocusEffect } from 'expo-router';
 import api, { Conversation, ChatMessage } from '../../src/config/api';
 import { useSocketStore } from '../../src/stores';
 import { useUnreadCounts } from '../_layout';
+import { Skeleton } from '../../src/components/ui/Skeleton';
 
 export default function ChatListScreen() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -73,8 +74,19 @@ export default function ChatListScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
-        <ActivityIndicator size="large" color="#4cae4f" />
+      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
+        <StatusBar barStyle="dark-content" />
+        <View className="px-4 py-4 space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <View key={i} className="flex-row items-center gap-3">
+              <Skeleton width={50} height={50} borderRadius={25} />
+              <View className="flex-1 gap-2">
+                <Skeleton width={140} height={16} />
+                <Skeleton width={200} height={12} />
+              </View>
+            </View>
+          ))}
+        </View>
       </View>
     );
   }
@@ -95,12 +107,19 @@ export default function ChatListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}
       >
         {conversations.length === 0 ? (
-          <View className="flex-1 items-center justify-center py-20">
+          <View className="flex-1 items-center justify-center py-20 px-8">
             <MessageSquare size={48} color="#94a3b8" />
             <Text className="text-lg font-bold text-slate-900 dark:text-white mt-4 mb-2">No conversations yet</Text>
-            <Text className="text-sm text-gray-500 text-center px-8">
+            <Text className="text-sm text-gray-500 text-center mb-6">
               Start a conversation from a listing or contract to connect with farmers and investors.
             </Text>
+            <TouchableOpacity
+              onPress={() => router.push('/marketplace')}
+              className="bg-[#4cae4f] px-6 py-3 rounded-xl flex-row items-center gap-2"
+            >
+              <Sprout size={18} color="white" />
+              <Text className="text-white font-bold">Browse Marketplace</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           <View className="px-4 py-2">

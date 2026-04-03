@@ -1,21 +1,22 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  Image, 
-  TouchableOpacity, 
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
   StatusBar,
   TextInput,
   ActivityIndicator,
   RefreshControl,
+  FlatList,
 } from 'react-native';
-import { 
-  Search, 
-  MapPin, 
+import {
+  Search,
+  MapPin,
   Grid3X3,
   List,
-  Tractor, 
+  Tractor,
   Heart,
   ChevronLeft,
   ChevronRight,
@@ -28,6 +29,8 @@ import { Header } from '../src/components/ui/Header';
 import { Button } from '../src/components/ui/Button';
 import { useMarketplaceStore, useAuthStore } from '../src/stores';
 import api, { Listing } from '../src/config/api';
+import { haptic } from '../src/utils/haptics';
+import { cache, CACHE_KEYS } from '../src/utils/cache';
 
 const mapListingToProperty = (listing: Listing) => ({
   id: listing.id,
@@ -54,9 +57,11 @@ export default function MarketplaceScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  
-  const { 
-    viewMode, 
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const {
+    viewMode,
     setViewMode,
     toggleFavorite,
     isFavorite,
@@ -67,9 +72,15 @@ export default function MarketplaceScreen() {
     isLoading,
   } = useMarketplaceStore();
   const { userRole } = useAuthStore();
+  const searchTimeout = useRef<NodeJS.Timeout>();
 
-  const fetchListings = useCallback(async (page = 1, search?: string, filter?: string | null) => {
-    setIsLoading(true);
+  const fetchListings = useCallback(async (page = 1, search?: string, filter?: string | null, append = false) => {
+    if (!append) {
+      setIsLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+    
     try {
       const params = new URLSearchParams();
       params.set('limit', '12');
@@ -82,14 +93,29 @@ export default function MarketplaceScreen() {
 
       const response = await api.get<{ data: Listing[]; pagination: { total: number; pages: number } }>(`/api/listings?${params.toString()}`);
       const result = response.data;
-      setListings(result.data || []);
-      setProperties(result.data?.map(mapListingToProperty) || []);
+      const newListings = result.data || [];
+      
+      if (append) {
+        setListings(prev => [...prev, ...newListings]);
+        setProperties(prev => [...prev, ...newListings.map(mapListingToProperty)]);
+      } else {
+        setListings(newListings);
+        setProperties(newListings.map(mapListingToProperty) || []);
+      }
+      
       setTotalCount(result.pagination?.total || 0);
       setTotalPages(result.pagination?.pages || 1);
+      setHasMore(page < (result.pagination?.pages || 1));
+      
+      // Cache the results
+      if (!append && !search && !filter) {
+        cache.set(CACHE_KEYS.LISTINGS, { listings: newListings, total: result.pagination?.total }, 5 * 60 * 1000);
+      }
     } catch {
       // silent fail
     } finally {
       setIsLoading(false);
+      setLoadingMore(false);
     }
   }, [setIsLoading, setProperties]);
 
@@ -103,12 +129,23 @@ export default function MarketplaceScreen() {
     fetchListings(1, searchQuery, activeFilter).finally(() => setRefreshing(false));
   };
 
-  const handleSearch = () => {
-    setCurrentPage(1);
-    fetchListings(1, searchQuery, activeFilter);
+  const handleSearch = (query?: string) => {
+    const search = query !== undefined ? query : searchQuery;
+    
+    // Clear existing timeout
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+    
+    // Debounce search by 300ms
+    searchTimeout.current = setTimeout(() => {
+      setCurrentPage(1);
+      fetchListings(1, search, activeFilter);
+    }, 300);
   };
 
   const handleFilterChange = (filter: string) => {
+    haptic.light();
     const newFilter = activeFilter === filter ? null : filter;
     setActiveFilter(newFilter);
     setCurrentPage(1);
@@ -197,13 +234,15 @@ export default function MarketplaceScreen() {
                 <View className="flex-row items-center gap-2 mb-4">
                    <View className="flex-1 flex-row items-center bg-[#f9fbf9] dark:bg-[#151d15] border border-gray-200 dark:border-gray-700 rounded-lg px-3">
                       <MapPin size={18} color="#94a3b8" />
-                      <TextInput 
+                      <TextInput
                         className="flex-1 py-2.5 px-2 text-sm"
                         placeholder="Search farms, crops, or locations..."
                         placeholderTextColor="#94a3b8"
                         value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        onSubmitEditing={handleSearch}
+                        onChangeText={(text) => {
+                          setSearchQuery(text);
+                          handleSearch(text);
+                        }}
                         returnKeyType="search"
                       />
                       {searchQuery.length > 0 && (
@@ -212,9 +251,6 @@ export default function MarketplaceScreen() {
                         </TouchableOpacity>
                       )}
                    </View>
-                   <TouchableOpacity onPress={handleSearch} className="bg-[#4cae4f] p-2.5 rounded-lg">
-                      <Search size={18} color="white" />
-                   </TouchableOpacity>
                 </View>
                 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
@@ -336,82 +372,38 @@ export default function MarketplaceScreen() {
              </View>
              )}
 
-             {/* Pagination */}
-             {totalPages > 1 && (
-               <View className="flex-row items-center justify-center gap-2 mt-12">
-                 <TouchableOpacity 
-                   onPress={() => handlePageChange(currentPage - 1)}
-                   disabled={currentPage <= 1}
-                   className={`p-2 rounded-lg border ${currentPage <= 1 ? 'opacity-30' : ''}`}
-                   style={{ borderColor: '#e5e7eb' }}
+             {/* Load More / Infinite Scroll */}
+             {hasMore && listings.length > 0 && (
+               <View className="mt-8">
+                 <TouchableOpacity
+                   onPress={() => {
+                     haptic.light();
+                     const nextPage = currentPage + 1;
+                     setCurrentPage(nextPage);
+                     fetchListings(nextPage, searchQuery, activeFilter, true);
+                   }}
+                   disabled={loadingMore}
+                   className="bg-[#4cae4f] py-4 rounded-xl items-center"
                  >
-                    <ChevronLeft size={18} color="#6b7280" />
+                   {loadingMore ? (
+                     <View className="flex-row items-center gap-2">
+                       <ActivityIndicator size="small" color="white" />
+                       <Text className="text-white font-bold text-base">Loading More...</Text>
+                     </View>
+                   ) : (
+                     <Text className="text-white font-bold text-base">Load More Farms</Text>
+                   )}
                  </TouchableOpacity>
-                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                   let page: number;
-                   if (totalPages <= 5) {
-                     page = i + 1;
-                   } else if (currentPage <= 3) {
-                     page = i + 1;
-                   } else if (currentPage >= totalPages - 2) {
-                     page = totalPages - 4 + i;
-                   } else {
-                     page = currentPage - 2 + i;
-                   }
-                   return (
-                     <TouchableOpacity
-                       key={page}
-                       onPress={() => handlePageChange(page)}
-                       className={`w-10 h-10 rounded-lg items-center justify-center ${
-                         currentPage === page ? 'bg-[#4cae4f]' : 'border border-gray-200 dark:border-gray-700'
-                       }`}
-                     >
-                       <Text className={`font-bold text-sm ${currentPage === page ? 'text-white' : 'text-gray-700 dark:text-gray-300'}`}>
-                         {page}
-                       </Text>
-                     </TouchableOpacity>
-                   );
-                 })}
-                 <TouchableOpacity 
-                   onPress={() => handlePageChange(currentPage + 1)}
-                   disabled={currentPage >= totalPages}
-                   className={`p-2 rounded-lg border ${currentPage >= totalPages ? 'opacity-30' : ''}`}
-                   style={{ borderColor: '#e5e7eb' }}
-                 >
-                    <ChevronRight size={18} color="#6b7280" />
-                 </TouchableOpacity>
-              </View>
+               </View>
+             )}
+             
+             {!hasMore && listings.length > 0 && (
+               <View className="mt-8 items-center">
+                 <Text className="text-gray-500 text-sm">You've reached the end!</Text>
+               </View>
              )}
           </View>
        </ScrollView>
-
-       {/* Bottom Navigation */}
-       <View className="absolute bottom-6 left-4 right-4 bg-[#111811] dark:bg-white h-16 rounded-2xl items-center justify-around px-6 shadow-2xl flex-row">
-          <TouchableOpacity 
-            onPress={() => setActiveTab('Marketplace')}
-            className="items-center"
-          >
-             <View className={`size-1.5 rounded-full mb-1 ${activeTab === 'Marketplace' ? 'bg-[#4cae4f]' : 'bg-transparent'}`} />
-             <Grid3X3 size={22} color={activeTab === 'Marketplace' ? '#4cae4f' : '#6b7280'} />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => { setActiveTab('Contracts'); router.push('/contracts'); }}
-            className="items-center"
-          >
-             <View className={`size-1.5 rounded-full mb-1 ${activeTab === 'Contracts' ? 'bg-[#4cae4f]' : 'bg-transparent'}`} />
-             <Tractor size={22} color={activeTab === 'Contracts' ? '#4cae4f' : '#6b7280'} />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => { 
-              setActiveTab('Management'); 
-              router.push(userRole === 'investor' ? '/investor-dashboard' : '/dashboard'); 
-            }}
-            className="items-center"
-          >
-             <View className={`size-1.5 rounded-full mb-1 ${activeTab === 'Management' ? 'bg-[#4cae4f]' : 'bg-transparent'}`} />
-             <List size={22} color={activeTab === 'Management' ? '#4cae4f' : '#6b7280'} />
-          </TouchableOpacity>
-       </View>
      </View>
    );
 }

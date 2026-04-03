@@ -16,6 +16,7 @@ import { useAuthStore, useSocketStore } from "../src/stores";
 import api from "../src/config/api";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
 import { OfflineBanner } from "../src/components/ui/OfflineBanner";
+import { ToastContainer } from "../src/components/ui/Toast";
 import {
 	setupNotificationHandler,
 	getNotificationsModule,
@@ -147,27 +148,25 @@ function RootLayoutNav() {
 		>
 			<StatusBar hidden />
 			<Stack screenOptions={{ headerShown: false }}>
+				<Stack.Screen name="(tabs)" />
 				<Stack.Screen name="index" />
+				<Stack.Screen name="onboarding" />
 				<Stack.Screen name="login" />
 				<Stack.Screen name="register" />
-				<Stack.Screen name="marketplace" />
-				<Stack.Screen name="dashboard" />
-				<Stack.Screen name="investor-dashboard" />
+				<Stack.Screen name="favorites" />
+				<Stack.Screen name="help" />
 				<Stack.Screen name="property/[id]" />
-				<Stack.Screen name="chat/index" />
 				<Stack.Screen name="chat/[id]" />
-				<Stack.Screen name="profile" />
 				<Stack.Screen name="notifications" />
 				<Stack.Screen name="wallet" />
-				<Stack.Screen name="contracts/index" />
 				<Stack.Screen name="contracts/[id]" />
-				<Stack.Screen name="listings/index" />
 				<Stack.Screen name="listings/create" />
 				<Stack.Screen name="listings/edit/[id]" />
 				<Stack.Screen name="updates/[contractId]" />
 				<Stack.Screen name="deliveries" />
 				<Stack.Screen name="disputes" />
 				<Stack.Screen name="reviews" />
+				<Stack.Screen name="investor-dashboard" />
 			</Stack>
 		</UnreadCountsContext.Provider>
 	);
@@ -189,6 +188,7 @@ export default function RootLayout() {
 	return (
 		<ErrorBoundary>
 			<OfflineBanner />
+			<ToastContainer />
 			<RootLayoutNav />
 		</ErrorBoundary>
 	);

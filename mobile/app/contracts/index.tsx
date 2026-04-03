@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, Alert } from 'react-native';
 import { ChevronLeft, MapPin, Clock, CheckCircle, XCircle, MessageSquare, Package } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Contract } from '../../src/config/api';
 import { useAuthStore, useSocketStore } from '../../src/stores';
+import { Skeleton } from '../../src/components/ui/Skeleton';
 
 const statusColors: Record<string, string> = {
   PENDING: '#f59e0b',
   ACTIVE: '#4cae4f',
   COMPLETED: '#3b82f6',
   CANCELLED: '#ef4444',
-  DISPUTED: '#ef4444',
+  DISPUTED: '#a855f7',
 };
 
 export default function ContractsScreen() {
@@ -91,8 +92,22 @@ export default function ContractsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
-        <ActivityIndicator size="large" color="#4cae4f" />
+      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
+        <StatusBar barStyle="dark-content" />
+        <View className="px-4 py-8 space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <View key={i} className="bg-white dark:bg-[#1e291e] p-4 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a]">
+              <View className="flex-row justify-between items-start mb-3">
+                <View>
+                  <Skeleton width={180} height={20} />
+                  <Skeleton width={120} height={14} style={{ marginTop: 4 }} />
+                </View>
+                <Skeleton width={80} height={24} borderRadius={12} />
+              </View>
+              <Skeleton width={150} height={16} />
+            </View>
+          ))}
+        </View>
       </View>
     );
   }

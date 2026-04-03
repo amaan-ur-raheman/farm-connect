@@ -1,35 +1,40 @@
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthStore } from '../src/stores';
 import { shouldSkipNotifications, getNotificationsModule } from '../src/utils/notifications';
 
 export default function Index() {
   const router = useRouter();
-  const navigation = useNavigation();
   const { isAuthenticated, userRole } = useAuthStore();
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
 
   useEffect(() => {
-    // Wait until navigation is ready
-    const unsubscribe = navigation.addListener('state', () => {
-      // Navigation is definitely ready here
-    });
-
-    const timer = setTimeout(() => {
-      if (!isAuthenticated) {
+    const checkOnboarding = async () => {
+      try {
+        const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
+        
+        if (!hasSeenOnboarding) {
+          // First time user - show onboarding
+          router.replace('/onboarding');
+        } else if (!isAuthenticated) {
+          // Returning user but not logged in
+          router.replace('/login');
+        } else {
+          // Returning user and logged in
+          router.replace('/(tabs)/dashboard');
+        }
+      } catch (error) {
+        console.error('Error checking onboarding:', error);
         router.replace('/login');
-        return;
+      } finally {
+        setCheckingOnboarding(false);
       }
-
-      const target = userRole === 'farmer' ? '/dashboard' : '/investor-dashboard';
-      router.replace(target as any);
-    }, 500); // Robust delay to ensure context is established
-
-    return () => {
-      unsubscribe();
-      clearTimeout(timer);
     };
-  }, [isAuthenticated, userRole, navigation]);
+
+    checkOnboarding();
+  }, [isAuthenticated, userRole, router]);
 
   // Deep linking handler for notifications
   useEffect(() => {
@@ -42,8 +47,8 @@ export default function Index() {
       if (data.screen) {
         const screen = data.screen as string;
         const id = data.id as string;
-        
-        const timer = setTimeout(() => {
+
+        setTimeout(() => {
           switch (screen) {
             case 'chat': router.push(`/chat/${id}`); break;
             case 'contract': router.push(`/contracts/${id}`); break;
@@ -54,12 +59,15 @@ export default function Index() {
             default: router.push('/notifications');
           }
         }, 100);
-        return () => clearTimeout(timer);
       }
     });
 
     return () => subscription.remove();
   }, []);
 
-  return null;
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f9fbf9' }}>
+      <ActivityIndicator size="large" color="#4cae4f" />
+    </View>
+  );
 }

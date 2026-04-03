@@ -12,7 +12,7 @@ import {
 	ActivityIndicator,
 	Keyboard,
 } from "react-native";
-import { Camera, MapPin, Mic, Send, Play } from "lucide-react-native";
+import { Camera, MapPin, Send, Play } from "lucide-react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Header } from "../../src/components/ui/Header";
 import { useUserStore, useSocketStore } from "../../src/stores";
@@ -269,9 +269,6 @@ export default function ChatScreen() {
 							style={{ height: inputHeight }}
 							className="flex-1 text-[15px] text-[#111811] dark:text-white font-semibold py-2"
 						/>
-						<TouchableOpacity className="p-2 mb-1">
-							<Mic size={20} color="#4cae4f" strokeWidth={2.2} />
-						</TouchableOpacity>
 					</View>
 
 					<TouchableOpacity

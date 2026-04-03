@@ -30,6 +30,7 @@ import { Header } from '../src/components/ui/Header';
 import { Button } from '../src/components/ui/Button';
 import api, { Contract, FarmUpdate } from '../src/config/api';
 import { useAuthStore, useSocketStore } from '../src/stores';
+import { useUnreadCounts } from './_layout';
 
 export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -42,6 +43,9 @@ export default function DashboardScreen() {
   const [wageAmount, setWageAmount] = useState('');
 
   const { socket } = useSocketStore();
+  const { authUser } = useAuthStore();
+  const { unreadCounts } = useUnreadCounts();
+  const userImage = authUser?.avatar_url ? { uri: authUser.avatar_url } : undefined;
 
   const fetchData = useCallback(async () => {
     setLoadingContracts(true);
@@ -134,7 +138,8 @@ export default function DashboardScreen() {
       <Header
         variant="menu"
         userImage={userImage}
-        onAvatarPress={() => router.push('/profile')}
+        onAvatarPress={() => router.push('/(tabs)/profile')}
+        notificationCount={unreadCounts.notifications}
       />
 
       <ScrollView

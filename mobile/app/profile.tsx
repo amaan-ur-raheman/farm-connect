@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
-  Alert
+  Alert,
+  Switch,
 } from 'react-native';
 import {
   Settings,
@@ -30,11 +31,13 @@ import {
   Package,
   AlertTriangle,
   FileText,
+  Fingerprint,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import { useUserStore, useAuthStore, useRegistrationStore } from '../src/stores';
 import { useUnreadCounts } from './_layout';
+import { biometric } from '../src/utils/biometric';
 
 function SidebarItem({ icon, label, active = false, onPress, badge }: { icon: any; label: string; active?: boolean; onPress?: () => void; badge?: number }) {
   return (
@@ -72,6 +75,8 @@ function MenuItem({ icon, label, isLast = false, onPress, badge }: { icon: any; 
 export default function ProfileScreen() {
   const [windowWidth, setWindowWidth] = useState(Dimensions.get('window').width);
   const isLargeScreen = windowWidth > 1024;
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+  const [biometricSupported, setBiometricSupported] = useState(false);
 
   const { profile, wallet, holdings, fetchProfile, fetchWallet, fetchHoldings } = useUserStore();
   const { userRole } = useAuthStore();
@@ -84,6 +89,17 @@ export default function ProfileScreen() {
     fetchProfile();
     fetchWallet();
     fetchHoldings();
+    
+    // Check biometric support
+    const checkBiometric = async () => {
+      const supported = await biometric.isCompatible();
+      const enrolled = await biometric.isEnrolled();
+      const enabled = await biometric.isBiometricEnabled();
+      
+      setBiometricSupported(supported && enrolled);
+      setBiometricEnabled(enabled);
+    };
+    checkBiometric();
   }, [fetchProfile, fetchWallet, fetchHoldings]);
 
   useEffect(() => {
@@ -110,6 +126,21 @@ export default function ProfileScreen() {
         },
       ]
     );
+  };
+
+  const toggleBiometric = async (value: boolean) => {
+    if (value) {
+      const success = await biometric.enableBiometric();
+      if (success) {
+        setBiometricEnabled(true);
+        Alert.alert('Success', 'Biometric login enabled!');
+      } else {
+        Alert.alert('Failed', 'Could not enable biometric login. Please try again.');
+      }
+    } else {
+      await biometric.disableBiometric();
+      setBiometricEnabled(false);
+    }
   };
 
   const kycStatus = authUser?.kyc_status || 'PENDING';
@@ -235,21 +266,48 @@ export default function ProfileScreen() {
                   <Text className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-4 ml-2">Farm Management</Text>
                   <View className="bg-white dark:bg-surface-dark rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden">
                      <MenuItem icon={<FileText size={18} color="#608562" />} label={userRole === 'farmer' ? 'My Listings' : 'My Contracts'} onPress={() => userRole === 'farmer' ? router.push('/listings') : router.push('/contracts')} />
+                     <MenuItem icon={<Heart size={18} color="#608562" />} label="My Favorites" onPress={() => router.push('/favorites')} />
                      <MenuItem icon={<Package size={18} color="#608562" />} label="Deliveries" onPress={() => router.push('/deliveries')} />
                      <MenuItem icon={<AlertTriangle size={18} color="#608562" />} label="Disputes" onPress={() => router.push('/disputes')} isLast />
                   </View>
                </View>
+
+               {/* Biometric Login Toggle */}
+               {biometricSupported && (
+                 <View>
+                    <Text className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-4 ml-2">Login Settings</Text>
+                    <View className="bg-white dark:bg-surface-dark rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden">
+                       <View className="flex-row items-center justify-between px-4 py-3">
+                          <View className="flex-row items-center gap-3 flex-1">
+                             <Fingerprint size={18} color="#608562" />
+                             <View className="flex-1">
+                                <Text className="text-sm font-semibold text-slate-900 dark:text-white">Biometric Login</Text>
+                                <Text className="text-xs text-gray-500">Use Face ID or Fingerprint</Text>
+                             </View>
+                          </View>
+                          <Switch
+                            value={biometricEnabled}
+                            onValueChange={toggleBiometric}
+                            trackColor={{ false: '#e5e7eb', true: '#4cae4f' }}
+                            thumbColor="#ffffff"
+                            ios_backgroundColor="#e5e7eb"
+                          />
+                       </View>
+                    </View>
+                 </View>
+               )}
 
                <View>
                   <Text className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-4 ml-2">Support & Safety</Text>
                   <View className="bg-white dark:bg-surface-dark rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden">
                      <MenuItem icon={<Bell size={18} color="#608562" />} label="Notification Center" onPress={() => router.push('/notifications')} badge={unreadCounts.notifications} />
                      <MenuItem icon={<MessageSquare size={18} color="#608562" />} label="Messages" onPress={() => router.push('/chat')} badge={unreadCounts.chat} />
-                     <MenuItem 
-                      icon={<HelpCircle size={18} color="#608562" />} 
-                      label="Security & Verification" 
+                     <MenuItem icon={<HelpCircle size={18} color="#608562" />} label="Help & Support" onPress={() => router.push('/help')} />
+                     <MenuItem
+                      icon={<Shield size={18} color="#608562" />}
+                      label="Security & Verification"
                       onPress={() => router.push('/profile/kyc')}
-                      isLast 
+                      isLast
                      />
                   </View>
                </View>
@@ -259,7 +317,7 @@ export default function ProfileScreen() {
                 onPress={handleLogout}
                >
                   <LogOut size={18} color="#ef4444" className="mr-3" />
-                  <Text className="text-rose-600 font-bold text-sm uppercase tracking-wider">Terminate Session</Text>
+                  <Text className="text-rose-600 font-bold text-sm uppercase tracking-wider">Log Out</Text>
                </TouchableOpacity>
             </View> 
 

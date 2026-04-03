@@ -1,11 +1,11 @@
-// mobile/app/investor-dashboard.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, Image } from 'react-native';
 import { TrendingUp, Wallet, Package, ChevronRight, Bell, MapPin, Sprout } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import api from '../src/config/api';
 import { useAuthStore } from '../src/stores';
+import { Skeleton } from '../src/components/ui/Skeleton';
 
 export default function InvestorDashboardScreen() {
   const [stats, setStats] = useState<any>(null);
@@ -31,7 +31,24 @@ export default function InvestorDashboardScreen() {
   };
 
   if (loading && !refreshing) {
-    return <View className="flex-1 items-center justify-center bg-[#f9fbf9] dark:bg-[#151d15]"><ActivityIndicator color="#4cae4f" /></View>;
+    return (
+      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] p-4">
+        <StatusBar barStyle="dark-content" />
+        <Skeleton width={200} height={28} style={{ marginBottom: 24 }} />
+        <View className="flex-row gap-3 mb-8">
+          <View className="flex-1 bg-white dark:bg-[#1e291e] p-4 rounded-2xl">
+            <Skeleton width={40} height={40} style={{ marginBottom: 8 }} />
+            <Skeleton width={80} height={12} style={{ marginBottom: 4 }} />
+            <Skeleton width={100} height={20} />
+          </View>
+          <View className="flex-1 bg-white dark:bg-[#1e291e] p-4 rounded-2xl">
+            <Skeleton width={40} height={40} style={{ marginBottom: 8 }} />
+            <Skeleton width={80} height={12} style={{ marginBottom: 4 }} />
+            <Skeleton width={60} height={20} />
+          </View>
+        </View>
+      </View>
+    );
   }
 
   return (
@@ -71,7 +88,15 @@ export default function InvestorDashboardScreen() {
             
             {stats?.recentUpdates?.length === 0 ? (
               <View className="bg-white dark:bg-[#1e291e] p-8 rounded-2xl items-center border border-[#eaf0ea] dark:border-[#2a382a]">
-                <Text className="text-gray-400 text-sm">No updates from your farms yet.</Text>
+                <Sprout size={40} color="#94a3b8" />
+                <Text className="text-gray-400 text-sm mt-3 mb-4 text-center">No updates from your farms yet.</Text>
+                <TouchableOpacity
+                  onPress={() => router.push('/marketplace')}
+                  className="bg-[#4cae4f] px-6 py-3 rounded-xl flex-row items-center gap-2"
+                >
+                  <Sprout size={18} color="white" />
+                  <Text className="text-white font-bold">Invest in a Farm</Text>
+                </TouchableOpacity>
               </View>
             ) : (
               stats?.recentUpdates?.map((update: any) => (

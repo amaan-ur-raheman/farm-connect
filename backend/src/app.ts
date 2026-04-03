@@ -6,6 +6,8 @@ import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import { randomUUID } from "crypto";
 import { env } from "@/config/env";
+import { prisma } from "@/config/database";
+import { redisClient } from "@/config/redis";
 import { errorHandler } from "@/shared/errors";
 import { asyncHandler, notFoundHandler } from "@/shared/middleware/handlers";
 import { authRouter } from "@/modules/auth/auth.routes";
@@ -43,10 +45,85 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(env.isDev ? "dev" : "combined"));
 
+// Health check endpoint with dependency verification
 app.get(
 	"/health",
 	asyncHandler(async (_req, res) => {
-		res.json({ status: "ok", timestamp: new Date().toISOString() });
+		const startTime = Date.now();
+		const health: {
+			status: "healthy" | "degraded" | "unhealthy";
+			timestamp: string;
+			uptime: string;
+			environment: string;
+			responseTime: number;
+			dependencies: {
+				database: { status: string; responseTime?: number; error?: string };
+				redis: { status: string; responseTime?: number; error?: string };
+			};
+		} = {
+			status: "healthy",
+			timestamp: new Date().toISOString(),
+			uptime: process.uptime().toFixed(0) + "s",
+			environment: env.node,
+			responseTime: 0,
+			dependencies: {
+				database: { status: "unknown" },
+				redis: { status: "unknown" },
+			},
+		};
+
+		// Check Database connectivity
+		try {
+			const dbStart = Date.now();
+			await prisma.$queryRaw`SELECT 1`;
+			health.dependencies.database = {
+				status: "connected",
+				responseTime: Date.now() - dbStart,
+			};
+		} catch (error: any) {
+			health.dependencies.database = {
+				status: "disconnected",
+				error: error.message || "Unknown error",
+			};
+			health.status = health.status === "healthy" ? "degraded" : health.status;
+		}
+
+		// Check Redis connectivity
+		try {
+			const redisStart = Date.now();
+			// Upstash Redis supports ping via get/set operations
+			await redisClient.ping();
+			health.dependencies.redis = {
+				status: "connected",
+				responseTime: Date.now() - redisStart,
+			};
+		} catch (error: any) {
+			health.dependencies.redis = {
+				status: "disconnected",
+				error: error.message || "Unknown error",
+			};
+			health.status = health.status === "healthy" ? "degraded" : health.status;
+		}
+
+		// If both dependencies are down, mark as unhealthy
+		if (
+			health.dependencies.database.status === "disconnected" &&
+			health.dependencies.redis.status === "disconnected"
+		) {
+			health.status = "unhealthy";
+		}
+
+		health.responseTime = Date.now() - startTime;
+
+		// Return appropriate status code
+		const statusCode =
+			health.status === "healthy"
+				? 200
+				: health.status === "degraded"
+					? 200
+					: 503;
+
+		res.status(statusCode).json(health);
 	}),
 );
 
