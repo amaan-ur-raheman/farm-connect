@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  Image, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
   StatusBar,
   Dimensions,
   Alert
 } from 'react-native';
-import { 
-  Settings, 
-  LogOut, 
-  Wallet, 
-  Tractor, 
-  Shield, 
+import {
+  Settings,
+  LogOut,
+  Wallet,
+  Tractor,
+  Shield,
   ChevronRight,
   TrendingUp,
   CreditCard,
@@ -34,24 +34,35 @@ import {
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import { useUserStore, useAuthStore, useRegistrationStore } from '../src/stores';
+import { useUnreadCounts } from './_layout';
 
-function SidebarItem({ icon, label, active = false, onPress }: { icon: any; label: string; active?: boolean; onPress?: () => void }) {
+function SidebarItem({ icon, label, active = false, onPress, badge }: { icon: any; label: string; active?: boolean; onPress?: () => void; badge?: number }) {
   return (
     <TouchableOpacity onPress={onPress} className={`flex-row items-center px-4 py-3 rounded-lg ${active ? 'bg-primary/10' : ''}`}>
        <View className="mr-3">
           {React.cloneElement(icon, { color: active ? '#4cae4f' : '#608562', size: 18, strokeWidth: active ? 2.5 : 2 })}
        </View>
-       <Text className={`text-sm tracking-tight ${active ? 'font-bold text-primary' : 'font-medium text-gray-600 dark:text-gray-400'}`}>{label}</Text>
+       <Text className={`flex-1 text-sm tracking-tight ${active ? 'font-bold text-primary' : 'font-medium text-gray-600 dark:text-gray-400'}`}>{label}</Text>
+       {badge !== undefined && badge > 0 && (
+         <View className="bg-red-500 rounded-full px-2 py-0.5 min-w-[20px] items-center">
+           <Text className="text-[10px] font-bold text-white">{badge > 99 ? '99+' : badge}</Text>
+         </View>
+       )}
     </TouchableOpacity>
   );
 }
 
-function MenuItem({ icon, label, isLast = false, onPress }: { icon: any; label: string; isLast?: boolean; onPress?: () => void }) {
+function MenuItem({ icon, label, isLast = false, onPress, badge }: { icon: any; label: string; isLast?: boolean; onPress?: () => void; badge?: number }) {
   return (
     <TouchableOpacity onPress={onPress} className={`px-6 py-5 flex-row items-center justify-between ${!isLast ? 'border-b border-[#f6f7f6] dark:border-[#2a382a]/50' : ''}`}>
        <View className="flex-row items-center gap-4">
           {icon}
           <Text className="text-sm font-bold text-[#111811] dark:text-white uppercase tracking-tight">{label}</Text>
+          {badge !== undefined && badge > 0 && (
+            <View className="bg-red-500 rounded-full px-2 py-0.5 min-w-[20px] items-center">
+              <Text className="text-[10px] font-bold text-white">{badge > 99 ? '99+' : badge}</Text>
+            </View>
+          )}
        </View>
        <ChevronRight size={14} color="#608562" opacity={0.5} />
     </TouchableOpacity>
@@ -65,6 +76,7 @@ export default function ProfileScreen() {
   const { profile, wallet, holdings, fetchProfile, fetchWallet, fetchHoldings } = useUserStore();
   const { userRole } = useAuthStore();
   const { authUser } = useAuthStore();
+  const { unreadCounts } = useUnreadCounts();
   const resetRegistration = useRegistrationStore((s) => s.reset);
   const clearUser = useUserStore((s) => s.clearUser);
 
@@ -121,8 +133,8 @@ export default function ProfileScreen() {
         <SidebarItem icon={<LayoutDashboard />} label="Overview" onPress={() => router.push('/dashboard')} />
         <SidebarItem icon={<Map />} label="My Properties" onPress={() => userRole === 'farmer' ? router.push('/listings') : router.push('/contracts')} />
         <SidebarItem icon={<Compass />} label="Explore All" onPress={() => router.push('/marketplace')} />
-        <SidebarItem icon={<MessageSquare />} label="Messages" onPress={() => router.push('/chat')} />
-        <SidebarItem icon={<Bell />} label="Notifications" onPress={() => router.push('/notifications')} />
+        <SidebarItem icon={<MessageSquare />} label="Messages" onPress={() => router.push('/chat')} badge={unreadCounts.chat} />
+        <SidebarItem icon={<Bell />} label="Notifications" onPress={() => router.push('/notifications')} badge={unreadCounts.notifications} />
         <SidebarItem icon={<User />} label="My Profile" active />
       </View>
 
@@ -229,9 +241,14 @@ export default function ProfileScreen() {
                <View>
                   <Text className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-4 ml-2">Support & Safety</Text>
                   <View className="bg-white dark:bg-surface-dark rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden">
-                     <MenuItem icon={<Bell size={18} color="#608562" />} label="Notification Center" onPress={() => router.push('/notifications')} />
-                     <MenuItem icon={<MessageSquare size={18} color="#608562" />} label="Messages" onPress={() => router.push('/chat')} />
-                     <MenuItem icon={<HelpCircle size={18} color="#608562" />} label="Security & Verification" isLast />
+                     <MenuItem icon={<Bell size={18} color="#608562" />} label="Notification Center" onPress={() => router.push('/notifications')} badge={unreadCounts.notifications} />
+                     <MenuItem icon={<MessageSquare size={18} color="#608562" />} label="Messages" onPress={() => router.push('/chat')} badge={unreadCounts.chat} />
+                     <MenuItem 
+                      icon={<HelpCircle size={18} color="#608562" />} 
+                      label="Security & Verification" 
+                      onPress={() => router.push('/profile/kyc')}
+                      isLast 
+                     />
                   </View>
                </View>
 

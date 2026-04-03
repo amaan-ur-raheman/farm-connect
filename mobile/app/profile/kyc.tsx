@@ -5,10 +5,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { Header } from '../../src/components/ui/Header';
 import api from '../../src/config/api';
+import { useUserStore } from '../../src/stores';
 
 export default function KycUploadScreen() {
   const [aadhaar, setAadhaar] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { fetchProfile } = useUserStore();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -44,10 +46,9 @@ export default function KycUploadScreen() {
         name: 'aadhaar.jpg',
       });
 
-      await api.post('/api/kyc/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await api.post('/api/kyc/upload', formData);
       
+      await fetchProfile();
       Alert.alert('Success', 'KYC Documents submitted successfully');
       router.back();
     } catch (err: any) {
@@ -58,7 +59,7 @@ export default function KycUploadScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white dark:bg-[#151d15]">
+    <View className="flex-1 bg-white dark:bg-background-dark">
       <Header variant="back" title="KYC Verification" onBack={() => router.back()} />
       <View className="p-6">
         <Text className="text-lg font-bold mb-4 dark:text-white">Upload Aadhaar Card</Text>
