@@ -3,7 +3,6 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState, useCallback, createContext, useContext } from "react";
-import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import "../src/global.css";
@@ -38,6 +37,7 @@ const isExpoGo = Constants.appOwnership === "expo";
 // Show notifications when app is in foreground
 if (!isExpoGo) {
 	try {
+		const Notifications = require("expo-notifications");
 		Notifications.setNotificationHandler({
 			handleNotification: async () => ({
 				shouldShowAlert: true,
@@ -99,7 +99,8 @@ function RootLayoutNav() {
 	useEffect(() => {
 		if (!isAuthenticated || isExpoGo) return;
 
-		const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+		const Notifications = require("expo-notifications");
+		const subscription = Notifications.addNotificationResponseReceivedListener((response: any) => {
 			const data = response.notification.request.content.data;
 			
 			if (data.screen) {
@@ -144,6 +145,7 @@ function RootLayoutNav() {
 			if (!Device.isDevice || isExpoGo) return;
 
 			try {
+				const Notifications = require("expo-notifications");
 				const { status: existingStatus } = await Notifications.getPermissionsAsync();
 				let finalStatus = existingStatus;
 
