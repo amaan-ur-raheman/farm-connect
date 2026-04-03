@@ -148,7 +148,7 @@ function RootLayoutNav() {
 			if (userRole === "farmer") {
 				router.replace("/dashboard");
 			} else if (userRole === "investor") {
-				router.replace("/marketplace");
+				router.replace("/investor-dashboard");
 			}
 			return;
 		}
@@ -163,6 +163,7 @@ function RootLayoutNav() {
 				<Stack.Screen name="register" />
 				<Stack.Screen name="marketplace" />
 				<Stack.Screen name="dashboard" />
+				<Stack.Screen name="investor-dashboard" />
 				<Stack.Screen name="property/[id]" />
 				<Stack.Screen name="chat/index" />
 				<Stack.Screen name="chat/[id]" />
