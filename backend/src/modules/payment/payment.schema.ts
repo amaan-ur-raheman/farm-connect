@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+export const createOrderSchema = z.object({
+  contract_id: z.string().uuid(),
+  amount: z.number().positive(),
+});
+
 export const depositToEscrowSchema = z.object({
   contract_id: z.string().uuid(),
   amount: z.number().positive(),

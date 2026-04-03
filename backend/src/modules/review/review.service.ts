@@ -1,11 +1,16 @@
 import { prisma } from '@/config/database';
-import { NotFoundError, ConflictError } from '@/shared/errors';
+import { NotFoundError, ConflictError, ForbiddenError } from '@/shared/errors';
 import type { CreateReviewInput } from './review.schema';
 
 export const createReview = async (reviewerId: string, input: CreateReviewInput) => {
   const contract = await prisma.contract.findUnique({ where: { id: input.contract_id } });
   if (!contract) throw new NotFoundError('Contract');
   if (!['COMPLETED'].includes(contract.status)) throw new NotFoundError('Can only review completed contracts');
+
+  // Only parties to the contract can review
+  if (contract.farmer_id !== reviewerId && contract.consumer_id !== reviewerId) {
+    throw new ForbiddenError('You are not a party to this contract');
+  }
 
   const existing = await prisma.review.findUnique({
     where: { contract_id_reviewer_id: { contract_id: input.contract_id, reviewer_id: reviewerId } },

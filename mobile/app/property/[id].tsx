@@ -20,13 +20,8 @@ import {
   Leaf,
   Droplets,
   MessageSquare,
-  Phone,
   Star,
   Tractor,
-  Mail,
-  Instagram,
-  Twitter,
-  Facebook,
 } from 'lucide-react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Header } from '../../src/components/ui/Header';
@@ -382,14 +377,10 @@ export default function PropertyDetailScreen() {
                     <View className="flex-row gap-3 mt-4">
                       <TouchableOpacity
                         onPress={handleStartChat}
-                        className="flex-1 flex-row items-center justify-center py-3 bg-slate-50 dark:bg-slate-800 rounded-xl gap-2"
+                        className="flex-1 flex-row items-center justify-center py-3 bg-[#4cae4f] rounded-xl gap-2"
                       >
-                        <MessageSquare size={16} color="#4cae4f" />
-                        <Text className="text-xs font-bold text-slate-700 dark:text-slate-300">Chat</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity className="flex-1 flex-row items-center justify-center py-3 bg-slate-50 dark:bg-slate-800 rounded-xl gap-2">
-                        <Phone size={16} color="#4cae4f" />
-                        <Text className="text-xs font-bold text-slate-700 dark:text-slate-300">Call</Text>
+                        <MessageSquare size={16} color="white" />
+                        <Text className="text-xs font-bold text-white">Chat with Farmer</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -401,26 +392,11 @@ export default function PropertyDetailScreen() {
 
         {/* Footer */}
         <View className="bg-[#1e291e] px-4 py-8">
-          <View className="flex-row items-center justify-between gap-6 mb-8">
-            <View className="flex-row items-center gap-2">
-              <Tractor size={24} color="#4cae4f" />
-              <Text className="text-xl font-black text-white">FarmConnect</Text>
-            </View>
-            <View className="flex-row items-center gap-4">
-              <TouchableOpacity className="size-10 bg-slate-800 items-center justify-center rounded-full">
-                <Mail size={18} color="#94a3b8" />
-              </TouchableOpacity>
-              <TouchableOpacity className="size-10 bg-slate-800 items-center justify-center rounded-full">
-                <Instagram size={18} color="#94a3b8" />
-              </TouchableOpacity>
-              <TouchableOpacity className="size-10 bg-slate-800 items-center justify-center rounded-full">
-                <Twitter size={18} color="#94a3b8" />
-              </TouchableOpacity>
-              <TouchableOpacity className="size-10 bg-slate-800 items-center justify-center rounded-full">
-                <Facebook size={18} color="#94a3b8" />
-              </TouchableOpacity>
-            </View>
+          <View className="flex-row items-center justify-center gap-2 mb-8">
+            <Tractor size={24} color="#4cae4f" />
+            <Text className="text-xl font-black text-white">FarmConnect</Text>
           </View>
+          <Text className="text-center text-xs text-gray-500">Alpha v2.4.0 — Connecting Farmers with Investors</Text>
         </View>
       </ScrollView>
     </View>

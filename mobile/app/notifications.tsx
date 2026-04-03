@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator,
 import { Bell, CheckCircle, Clock, MessageSquare, AlertTriangle, Wallet, Package, ChevronLeft } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Notification } from '../src/config/api';
+import { useUnreadCounts } from './_layout';
 
 const typeIcons: Record<string, any> = {
   CONTRACT: Clock,
@@ -26,6 +27,7 @@ export default function NotificationsScreen() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { refreshUnreadCounts } = useUnreadCounts();
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -44,6 +46,7 @@ export default function NotificationsScreen() {
     try {
       await api.patch(`/api/notifications/${id}/read`);
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+      refreshUnreadCounts();
     } catch (err) {
       console.error('Failed to mark notification as read:', err);
     }
@@ -53,6 +56,7 @@ export default function NotificationsScreen() {
     try {
       await api.patch('/api/notifications/read-all');
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      refreshUnreadCounts();
     } catch (err) {
       console.error('Failed to mark all notifications as read:', err);
     }

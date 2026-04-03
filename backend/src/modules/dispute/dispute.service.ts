@@ -57,7 +57,7 @@ export const createDispute = async (
 	return dispute;
 };
 
-export const getUserDisputes = async (userId: string) => {
+export const getUserDisputes = async (userId: string, skip = 0, limit = 20) => {
 	return prisma.dispute.findMany({
 		where: {
 			OR: [
@@ -70,6 +70,8 @@ export const getUserDisputes = async (userId: string) => {
 			contract: { include: { listing: { select: { name: true } } } },
 		},
 		orderBy: { created_at: "desc" },
+		skip,
+		take: limit,
 	});
 };
 

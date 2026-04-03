@@ -7,9 +7,11 @@ import {
 	getEscrowLedger,
 } from "./escrow.service";
 import { releaseWageSchema } from "@/modules/payment/payment.schema";
+import { freezeEscrowSchema } from "@/modules/escrow/escrow.schema";
 import { validate } from "@/shared/middleware/validate";
 import { prisma } from "@/config/database";
-import { BadRequestError } from "@/shared/errors";
+import { BadRequestError, ForbiddenError } from "@/shared/errors";
+import sanitizeHtml from "sanitize-html";
 
 export const escrowRouter = Router();
 
@@ -42,7 +44,21 @@ escrowRouter.post(
 	"/contracts/:contractId/settle",
 	authenticate,
 	asyncHandler(async (req, res) => {
-		const result = await finalSettlement(req.params.contractId as string);
+		const contractId = req.params.contractId as string;
+		const userId = req.user!.userId;
+
+		// Verify caller is a party to the contract
+		const contract = await prisma.contract.findUnique({
+			where: { id: contractId },
+		});
+		if (!contract) {
+			throw new BadRequestError("Contract not found");
+		}
+		if (contract.farmer_id !== userId && contract.consumer_id !== userId) {
+			throw new ForbiddenError("You are not a party to this contract");
+		}
+
+		const result = await finalSettlement(contractId);
 		res.json({ success: true, data: result });
 	}),
 );
@@ -59,10 +75,15 @@ escrowRouter.get(
 escrowRouter.post(
 	"/contracts/:contractId/freeze",
 	authenticate,
+	validate(freezeEscrowSchema),
 	asyncHandler(async (req, res) => {
 		const { amount, reason, description } = req.body;
 		const contractId = req.params.contractId as string;
 		const reporterId = req.user!.userId;
+
+		// Sanitize text inputs
+		const sanitizedReason = sanitizeHtml(reason, { allowedTags: [] });
+		const sanitizedDescription = sanitizeHtml(description, { allowedTags: [] });
 
 		const result = await prisma.$transaction(async (tx) => {
 			const contract = await tx.contract.findUnique({
@@ -70,6 +91,19 @@ escrowRouter.post(
 			});
 			if (!contract) {
 				throw new BadRequestError("Contract not found");
+			}
+
+			// Verify caller is a party to the contract
+			if (contract.farmer_id !== reporterId && contract.consumer_id !== reporterId) {
+				throw new ForbiddenError("You are not a party to this contract");
+			}
+
+			// Check if dispute already exists
+			const existingDispute = await tx.dispute.findFirst({
+				where: { contract_id: contractId, status: { in: ["OPEN", "UNDER_REVIEW"] } },
+			});
+			if (existingDispute) {
+				throw new BadRequestError("A dispute already exists for this contract");
 			}
 
 			await tx.contract.update({
@@ -87,7 +121,7 @@ escrowRouter.post(
 					event: "DISPUTE_LOCK",
 					amount,
 					transaction_type: "DEBIT",
-					description: `Escrow frozen for dispute: ${reason}`,
+					description: `Escrow frozen for dispute: ${sanitizedReason}`,
 				},
 			});
 
@@ -95,8 +129,8 @@ escrowRouter.post(
 				data: {
 					contract_id: contractId,
 					reporter_id: reporterId,
-					reason,
-					description,
+					reason: sanitizedReason,
+					description: sanitizedDescription,
 					escrow_frozen: amount,
 					status: "OPEN",
 				},

@@ -10,6 +10,7 @@ import {
 } from './delivery.service';
 import { validate } from '@/shared/middleware/validate';
 import { createDeliverySchema, updateDeliveryStatusSchema, verifyDeliverySchema } from './delivery.schema';
+import { prisma } from '@/config/database';
 
 export const deliveryRouter = Router();
 
@@ -19,8 +20,18 @@ deliveryRouter.post('/', authenticate, requireRole('FARMER'), validate(createDel
 }));
 
 deliveryRouter.get('/', authenticate, asyncHandler(async (req, res) => {
-  const deliveries = await getUserDeliveries(req.user!.userId, req.user!.role);
-  res.json({ success: true, data: deliveries });
+  const page = Math.max(1, parseInt(req.query.page as string) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+  const skip = (page - 1) * limit;
+  const [deliveries, total] = await Promise.all([
+    getUserDeliveries(req.user!.userId, req.user!.role, skip, limit),
+    prisma.delivery.count({
+      where: {
+        contract: req.user!.role === 'FARMER' ? { farmer_id: req.user!.userId } : { consumer_id: req.user!.userId }
+      }
+    })
+  ]);
+  res.json({ success: true, data: deliveries, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
 }));
 
 deliveryRouter.get('/contract/:contractId', authenticate, asyncHandler(async (req, res) => {

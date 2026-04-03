@@ -2,15 +2,24 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
 import { Image } from 'expo-image';
 import { ChevronLeft, MessageSquare } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import api, { Conversation, ChatMessage } from '../../src/config/api';
 import { useSocketStore } from '../../src/stores';
+import { useUnreadCounts } from '../_layout';
 
 export default function ChatListScreen() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { socket } = useSocketStore();
+  const { refreshUnreadCounts } = useUnreadCounts();
+
+  // Reset chat badge when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      refreshUnreadCounts();
+    }, [refreshUnreadCounts])
+  );
 
   const fetchConversations = useCallback(async () => {
     try {

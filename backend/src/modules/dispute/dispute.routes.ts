@@ -9,6 +9,7 @@ import {
 } from "./dispute.service";
 import { validate } from "@/shared/middleware/validate";
 import { createDisputeSchema, resolveDisputeSchema } from "./dispute.schema";
+import { prisma } from "@/config/database";
 
 export const disputeRouter = Router();
 
@@ -27,8 +28,22 @@ disputeRouter.get(
 	"/",
 	authenticate,
 	asyncHandler(async (req, res) => {
-		const disputes = await getUserDisputes(req.user!.userId);
-		res.json({ success: true, data: disputes });
+		const page = Math.max(1, parseInt(req.query.page as string) || 1);
+		const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+		const skip = (page - 1) * limit;
+		const [disputes, total] = await Promise.all([
+			getUserDisputes(req.user!.userId, skip, limit),
+			prisma.dispute.count({
+				where: {
+					OR: [
+						{ reporter_id: req.user!.userId },
+						{ contract: { farmer_id: req.user!.userId } },
+						{ contract: { consumer_id: req.user!.userId } },
+					],
+				}
+			})
+		]);
+		res.json({ success: true, data: disputes, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
 	}),
 );
 

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import app from "./app";
 import { env } from "./config/env";
 import { prisma } from "./config/database";
+import { getRefreshToken } from "./config/redis";
 
 const httpServer = http.createServer(app);
 
@@ -14,14 +15,21 @@ export const io = new Server(httpServer, {
 	},
 });
 
-// Authenticate WebSocket connections via JWT
-io.use((socket, next) => {
+// Authenticate WebSocket connections via JWT with token revocation check
+io.use(async (socket, next) => {
 	const token = socket.handshake.auth?.token as string | undefined;
 	if (!token) {
 		return next(new Error("Unauthorized"));
 	}
 	try {
 		const payload = jwt.verify(token, env.jwt.secret) as { userId: string };
+
+		// Check if token is revoked (user logged out)
+		const storedToken = await getRefreshToken(payload.userId);
+		if (!storedToken) {
+			return next(new Error("Token revoked"));
+		}
+
 		socket.data.userId = payload.userId;
 		next();
 	} catch {

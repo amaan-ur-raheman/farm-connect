@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticate, requireRole } from '@/shared/middleware/auth';
 import { validate } from '@/shared/middleware/validate';
-import { createContractSchema } from './contract.schema';
+import { createContractSchema, contractActionSchema } from './contract.schema';
 import {
   createContractHandler,
   getContractHandler,
@@ -16,4 +16,4 @@ contractRouter.get('/farmer', authenticate, getFarmerContractsHandler);
 contractRouter.get('/consumer', authenticate, getConsumerContractsHandler);
 contractRouter.get('/:id', authenticate, getContractHandler);
 contractRouter.post('/', authenticate, requireRole('CONSUMER'), validate(createContractSchema), createContractHandler);
-contractRouter.post('/:id/action', authenticate, contractActionHandler);
+contractRouter.post('/:id/action', authenticate, validate(contractActionSchema), contractActionHandler);

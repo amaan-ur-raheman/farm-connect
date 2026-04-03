@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { authenticate, requireRole } from '@/shared/middleware/auth';
 import { asyncHandler } from '@/shared/middleware/handlers';
+import { validate } from '@/shared/middleware/validate';
+import { sanitizeFields } from '@/shared/middleware/sanitize';
+import { BadRequestError } from '@/shared/errors';
 import { createFarmUpdate, getContractUpdates } from './update.service';
 import multer from 'multer';
 import streamifier from 'streamifier';
@@ -27,10 +30,14 @@ uploadRouter.post(
   authenticate,
   requireRole('FARMER'),
   upload.single('media'),
+  sanitizeFields('caption'),
+  validate(createUpdateSchema),
   asyncHandler(async (req, res) => {
-    const { contract_id, caption } = createUpdateSchema.parse(req.body);
+    const { contract_id, caption } = req.body;
 
     let mediaUrl = '';
+    let mediaType: string | undefined;
+
     if (req.file) {
       const folder = `farmconnect/updates/${contract_id}`;
       mediaUrl = await new Promise<string>((resolve, reject) => {
@@ -40,6 +47,12 @@ uploadRouter.post(
         });
         streamifier.createReadStream(req.file!.buffer).pipe(stream);
       });
+      mediaType = req.file.mimetype.startsWith('video') ? 'video' : 'image';
+    }
+
+    // Reject updates without media
+    if (!mediaUrl) {
+      throw new BadRequestError('Media file is required for farm updates');
     }
 
     const update = await createFarmUpdate(
@@ -47,7 +60,7 @@ uploadRouter.post(
       contract_id,
       caption,
       mediaUrl,
-      req.file?.mimetype.startsWith('video') ? 'video' : 'image'
+      mediaType,
     );
 
     res.status(201).json({ success: true, data: update });

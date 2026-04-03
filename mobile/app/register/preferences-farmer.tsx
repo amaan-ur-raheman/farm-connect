@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Stack, router } from 'expo-router';
+import { validateIfsc, validateBankAccount, validateName, validateLocation } from '../../src/utils/validation';
 import {
   ChevronRight,
   ChevronLeft,
@@ -94,15 +95,48 @@ export default function FarmerPreferences() {
   };
 
   const validateFarmDetails = () => {
+    const nameCheck = validateName(localFarmDetails.farmName, 'Farm name');
+    if (!nameCheck.isValid) {
+      Alert.alert('Invalid Farm Name', nameCheck.error);
+      return false;
+    }
+    const locationCheck = validateLocation(localFarmDetails.location);
+    if (!locationCheck.isValid) {
+      Alert.alert('Invalid Location', locationCheck.error);
+      return false;
+    }
+    if (!localFarmDetails.farmSize) {
+      Alert.alert('Missing Farm Size', 'Please select your farm size.');
+      return false;
+    }
+    if (!localFarmDetails.farmingType) {
+      Alert.alert('Missing Farming Type', 'Please select your farming type.');
+      return false;
+    }
     return true;
   };
 
   const validateBank = () => {
+    const ifscCheck = validateIfsc(bankDetails.ifscCode);
+    if (!ifscCheck.isValid) {
+      Alert.alert('Invalid IFSC', ifscCheck.error);
+      return false;
+    }
+    const accountCheck = validateBankAccount(bankDetails.accountNumber);
+    if (!accountCheck.isValid) {
+      Alert.alert('Invalid Account', accountCheck.error);
+      return false;
+    }
+    if (!bankDetails.bankName || !bankDetails.bankName.trim()) {
+      Alert.alert('Invalid Bank Name', 'Bank name is required.');
+      return false;
+    }
     return true;
   };
 
   const handleNext = () => {
     if (step === 1) {
+      if (!validateFarmDetails()) return;
       setFarmerDetails({
         farmSize: localFarmDetails.farmSize,
         farmLocation: localFarmDetails.location,
@@ -116,10 +150,7 @@ export default function FarmerPreferences() {
   };
 
   const handleComplete = async () => {
-    if (!bankDetails.bankName || !bankDetails.accountNumber || !bankDetails.ifscCode) {
-      Alert.alert('Missing Bank Details', 'Please fill in all bank details.');
-      return;
-    }
+    if (!validateBank()) return;
     setIsSubmitting(true);
     try {
       const name = `${formData.firstName} ${formData.lastName}`.trim();

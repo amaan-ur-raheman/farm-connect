@@ -67,12 +67,14 @@ export const getContractDeliveries = async (contractId: string) => {
   });
 };
 
-export const getUserDeliveries = async (userId: string, role: string) => {
+export const getUserDeliveries = async (userId: string, role: string, skip = 0, limit = 20) => {
   return prisma.delivery.findMany({
     where: {
       contract: role === 'FARMER' ? { farmer_id: userId } : { consumer_id: userId }
     },
     orderBy: { created_at: 'desc' },
+    skip,
+    take: limit,
     include: {
       contract: {
         include: {

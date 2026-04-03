@@ -30,7 +30,7 @@ import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import { Button } from '../src/components/ui/Button';
 import api, { Contract, FarmUpdate } from '../src/config/api';
-import { useAuthStore } from '../src/stores/authStore';
+import { useAuthStore, useSocketStore } from '../src/stores';
 
 export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -41,6 +41,8 @@ export default function DashboardScreen() {
   const [loadingContracts, setLoadingContracts] = useState(true);
   const [payingWage, setPayingWage] = useState(false);
   const [wageAmount, setWageAmount] = useState('');
+
+  const { socket } = useSocketStore();
 
   const fetchData = useCallback(async () => {
     setLoadingContracts(true);
@@ -77,6 +79,24 @@ export default function DashboardScreen() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUpdate = () => {
+      fetchData();
+    };
+
+    socket.on('contract_update', handleUpdate);
+    socket.on('delivery_update', handleUpdate);
+    socket.on('new_notification', handleUpdate);
+
+    return () => {
+      socket.off('contract_update', handleUpdate);
+      socket.off('delivery_update', handleUpdate);
+      socket.off('new_notification', handleUpdate);
+    };
+  }, [socket, fetchData]);
 
   const handlePayWage = async () => {
     if (!selectedContract) return;

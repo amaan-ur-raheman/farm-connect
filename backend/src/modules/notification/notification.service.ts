@@ -1,5 +1,5 @@
 import { prisma } from "@/config/database";
-import { NotificationType, Prisma } from "@prisma/client";
+import { NotificationType, Prisma } from "@/generated";
 import { Expo } from "expo-server-sdk";
 import { io } from "@/server";
 

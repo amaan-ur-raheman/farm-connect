@@ -36,6 +36,7 @@ export default function RegisterStep1() {
 
   const { sendOtp, isLoading } = useAuthStore();
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const validateField = (field: string, value: string) => {
     let result;
@@ -96,6 +97,10 @@ export default function RegisterStep1() {
   };
 
   const handleContinue = async () => {
+    if (!agreedToTerms) {
+      Alert.alert('Terms Required', 'Please agree to the Terms of Service and Privacy Policy to continue.');
+      return;
+    }
     if (!validateForm()) {
       Alert.alert('Validation Error', 'Please fix the errors before continuing.');
       return;
@@ -295,15 +300,18 @@ export default function RegisterStep1() {
           </View>
 
           {/* Terms */}
-          <View className="flex-row items-start mt-6 gap-2">
-            <View className="size-5 mt-0.5 rounded border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]" />
+          <TouchableOpacity
+            onPress={() => setAgreedToTerms(!agreedToTerms)}
+            className="flex-row items-start mt-6 gap-2"
+          >
+            <View className={`size-5 mt-0.5 rounded border ${agreedToTerms ? 'bg-primary border-primary' : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'}`} />
             <Text className="flex-1 text-xs text-gray-500 dark:text-gray-400">
               I agree to the{' '}
               <Text className="text-primary font-medium">Terms of Service</Text>
               {' '}and{' '}
               <Text className="text-primary font-medium">Privacy Policy</Text>
             </Text>
-          </View>
+          </TouchableOpacity>
 
           {/* Continue Button */}
           <TouchableOpacity

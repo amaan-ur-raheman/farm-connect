@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Stack, router } from 'expo-router';
+import { validateIfsc, validateBankAccount, validateName } from '../../src/utils/validation';
 import {
   ChevronRight,
   ChevronLeft,
@@ -72,10 +73,36 @@ export default function InvestorPreferences() {
   };
 
   const validatePreferences = () => {
+    if (!investmentRange) {
+      Alert.alert('Missing Investment Range', 'Please select your investment range.');
+      return false;
+    }
+    if (!investmentGoals) {
+      Alert.alert('Missing Investment Goals', 'Please select your investment goals.');
+      return false;
+    }
     return true;
   };
 
   const validateBank = () => {
+    const ifscCheck = validateIfsc(bankDetails.ifscCode);
+    if (!ifscCheck.isValid) {
+      Alert.alert('Invalid IFSC', ifscCheck.error);
+      return false;
+    }
+    const accountCheck = validateBankAccount(bankDetails.accountNumber);
+    if (!accountCheck.isValid) {
+      Alert.alert('Invalid Account', accountCheck.error);
+      return false;
+    }
+    if (!bankDetails.accountHolderName || !bankDetails.accountHolderName.trim()) {
+      Alert.alert('Invalid Account Holder', 'Account holder name is required.');
+      return false;
+    }
+    if (!bankDetails.bankName || !bankDetails.bankName.trim()) {
+      Alert.alert('Invalid Bank Name', 'Bank name is required.');
+      return false;
+    }
     return true;
   };
 
@@ -92,10 +119,7 @@ export default function InvestorPreferences() {
   };
 
   const handleComplete = async () => {
-    if (!bankDetails.bankName || !bankDetails.accountNumber || !bankDetails.ifscCode) {
-      Alert.alert('Missing Bank Details', 'Please fill in all bank details.');
-      return;
-    }
+    if (!validateBank()) return;
     setIsSubmitting(true);
     try {
       const name = `${formData.firstName} ${formData.lastName}`.trim();

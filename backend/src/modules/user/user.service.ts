@@ -1,7 +1,7 @@
 import { prisma } from "@/config/database";
 import { NotFoundError } from "@/shared/errors";
 import type { UpdateProfileInput } from "./user.schema";
-import { KycStatus } from "@prisma/client";
+import { KycStatus } from "@/generated";
 
 export type KycDocumentType =
 	| "aadhaar_front"
@@ -116,6 +116,7 @@ export const getUserStats = async (userId: string) => {
 	const listings = await prisma.farmListing.findMany({
 		where: isFarmer ? { farmer_id: userId } : {},
 		select: { id: true, area_acres: true, status: true },
+		take: isFarmer ? undefined : 1000, // Limit consumer stats to prevent N+1
 	});
 
 	const totalAcres = listings.reduce((sum, l) => sum + l.area_acres, 0);

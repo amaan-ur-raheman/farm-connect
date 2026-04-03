@@ -278,6 +278,16 @@ exports.Prisma.ReviewScalarFieldEnum = {
   created_at: 'created_at'
 };
 
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  admin_id: 'admin_id',
+  action: 'action',
+  entity_type: 'entity_type',
+  entity_id: 'entity_id',
+  details: 'details',
+  created_at: 'created_at'
+};
+
 exports.Prisma.NotificationScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
@@ -425,6 +435,7 @@ exports.Prisma.ModelName = {
   Dispute: 'Dispute',
   WalletTransaction: 'WalletTransaction',
   Review: 'Review',
+  AuditLog: 'AuditLog',
   Notification: 'Notification',
   Conversation: 'Conversation',
   Message: 'Message'

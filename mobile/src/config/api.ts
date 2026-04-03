@@ -144,6 +144,7 @@ export interface AuthUser {
 	role: "FARMER" | "CONSUMER" | "ADMIN";
 	kyc_status: "PENDING" | "SUBMITTED" | "VERIFIED" | "REJECTED";
 	kyc_documents?: Record<string, { url: string; uploaded_at: string }>;
+	avatar_url?: string | null;
 	farm_size_acres?: number;
 	farm_type?: string;
 	crops_grown?: string[];

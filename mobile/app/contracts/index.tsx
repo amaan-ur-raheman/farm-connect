@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator,
 import { ChevronLeft, MapPin, Clock, CheckCircle, XCircle, MessageSquare, Package } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Contract } from '../../src/config/api';
-import { useAuthStore } from '../../src/stores/authStore';
+import { useAuthStore, useSocketStore } from '../../src/stores';
 
 const statusColors: Record<string, string> = {
   PENDING: '#f59e0b',
@@ -20,6 +20,8 @@ export default function ContractsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<string>('ALL');
 
+  const { socket } = useSocketStore();
+
   const fetchContracts = useCallback(async () => {
     try {
       const endpoint = userRole === 'farmer' ? '/api/contracts/farmer' : '/api/contracts/consumer';
@@ -33,6 +35,22 @@ export default function ContractsScreen() {
   }, [userRole]);
 
   useEffect(() => { fetchContracts(); }, [fetchContracts]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUpdate = () => {
+      fetchContracts();
+    };
+
+    socket.on('contract_update', handleUpdate);
+    socket.on('delivery_update', handleUpdate);
+
+    return () => {
+      socket.off('contract_update', handleUpdate);
+      socket.off('delivery_update', handleUpdate);
+    };
+  }, [socket, fetchContracts]);
 
   const onRefresh = () => {
     setRefreshing(true);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { Image } from 'expo-image';
-import { ChevronLeft, Plus, MapPin, Trash2 } from 'lucide-react-native';
+import { ChevronLeft, Plus, MapPin, Trash2, Pencil } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Listing } from '../../src/config/api';
 
@@ -124,6 +124,9 @@ export default function MyListingsScreen() {
                     <View className="flex-row gap-2">
                       <TouchableOpacity onPress={() => router.push(`/property/${listing.id}`)} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
                         <Text className="text-xs font-bold text-slate-600">View</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => router.push(`/listings/edit/${listing.id}`)} className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                        <Pencil size={16} color="#3b82f6" />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => handleDelete(listing.id)} className="p-2 bg-red-50 dark:bg-red-900/30 rounded-lg">
                         <Trash2 size={16} color="#ef4444" />

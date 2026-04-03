@@ -141,6 +141,7 @@ model User {
   messages              Message[]
   conversations_as_one  Conversation[] @relation("ParticipantOne")
   conversations_as_two  Conversation[] @relation("ParticipantTwo")
+  audit_logs            AuditLog[]
 
   @@index([phone])
   @@index([role])
@@ -304,6 +305,20 @@ model Review {
 
   @@unique([contract_id, reviewer_id])
   @@index([contract_id])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  admin_id    String
+  admin       User     @relation(fields: [admin_id], references: [id])
+  action      String
+  entity_type String
+  entity_id   String
+  details     Json?
+  created_at  DateTime @default(now())
+
+  @@index([admin_id])
+  @@index([entity_type, entity_id])
 }
 
 model Notification {

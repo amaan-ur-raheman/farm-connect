@@ -2,7 +2,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback, createContext, useContext } from "react";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
@@ -10,6 +10,25 @@ import "../src/global.css";
 import { useAuthStore, useSocketStore } from "../src/stores";
 import api from "../src/config/api";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
+
+// Context for unread counts (badges)
+interface UnreadCounts {
+	notifications: number;
+	chat: number;
+}
+
+interface UnreadCountsContextType {
+	unreadCounts: UnreadCounts;
+	refreshUnreadCounts: () => Promise<void>;
+}
+
+const UnreadCountsContext = createContext<UnreadCountsContextType | null>(null);
+
+export function useUnreadCounts() {
+	const ctx = useContext(UnreadCountsContext);
+	if (!ctx) throw new Error("useUnreadCounts must be used within RootLayoutNav");
+	return ctx;
+}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,14 +52,52 @@ function RootLayoutNav() {
 	const segments = useSegments();
 	const { isAuthenticated, userRole, setPushToken } = useAuthStore();
 	const { connect, disconnect } = useSocketStore();
+	const [unreadCounts, setUnreadCounts] = useState<UnreadCounts>({
+		notifications: 0,
+		chat: 0,
+	});
+
+	const refreshUnreadCounts = useCallback(async () => {
+		if (!isAuthenticated) return;
+		try {
+			const [notifRes, chatRes] = await Promise.all([
+				api.get<{ data: { count: number } }>("/api/notifications/unread-count").catch(() => ({ data: { data: { count: 0 } } })),
+				api.get<{ data: { count: number } }>("/api/chat/unread-count").catch(() => ({ data: { data: { count: 0 } } })),
+			]);
+			setUnreadCounts({
+				notifications: notifRes.data.data?.count || 0,
+				chat: chatRes.data.data?.count || 0,
+			});
+		} catch (err) {
+			console.log("Failed to refresh unread counts:", err);
+		}
+	}, [isAuthenticated]);
 
 	useEffect(() => {
 		if (isAuthenticated) {
 			connect();
+			refreshUnreadCounts();
 		} else {
 			disconnect();
+			setUnreadCounts({ notifications: 0, chat: 0 });
 		}
-	}, [isAuthenticated, connect, disconnect]);
+	}, [isAuthenticated, connect, disconnect, refreshUnreadCounts]);
+
+	// Poll unread counts every 30 seconds
+	useEffect(() => {
+		if (!isAuthenticated) return;
+		const interval = setInterval(refreshUnreadCounts, 30000);
+		return () => clearInterval(interval);
+	}, [isAuthenticated, refreshUnreadCounts]);
+
+	// Refresh unread counts when app comes to foreground
+	useEffect(() => {
+		if (!isAuthenticated) return;
+		const subscription = Notifications.addNotificationResponseReceivedListener(() => {
+			refreshUnreadCounts();
+		});
+		return () => subscription.remove();
+	}, [isAuthenticated, refreshUnreadCounts]);
 
 	useEffect(() => {
 		// Register push notifications silently
@@ -98,7 +155,7 @@ function RootLayoutNav() {
 	}, [isAuthenticated, userRole, segments]);
 
 	return (
-		<>
+		<UnreadCountsContext.Provider value={{ unreadCounts, refreshUnreadCounts }}>
 			<StatusBar hidden />
 			<Stack screenOptions={{ headerShown: false }}>
 				<Stack.Screen name="index" />
@@ -116,12 +173,13 @@ function RootLayoutNav() {
 				<Stack.Screen name="contracts/[id]" />
 				<Stack.Screen name="listings/index" />
 				<Stack.Screen name="listings/create" />
+				<Stack.Screen name="listings/edit/[id]" />
 				<Stack.Screen name="updates/[contractId]" />
 				<Stack.Screen name="deliveries" />
 				<Stack.Screen name="disputes" />
 				<Stack.Screen name="reviews" />
 			</Stack>
-		</>
+		</UnreadCountsContext.Provider>
 	);
 }
 

@@ -1,13 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { sanitizeText } from "@/shared/utils/sanitize";
+import { sanitizeText } from "../utils/sanitize";
 
-export const sanitizeFields =
-	(...fields: string[]) =>
-	(req: Request, _res: Response, next: NextFunction): void => {
-		for (const field of fields) {
-			if (typeof req.body?.[field] === "string") {
-				req.body[field] = sanitizeText(req.body[field]);
-			}
+/**
+ * Middleware to sanitize specific fields in the request body.
+ * Strips HTML tags and JS event attributes.
+ */
+export const sanitizeFields = (...fields: string[]) => {
+	return (req: Request, _res: Response, next: NextFunction) => {
+		if (req.body) {
+			fields.forEach((field) => {
+				if (req.body[field] && typeof req.body[field] === "string") {
+					req.body[field] = sanitizeText(req.body[field]);
+				}
+			});
 		}
 		next();
 	};
+};

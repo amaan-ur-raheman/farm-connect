@@ -5,6 +5,8 @@ import { releaseWageToFarmer, finalSettlement } from '@/modules/escrow/escrow.se
 import { authenticate } from '@/shared/middleware/auth';
 import { validate } from '@/shared/middleware/validate';
 import { createContractSchema, contractActionSchema } from './contract.schema';
+import { BadRequestError, ForbiddenError } from '@/shared/errors';
+import { prisma } from '@/config/database';
 
 export const createContractHandler = asyncHandler(async (req: Request, res: Response) => {
   const contract = await createContract(req.user!.userId, req.body);
@@ -31,15 +33,59 @@ export const contractActionHandler = asyncHandler(async (req: Request, res: Resp
   const { id } = req.params as { id: string };
   const userId = req.user!.userId;
 
+  // Verify user is a party to the contract before any action
+  const contract = await prisma.contract.findUnique({
+    where: { id },
+    select: { farmer_id: true, consumer_id: true },
+  });
+  if (!contract) {
+    throw new BadRequestError('Contract not found');
+  }
+  if (contract.farmer_id !== userId && contract.consumer_id !== userId) {
+    throw new ForbiddenError('You are not a party to this contract');
+  }
+
   let result;
   switch (action) {
-    case 'accept': result = await acceptContract(id, userId); break;
-    case 'reject': result = await rejectContract(id, userId); break;
-    case 'cancel': result = await cancelContract(id, userId); break;
-    case 'complete': result = await completeContract(id, userId); break;
-    case 'release_wage': result = await releaseWageToFarmer(id, userId, amount, description); break;
-    case 'settlement': result = await finalSettlement(id); break;
-    default: throw new Error('Invalid action');
+    case 'accept':
+      // Only farmer can accept
+      if (contract.farmer_id !== userId) {
+        throw new ForbiddenError('Only the farmer can accept this contract');
+      }
+      result = await acceptContract(id, userId);
+      break;
+    case 'reject':
+      // Only farmer can reject
+      if (contract.farmer_id !== userId) {
+        throw new ForbiddenError('Only the farmer can reject this contract');
+      }
+      result = await rejectContract(id, userId);
+      break;
+    case 'cancel':
+      result = await cancelContract(id, userId);
+      break;
+    case 'complete':
+      result = await completeContract(id, userId);
+      break;
+    case 'release_wage':
+      // Only farmer can release wages to themselves
+      if (contract.farmer_id !== userId) {
+        throw new ForbiddenError('Only the farmer can release wages');
+      }
+      if (!amount || amount <= 0) {
+        throw new BadRequestError('Amount is required and must be positive');
+      }
+      result = await releaseWageToFarmer(id, userId, amount, description);
+      break;
+    case 'settlement':
+      // Only farmer or consumer can settle
+      if (contract.farmer_id !== userId && contract.consumer_id !== userId) {
+        throw new ForbiddenError('Only contract parties can initiate settlement');
+      }
+      result = await finalSettlement(id);
+      break;
+    default:
+      throw new BadRequestError(`Invalid action: ${action}`);
   }
 
   res.json({ success: true, data: result });

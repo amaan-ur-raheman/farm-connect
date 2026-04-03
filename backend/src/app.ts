@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import compression from "compression";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
+import { randomUUID } from "crypto";
 import { env } from "@/config/env";
 import { errorHandler } from "@/shared/errors";
 import { asyncHandler, notFoundHandler } from "@/shared/middleware/handlers";
@@ -24,6 +26,16 @@ import { adminRouter } from "@/modules/admin/admin.routes";
 
 const app = express();
 app.set("trust proxy", 1);
+
+// Compression middleware for gzip responses
+app.use(compression());
+
+// Correlation ID middleware for request tracing
+app.use((req, _res, next) => {
+	req.id = randomUUID();
+	_res.setHeader("X-Request-ID", req.id);
+	next();
+});
 
 app.use(helmet());
 app.use(cors({ origin: env.corsOrigin, credentials: true }));

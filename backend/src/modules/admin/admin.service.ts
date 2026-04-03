@@ -2,6 +2,7 @@ import { prisma } from "@/config/database";
 import { getPendingKyc, verifyKyc, rejectKyc } from "@/modules/kyc/kyc.service";
 import { resolveDispute as resolveDisputeService } from "@/modules/dispute/dispute.service";
 import { ResolveDisputeInput } from "@/modules/dispute/dispute.schema";
+import { logAdminAction } from "./admin.logger";
 
 export const getAdminStats = async () => {
 	const [totalUsers, pendingKyc, openDisputes, activeContracts] = await Promise.all([
@@ -32,12 +33,16 @@ export const getKycApplications = async () => {
 	return getPendingKyc();
 };
 
-export const handleKycAction = async (userId: string, action: "APPROVE" | "REJECT", reason?: string) => {
+export const handleKycAction = async (adminId: string, userId: string, action: "APPROVE" | "REJECT", reason?: string) => {
+	let result;
 	if (action === "APPROVE") {
-		return verifyKyc(userId);
+		result = await verifyKyc(userId);
 	} else {
-		return rejectKyc(userId, reason || "Documents did not meet requirements.");
+		result = await rejectKyc(userId, reason || "Documents did not meet requirements.");
 	}
+
+	await logAdminAction(adminId, `KYC_${action}`, "USER", userId, { reason });
+	return result;
 };
 
 export const getAllDisputes = async () => {
@@ -57,5 +62,34 @@ export const getAllDisputes = async () => {
 };
 
 export const resolveAdminDispute = async (disputeId: string, adminId: string, input: ResolveDisputeInput) => {
-	return resolveDisputeService(disputeId, adminId, input);
+	const result = await resolveDisputeService(disputeId, adminId, input);
+	await logAdminAction(adminId, "DISPUTE_RESOLVE", "DISPUTE", disputeId, {
+		outcome: input.outcome,
+		resolution: input.resolution,
+	});
+	return result;
+};
+
+export const getAllUsers = async () => {
+	return prisma.user.findMany({
+		orderBy: { created_at: "desc" },
+		select: {
+			id: true,
+			name: true,
+			phone: true,
+			email: true,
+			role: true,
+			kyc_status: true,
+			created_at: true,
+		},
+	});
+};
+
+export const getAllListings = async () => {
+	return prisma.farmListing.findMany({
+		orderBy: { created_at: "desc" },
+		include: {
+			farmer: { select: { id: true, name: true, phone: true } },
+		},
+	});
 };
