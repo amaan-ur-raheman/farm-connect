@@ -8,11 +8,13 @@ import {
   getFarmerContractsHandler,
   getConsumerContractsHandler,
   contractActionHandler,
+  getConsumerStatsHandler,
 } from './contract.controller';
 
 export const contractRouter = Router();
 
 contractRouter.get('/farmer', authenticate, getFarmerContractsHandler);
+contractRouter.get('/consumer/stats', authenticate, getConsumerStatsHandler);
 contractRouter.get('/consumer', authenticate, getConsumerContractsHandler);
 contractRouter.get('/:id', authenticate, getContractHandler);
 contractRouter.post('/', authenticate, requireRole('CONSUMER'), validate(createContractSchema), createContractHandler);

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '@/shared/middleware/handlers';
-import { createContract, getContractById, getFarmerContracts, getConsumerContracts, acceptContract, rejectContract, cancelContract, completeContract } from './contract.service';
+import { createContract, getContractById, getFarmerContracts, getConsumerContracts, acceptContract, rejectContract, cancelContract, completeContract, getConsumerStats } from './contract.service';
 import { releaseWageToFarmer, finalSettlement } from '@/modules/escrow/escrow.service';
 import { authenticate } from '@/shared/middleware/auth';
 import { validate } from '@/shared/middleware/validate';
@@ -89,4 +89,9 @@ export const contractActionHandler = asyncHandler(async (req: Request, res: Resp
   }
 
   res.json({ success: true, data: result });
+});
+
+export const getConsumerStatsHandler = asyncHandler(async (req: Request, res: Response) => {
+  const stats = await getConsumerStats(req.user!.userId);
+  res.json({ success: true, data: stats });
 });

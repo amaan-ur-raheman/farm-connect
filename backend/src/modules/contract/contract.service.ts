@@ -137,3 +137,40 @@ export const completeContract = async (contractId: string, farmerId: string) => 
   io.to(contract.consumer_id).emit('contract_update', { type: 'completed', id: contractId });
   return updated;
 };
+
+export const getConsumerStats = async (consumerId: string) => {
+  const contracts = await prisma.contract.findMany({
+    where: { consumer_id: consumerId },
+    include: {
+      deliveries: { where: { status: 'VERIFIED' } },
+    },
+  });
+
+  const totalInvested = contracts
+    .filter(c => ['ACTIVE', 'COMPLETED'].includes(c.status))
+    .reduce((sum, c) => sum + c.total_amount, 0);
+
+  const activeInvestments = contracts.filter(c => c.status === 'ACTIVE').length;
+
+  const totalYield = contracts.reduce((sum, c) => {
+    const contractYield = c.deliveries.reduce((ySum, d) => ySum + (d.yield_amount_kg || 0), 0);
+    return sum + contractYield;
+  }, 0);
+
+  const recentUpdates = await prisma.farmUpdate.findMany({
+    where: { contract: { consumer_id: consumerId } },
+    include: { 
+      contract: { include: { listing: { select: { name: true } } } },
+      farmer: { select: { name: true, avatar_url: true } }
+    },
+    orderBy: { created_at: 'desc' },
+    take: 5,
+  });
+
+  return {
+    totalInvested,
+    activeInvestments,
+    totalYield,
+    recentUpdates,
+  };
+};
