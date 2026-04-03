@@ -13,11 +13,12 @@ import {
   Tractor,
   Video,
   Settings,
+  ArrowLeft,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useUiStore, useUserStore } from '../../stores';
 
-export type HeaderVariant = 'menu' | 'back-title' | 'back-avatar';
+export type HeaderVariant = 'menu' | 'back-title' | 'back-avatar' | 'back';
 
 interface HeaderProps {
   variant: HeaderVariant;
@@ -29,6 +30,7 @@ interface HeaderProps {
   onActionPress?: () => void;
   onAvatarPress?: () => void;
   onMenuPress?: () => void;
+  onBack?: () => void;
   showSearch?: boolean;
   onSearchToggle?: () => void;
   onSearchChange?: (text: string) => void;
@@ -44,6 +46,7 @@ export function Header({
   userImage,
   onActionPress,
   onAvatarPress,
+  onBack,
   showSearch,
   onSearchToggle,
   onSearchChange,
@@ -68,6 +71,22 @@ export function Header({
       <SafeAreaView className="bg-white dark:bg-[#1e291e] border-b border-[#eaf0ea] dark:border-[#2a382a]">
         <View className="h-16 px-4 flex-row items-center justify-between">
           {/* LEFT SECTION */}
+          {variant === 'back' && (
+            <View className="flex-row items-center gap-3">
+              <TouchableOpacity 
+                onPress={onBack || (() => router.back())}
+                className="size-10 bg-gray-50 dark:bg-gray-800 rounded-full items-center justify-center border border-gray-100 dark:border-gray-700"
+              >
+                <ArrowLeft size={20} color="#4cae4f" strokeWidth={2.5} />
+              </TouchableOpacity>
+              {title && (
+                <Text className="text-lg font-bold text-[#1e293b] dark:text-white uppercase tracking-tight">
+                  {title}
+                </Text>
+              )}
+            </View>
+          )}
+
           {variant === 'menu' && (
             <View className="flex-row items-center">
               {/* FarmConnect Logo - Consistent pill style */}
