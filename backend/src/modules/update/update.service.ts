@@ -7,6 +7,16 @@ export const createFarmUpdate = async (farmerId: string, contractId: string, cap
   if (!contract) throw new NotFoundError('Contract');
   if (contract.farmer_id !== farmerId) throw new ForbiddenError('Not your contract');
 
+  // Count existing updates to determine current cycle number
+  const updateCount = await prisma.farmUpdate.count({
+    where: { contract_id: contractId },
+  });
+
+  // Calculate release amount (simplified logic until total_cycles is explicitly added to schema)
+  const releaseAmount = contract.total_amount;
+
+  // Schedule release in 48 hours (in ms)
+  const DELAY_48_HOURS = 48 * 60 * 60 * 1000;
   const update = await prisma.farmUpdate.create({
     data: {
       contract_id: contractId,
@@ -19,11 +29,6 @@ export const createFarmUpdate = async (farmerId: string, contractId: string, cap
     },
   });
 
-  // Calculate release amount: total / total_cycles
-  const releaseAmount = contract.total_amount / (contract.total_cycles || 1);
-  
-  // Schedule release in 48 hours (in ms)
-  const DELAY_48_HOURS = 48 * 60 * 60 * 1000;
   await scheduleEscrowRelease(contractId, farmerId, update.id, releaseAmount, DELAY_48_HOURS);
 
   return update;

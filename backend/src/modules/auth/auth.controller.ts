@@ -3,6 +3,8 @@ import { asyncHandler } from '@/shared/middleware/handlers';
 import { sendOtp, verifyOtpAndLogin, refreshAccessToken, logout } from './auth.service';
 import { validate } from '@/shared/middleware/validate';
 import { sendOtpSchema, verifyOtpSchema, refreshTokenSchema } from './auth.schema';
+import { env } from '@/config/env';
+import { getOtp } from '@/config/redis';
 
 export const sendOtpHandler = asyncHandler(async (req: Request, res: Response) => {
   const result = await sendOtp(req.body);

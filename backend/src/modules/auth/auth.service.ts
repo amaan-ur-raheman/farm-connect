@@ -11,7 +11,7 @@ const generateOtp = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-export const sendOtp = async (input: SendOtpInput): Promise<{ message: string }> => {
+export const sendOtp = async (input: SendOtpInput): Promise<{ message: string, devOtp?: string }> => {
   const allowed = await checkOtpRateLimit(input.phone);
   if (!allowed) {
     throw new BadRequestError('Too many OTP requests. Please try again after an hour.');
@@ -20,22 +20,28 @@ export const sendOtp = async (input: SendOtpInput): Promise<{ message: string }>
   const otp = generateOtp();
   await setOtp(input.phone, otp);
 
-  // Always send real SMS if Twilio is configured, otherwise log to console
+  // Always log OTP to console FIRST (guaranteed to show)
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log(`🔑 OTP for ${input.phone}: ${otp}`);
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+  // Try to send SMS if Twilio is configured
   const twilioConfigured = env.twilio.accountSid && env.twilio.authToken && env.twilio.phoneNumber;
-  
+
   if (twilioConfigured) {
     try {
       await sendSmsOtp(input.phone, otp);
-      console.log(`📱 SMS sent to ${input.phone} via Twilio`);
+      console.log(`✅ SMS sent to ${input.phone} via Twilio`);
     } catch (smsError) {
-      console.error(`❌ Twilio SMS failed: ${smsError instanceof Error ? smsError.message : 'Unknown error'}`);
-      console.log(`💡 Fallback OTP for ${input.phone}: ${otp}`);
+      console.warn(`⚠️  SMS failed (${smsError instanceof Error ? smsError.message : 'Unknown error'})`);
+      console.warn(`💡 User will see OTP in app (dev mode only)`);
     }
-  } else {
-    console.log(`[DEV] OTP for ${input.phone}: ${otp}`);
   }
 
-  return { message: 'OTP sent successfully' };
+  return { 
+    message: 'OTP sent successfully',
+    ...(env.isDev ? { devOtp: otp } : {})
+  };
 };
 
 export const verifyOtpAndLogin = async (input: VerifyOtpInput): Promise<{
