@@ -10,6 +10,7 @@ import "../src/global.css";
 import { useAuthStore, useSocketStore } from "../src/stores";
 import api from "../src/config/api";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
+import { OfflineBanner } from "../src/components/ui/OfflineBanner";
 
 // Context for unread counts (badges)
 interface UnreadCounts {
@@ -32,19 +33,23 @@ export function useUnreadCounts() {
 
 SplashScreen.preventAutoHideAsync();
 
+const isExpoGo = Constants.appOwnership === "expo";
+
 // Show notifications when app is in foreground
-try {
-	Notifications.setNotificationHandler({
-		handleNotification: async () => ({
-			shouldShowAlert: true,
-			shouldPlaySound: true,
-			shouldSetBadge: false,
-			shouldShowBanner: true,
-			shouldShowList: true,
-		}),
-	});
-} catch (err) {
-	console.warn("Notifications setup failed:", err);
+if (!isExpoGo) {
+	try {
+		Notifications.setNotificationHandler({
+			handleNotification: async () => ({
+				shouldShowAlert: true,
+				shouldPlaySound: true,
+				shouldSetBadge: false,
+				shouldShowBanner: true,
+				shouldShowList: true,
+			}),
+		});
+	} catch (err) {
+		console.warn("Notifications setup failed:", err);
+	}
 }
 
 function RootLayoutNav() {
@@ -92,7 +97,7 @@ function RootLayoutNav() {
 
 	// Handle notification response (tap on notification) for deep linking
 	useEffect(() => {
-		if (!isAuthenticated) return;
+		if (!isAuthenticated || isExpoGo) return;
 
 		const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
 			const data = response.notification.request.content.data;
@@ -136,7 +141,7 @@ function RootLayoutNav() {
 	useEffect(() => {
 		// Register push notifications silently
 		(async () => {
-			if (!Device.isDevice) return;
+			if (!Device.isDevice || isExpoGo) return;
 
 			try {
 				const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -233,6 +238,7 @@ export default function RootLayout() {
 
 	return (
 		<ErrorBoundary>
+			<OfflineBanner />
 			<RootLayoutNav />
 		</ErrorBoundary>
 	);
