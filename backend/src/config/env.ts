@@ -50,7 +50,7 @@ try {
 export const env = {
   node: envConfig.NODE_ENV,
   port: parseInt(envConfig.PORT, 10),
-  corsOrigin: envConfig.CORS_ORIGIN,
+  corsOrigin: envConfig.CORS_ORIGIN.split(',').map(origin => origin.trim()) as string[],
 
   database: {
     url: envConfig.DATABASE_URL,

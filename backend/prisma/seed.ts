@@ -7,6 +7,7 @@ async function main() {
   console.log('🌱 Seeding database...');
 
   // Clean existing data
+  await prisma.auditLog.deleteMany();
   await prisma.message.deleteMany();
   await prisma.conversation.deleteMany();
   await prisma.notification.deleteMany();
@@ -20,7 +21,7 @@ async function main() {
   await prisma.farmListing.deleteMany();
   await prisma.user.deleteMany();
 
-  // Create farmers and investor...
+  // Create admin
   const admin = await prisma.user.create({
     data: {
       phone: '+910000000000',
@@ -51,6 +52,10 @@ async function main() {
       irrigation_type: 'Drip',
       years_of_experience: 15,
       soil_type: 'Black Cotton',
+      bank_name: 'State Bank of India',
+      bank_account_number: '30987654321',
+      bank_ifsc: 'SBIN0001234',
+      farm_name: 'Rajesh Green Farms',
     },
   });
 
@@ -68,6 +73,9 @@ async function main() {
       pincode: '400050',
       latitude: 19.0596,
       longitude: 72.8295,
+      investment_range: '5L - 20L',
+      investment_goals: ['High Returns', 'Organic Support'],
+      preferred_farm_types: ['Organic', 'Mixed', 'Hydroponic'],
     },
   });
 
@@ -91,6 +99,10 @@ async function main() {
       irrigation_type: 'Sprinkler',
       years_of_experience: 10,
       soil_type: 'Red Laterite',
+      bank_name: 'HDFC Bank',
+      bank_account_number: '50123456789',
+      bank_ifsc: 'HDFC0000123',
+      farm_name: 'Sunita Organic Estates',
     },
   });
 
@@ -252,7 +264,7 @@ async function main() {
     },
   });
 
-  // Create a delivery
+  // Create deliveries
   await prisma.delivery.create({
     data: {
       contract_id: contract.id,
@@ -264,6 +276,17 @@ async function main() {
     },
   });
 
+  await prisma.delivery.create({
+    data: {
+      contract_id: contract.id,
+      batch_number: 'BATCH-002',
+      yield_amount_kg: 1800,
+      quality_grade: 'A',
+      delivery_date: new Date('2024-04-10'),
+      status: 'IN_TRANSIT',
+    },
+  });
+
   // Create wallet transactions for farmer
   await prisma.walletTransaction.create({
     data: {
@@ -272,6 +295,18 @@ async function main() {
       amount: 20000,
       description: 'Wage release — January',
       balance_after: 20000,
+      status: 'SUCCESS',
+    },
+  });
+
+  await prisma.walletTransaction.create({
+    data: {
+      user_id: farmer.id,
+      type: 'CREDIT',
+      amount: 15000,
+      description: 'Advance payment — February',
+      balance_after: 35000,
+      status: 'PENDING',
     },
   });
 
@@ -332,6 +367,17 @@ async function main() {
       sender_id: farmer.id,
       text: 'The tomatoes are looking great this week!',
       read: true,
+    },
+  });
+
+  // Create audit log
+  await prisma.auditLog.create({
+    data: {
+      admin_id: admin.id,
+      action: 'USER_VERIFIED',
+      entity_type: 'USER',
+      entity_id: farmer.id,
+      details: { role: 'FARMER', kyc_status: 'VERIFIED' },
     },
   });
 

@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
+  TextInput as RNTextInput,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Alert,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { validateIfsc, validateBankAccount, validateName, validateLocation } from '../../src/utils/validation';
@@ -20,8 +21,10 @@ import {
   Wallet,
   Building2,
   CheckCircle,
+  FileText,
 } from 'lucide-react-native';
 import { useRegistrationStore } from '../../src/stores';
+import { Input } from '../../src/components/ui/Input';
 import api from '../../src/config/api';
 
 const FARM_SIZE_RANGES = [
@@ -69,7 +72,7 @@ export default function FarmerPreferences() {
   const { farmerDetails, setFarmerDetails, bankDetails, setBankDetails, formData, reset } = useRegistrationStore();
   
   const [localFarmDetails, setLocalFarmDetails] = useState({
-    farmName: farmerDetails?.farmLocation || '',
+    farmName: farmerDetails?.farmName || '',
     farmSize: farmerDetails?.farmSize || '',
     farmingType: farmerDetails?.farmType || '',
     experience: farmerDetails?.yearsOfExperience?.toString() || '',
@@ -78,6 +81,13 @@ export default function FarmerPreferences() {
   const [accountType, setAccountType] = useState<'checking' | 'savings'>('checking');
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Refs for Step 1
+  const farmLocationRef = useRef<RNTextInput>(null);
+  
+  // Refs for Step 2
+  const accountNumberRef = useRef<RNTextInput>(null);
+  const ifscRef = useRef<RNTextInput>(null);
 
   const updateFarm = (field: string, value: string) => {
     setLocalFarmDetails(prev => ({ ...prev, [field]: value }));
@@ -135,9 +145,11 @@ export default function FarmerPreferences() {
   };
 
   const handleNext = () => {
+    Keyboard.dismiss();
     if (step === 1) {
       if (!validateFarmDetails()) return;
       setFarmerDetails({
+        farmName: localFarmDetails.farmName,
         farmSize: localFarmDetails.farmSize,
         farmLocation: localFarmDetails.location,
         farmType: localFarmDetails.farmingType,
@@ -150,6 +162,7 @@ export default function FarmerPreferences() {
   };
 
   const handleComplete = async () => {
+    Keyboard.dismiss();
     if (!validateBank()) return;
     setIsSubmitting(true);
     try {
@@ -185,61 +198,69 @@ export default function FarmerPreferences() {
         <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
           <View className="h-full w-full bg-primary rounded-full" />
         </View>
-        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
           Step 3 of 3 • Farm Details
         </Text>
       </View>
 
       {/* Title */}
       <View className="flex-row items-center gap-3 mb-6">
-        <View className="size-12 rounded-full bg-primary/10 items-center justify-center">
-          <Sprout size={24} color="#2be619" />
+        <View className="size-12 rounded-2xl bg-primary/10 items-center justify-center">
+          <Sprout size={24} color="#4cae4f" strokeWidth={2.5} />
         </View>
         <View>
-          <Text className="text-xl font-bold text-text-main dark:text-white">
+          <Text className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
             Farm Details
           </Text>
-          <Text className="text-xs text-gray-500 dark:text-gray-400">
-            Tell us about your farm
+          <Text className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+            Tell us about your agricultural setup
           </Text>
         </View>
       </View>
 
       {/* Farm Form */}
-      <View className="gap-4">
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Farm Name
-          </Text>
-          <TextInput
-            value={localFarmDetails.farmName}
-            onChangeText={(v: string) => updateFarm('farmName', v)}
-            placeholder="Enter your farm name"
-            placeholderTextColor="#9ca3af"
-            className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
-          />
-        </View>
+      <View className="gap-1">
+        <Input
+          label="Farm Name"
+          value={localFarmDetails.farmName}
+          onChangeText={(v) => updateFarm('farmName', v)}
+          placeholder="e.g. Sahyadri Organic Farm"
+          icon={<FileText size={18} color="#9ca3af" />}
+          returnKeyType="next"
+          onSubmitEditing={() => farmLocationRef.current?.focus()}
+        />
+
+        <Input
+          ref={farmLocationRef}
+          label="Farm Location"
+          value={localFarmDetails.location}
+          onChangeText={(v) => updateFarm('location', v)}
+          placeholder="District, State"
+          icon={<MapPin size={18} color="#9ca3af" />}
+          returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
+        />
 
         {/* Farm Size */}
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Farm Size
+        <View className="mb-6">
+          <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
+            Total Land Area
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {FARM_SIZE_RANGES.map((range) => (
               <TouchableOpacity
                 key={range.value}
                 onPress={() => updateFarm('farmSize', range.value)}
-                className={`px-3 py-2 rounded-full border-2 transition-all ${
+                className={`px-4 py-2.5 rounded-full border-2 transition-all ${
                   localFarmDetails.farmSize === range.value
                     ? 'border-primary bg-primary'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
-                <Text className={`text-xs font-medium ${
+                <Text className={`text-xs font-bold ${
                   localFarmDetails.farmSize === range.value
                     ? 'text-white'
-                    : 'text-text-main dark:text-white'
+                    : 'text-slate-600 dark:text-gray-400'
                 }`}>
                   {range.label}
                 </Text>
@@ -249,25 +270,25 @@ export default function FarmerPreferences() {
         </View>
 
         {/* Farming Type */}
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Primary Farming Type
+        <View className="mb-6">
+          <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
+            Primary Farming Focus
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {FARMING_TYPES.map((type) => (
               <TouchableOpacity
                 key={type}
                 onPress={() => toggleFarmingType(type)}
-                className={`px-3 py-2 rounded-full border-2 transition-all ${
+                className={`px-4 py-2.5 rounded-full border-2 transition-all ${
                   localFarmDetails.farmingType === type
                     ? 'border-primary bg-primary'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
-                <Text className={`text-xs font-medium ${
+                <Text className={`text-xs font-bold ${
                   localFarmDetails.farmingType === type
                     ? 'text-white'
-                    : 'text-text-main dark:text-white'
+                    : 'text-slate-600 dark:text-gray-400'
                 }`}>
                   {type}
                 </Text>
@@ -277,60 +298,43 @@ export default function FarmerPreferences() {
         </View>
 
         {/* Experience */}
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Farming Experience
+        <View className="mb-6">
+          <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
+            Industry Experience
           </Text>
           <View className="flex-row gap-2">
             {FARMING_EXPERIENCE.map((exp) => (
               <TouchableOpacity
                 key={exp.label}
                 onPress={() => updateFarm('experience', exp.label)}
-                className={`flex-1 p-3 rounded-xl border-2 text-center transition-all ${
+                className={`flex-1 p-3 rounded-2xl border-2 text-center transition-all ${
                   localFarmDetails.experience === exp.label
                     ? 'border-primary bg-primary/5'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
-                <Text className={`text-xs font-medium ${
+                <Text className={`text-xs font-bold ${
                   localFarmDetails.experience === exp.label
                     ? 'text-primary'
-                    : 'text-text-main dark:text-white'
+                    : 'text-slate-600 dark:text-gray-400'
                 }`}>
                   {exp.label}
                 </Text>
-                <Text className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
+                <Text className="text-[10px] text-gray-500 dark:text-gray-500 mt-0.5 font-medium">
                   {exp.years}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
-
-        {/* Location */}
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Farm Location
-          </Text>
-          <View className="flex-row items-center bg-white dark:bg-[#1e291e] border border-[#eaf0ea] dark:border-[#2a382a] rounded-xl px-4">
-            <MapPin size={18} color="#9ca3af" />
-            <TextInput
-              value={localFarmDetails.location}
-              onChangeText={(v: string) => updateFarm('location', v)}
-              placeholder="Enter farm location"
-              placeholderTextColor="#9ca3af"
-              className="flex-1 py-3.5 ml-3 text-sm text-text-main dark:text-white"
-            />
-          </View>
-        </View>
       </View>
 
       <TouchableOpacity
         onPress={handleNext}
-        className="py-4 rounded-xl bg-primary flex-row items-center justify-center gap-2 mt-6"
+        className="py-4.5 rounded-2xl bg-primary flex-row items-center justify-center gap-2 mt-6 shadow-lg shadow-primary/20"
       >
-        <Text className="text-white font-semibold text-sm">Next: Bank Details</Text>
-        <ChevronRight size={18} color="white" />
+        <Text className="text-white font-bold text-base uppercase tracking-widest">Next Step</Text>
+        <ChevronRight size={20} color="white" strokeWidth={2.5} />
       </TouchableOpacity>
     </>
   );
@@ -342,74 +346,64 @@ export default function FarmerPreferences() {
         <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
           <View className="h-full w-full bg-primary rounded-full" />
         </View>
-        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Step 3 of 3 • Bank Details
+        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
+          Step 3 of 3 • Payout Methods
         </Text>
       </View>
 
       {/* Title */}
       <View className="flex-row items-center gap-3 mb-6">
-        <View className="size-12 rounded-full bg-primary/10 items-center justify-center">
-          <Wallet size={24} color="#2be619" />
+        <View className="size-12 rounded-2xl bg-primary/10 items-center justify-center">
+          <Wallet size={24} color="#4cae4f" strokeWidth={2.5} />
         </View>
         <View>
-          <Text className="text-xl font-bold text-text-main dark:text-white">
-            Bank Details
+          <Text className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
+            Bank Setup
           </Text>
-          <Text className="text-xs text-gray-500 dark:text-gray-400">
-            For receiving payments from investors
+          <Text className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+            Where you'll receive your farm funding
           </Text>
         </View>
       </View>
 
       {/* Bank Form */}
-      <View className="gap-4">
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Bank Name
-          </Text>
-          <View className="flex-row items-center bg-white dark:bg-[#1e291e] border border-[#eaf0ea] dark:border-[#2a382a] rounded-xl px-4">
-            <Building2 size={18} color="#9ca3af" />
-            <TextInput
-              value={bankDetails.bankName}
-              onChangeText={(v: string) => updateBank('bankName', v)}
-              placeholder="Enter bank name"
-              placeholderTextColor="#9ca3af"
-              className="flex-1 py-3.5 ml-3 text-sm text-text-main dark:text-white"
-            />
-          </View>
-        </View>
+      <View className="gap-1">
+        <Input
+          label="Bank Name"
+          value={bankDetails.bankName}
+          onChangeText={(v) => updateBank('bankName', v)}
+          placeholder="e.g. State Bank of India"
+          icon={<Building2 size={18} color="#9ca3af" />}
+          returnKeyType="next"
+          onSubmitEditing={() => accountNumberRef.current?.focus()}
+        />
 
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Account Number
-          </Text>
-          <TextInput
-            value={bankDetails.accountNumber}
-            onChangeText={(v: string) => updateBank('accountNumber', v)}
-            placeholder="Enter account number"
-            placeholderTextColor="#9ca3af"
-            keyboardType="numeric"
-            className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
-          />
-        </View>
+        <Input
+          ref={accountNumberRef}
+          label="Account Number"
+          value={bankDetails.accountNumber}
+          onChangeText={(v) => updateBank('accountNumber', v)}
+          placeholder="0000 0000 0000 0000"
+          keyboardType="numeric"
+          icon={<Wallet size={18} color="#9ca3af" />}
+          returnKeyType="next"
+          onSubmitEditing={() => ifscRef.current?.focus()}
+        />
 
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            IFSC Code
-          </Text>
-          <TextInput
-            value={bankDetails.ifscCode}
-            onChangeText={(v: string) => updateBank('ifscCode', v)}
-            placeholder="Enter IFSC code"
-            placeholderTextColor="#9ca3af"
-            autoCapitalize="characters"
-            className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
-          />
-        </View>
+        <Input
+          ref={ifscRef}
+          label="IFSC Code"
+          value={bankDetails.ifscCode}
+          onChangeText={(v) => updateBank('ifscCode', v)}
+          placeholder="SBIN0001234"
+          autoCapitalize="characters"
+          icon={<CheckCircle size={18} color="#9ca3af" />}
+          returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
+        />
 
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
+        <View className="mb-6">
+          <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
             Account Type
           </Text>
           <View className="flex-row gap-3">
@@ -417,16 +411,16 @@ export default function FarmerPreferences() {
               <TouchableOpacity
                 key={type}
                 onPress={() => setAccountType(type)}
-                className={`flex-1 py-3 rounded-xl border-2 text-center capitalize transition-all ${
+                className={`flex-1 py-4 rounded-2xl border-2 text-center capitalize transition-all ${
                   accountType === type
                     ? 'border-primary bg-primary/5'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
-                <Text className={`text-sm font-medium ${
+                <Text className={`text-sm font-bold uppercase tracking-widest ${
                   accountType === type
                     ? 'text-primary'
-                    : 'text-text-main dark:text-white'
+                    : 'text-slate-600 dark:text-gray-400'
                 }`}>
                   {type}
                 </Text>
@@ -437,25 +431,25 @@ export default function FarmerPreferences() {
       </View>
 
       {/* Navigation */}
-      <View className="flex-row gap-3 mt-6">
+      <View className="flex-row gap-3 mt-6 mb-10">
         <TouchableOpacity
           onPress={() => setStep(1)}
-          className="flex-1 py-4 rounded-xl bg-[#eaf0ea] dark:bg-[#2a382a] flex-row items-center justify-center gap-2"
+          className="flex-1 h-14 rounded-2xl bg-gray-100 dark:bg-[#2a382a] flex-row items-center justify-center gap-2"
         >
-          <ChevronLeft size={18} color="#4cae4f" />
-          <Text className="text-primary font-semibold text-sm">Back</Text>
+          <ChevronLeft size={18} color="#4cae4f" strokeWidth={2.5} />
+          <Text className="text-gray-600 dark:text-gray-300 font-bold uppercase tracking-widest text-xs">Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleComplete}
           disabled={isSubmitting}
-          className={`flex-[2] py-4 rounded-xl bg-primary flex-row items-center justify-center gap-2 ${isSubmitting ? 'opacity-60' : ''}`}
+          className={`flex-[2] h-14 rounded-2xl bg-primary flex-row items-center justify-center gap-2 shadow-lg shadow-primary/20 ${isSubmitting ? 'opacity-60' : ''}`}
         >
           {isSubmitting ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
             <>
-              <Text className="text-white font-semibold text-sm">Complete Registration</Text>
-              <CheckCircle size={18} color="white" />
+              <Text className="text-white font-bold uppercase tracking-widest text-xs">Finalize</Text>
+              <CheckCircle size={18} color="white" strokeWidth={2.5} />
             </>
           )}
         </TouchableOpacity>
@@ -464,19 +458,22 @@ export default function FarmerPreferences() {
   );
 
   return (
-    <>
+    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerClassName="flex-grow px-6 py-8"
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingTop: 32, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          alwaysBounceVertical={false}
         >
           {step === 1 ? renderStep1() : renderStep2()}
         </ScrollView>
       </KeyboardAvoidingView>
-    </>
+    </View>
   );
 }

@@ -8,8 +8,8 @@ interface CardProps extends ViewProps {
 
 export function Card({ title, subtitle, icon, children, className, ...props }: CardProps) {
   return (
-    <View 
-      className={`bg-white dark:bg-[#1a2c15] rounded-2xl p-6 shadow-sm border border-agri-border dark:border-slate-800 ${className}`}
+    <View
+      className={`bg-white dark:bg-[#1a2c15] rounded-2xl p-6 shadow-sm border border-agri-border dark:border-slate-800 ${className || ''}`}
       {...props}
     >
       {(title || subtitle || icon) && (

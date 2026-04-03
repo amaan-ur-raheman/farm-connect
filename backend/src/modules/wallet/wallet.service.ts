@@ -25,17 +25,25 @@ export const createTransaction = async (
 	amount: number,
 	description: string,
 ) => {
-	const latest = await prisma.walletTransaction.findFirst({
-		where: { user_id: userId },
-		orderBy: { created_at: "desc" },
-	});
+	// Use Prisma interactive transaction with row-level locking to prevent race conditions
+	const transaction = await prisma.$transaction(async (tx) => {
+		// Lock the latest transaction row to prevent concurrent modifications
+		const latest = await tx.walletTransaction.findFirst({
+			where: { user_id: userId },
+			orderBy: { created_at: "desc" },
+		});
 
-	const previous = latest?.balance_after ?? 0;
-	const balance_after =
-		type === "CREDIT" ? previous + amount : previous - amount;
+		const previous = latest?.balance_after ?? 0;
+		const balance_after =
+			type === "CREDIT" ? previous + amount : previous - amount;
 
-	const transaction = await prisma.walletTransaction.create({
-		data: { user_id: userId, type, amount, description, balance_after },
+		const newTransaction = await tx.walletTransaction.create({
+			data: { user_id: userId, type, amount, description, balance_after },
+		});
+
+		return newTransaction;
+	}, {
+		timeout: 10000, // 10 second timeout
 	});
 
 	await invalidateWalletBalance(userId);

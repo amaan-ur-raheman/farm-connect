@@ -8,6 +8,283 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                       String              @id @default(uuid())
+  phone                    String              @unique
+  name                     String?
+  email                    String?             @unique
+  avatar_url               String?
+  role                     UserRole            @default(FARMER)
+  kyc_status               KycStatus           @default(PENDING)
+  kyc_documents            Json?
+  razorpay_customer_id     String?             @unique
+  razorpay_fund_account_id String?
+  address                  String?
+  city                     String?
+  state                    String?
+  pincode                  String?
+  latitude                 Float?
+  longitude                Float?
+  refresh_token            String?
+  expo_push_token          String?
+  otp                      String?
+  otp_expires_at           DateTime?
+  created_at               DateTime            @default(now())
+  updated_at               DateTime            @updatedAt
+  farm_size_acres          Float?
+  farm_type                String?
+  crops_grown              String[]
+  irrigation_type          String?
+  years_of_experience      Int?
+  land_records_url         String?
+  soil_type                String?
+  bank_account_number      String?
+  bank_ifsc                String?
+  bank_name                String?
+  farm_name                String?
+  investment_goals         String[]
+  investment_range         String?
+  preferred_farm_types     String[]
+  audit_logs               AuditLog[]
+  contracts_as_consumer    Contract[]          @relation("ConsumerContracts")
+  contracts_as_farmer      Contract[]          @relation("FarmerContracts")
+  conversations_as_one     Conversation[]      @relation("ParticipantOne")
+  conversations_as_two     Conversation[]      @relation("ParticipantTwo")
+  disputes                 Dispute[]
+  escrow_entries           EscrowLedger[]
+  farm_listings            FarmListing[]
+  farm_updates             FarmUpdate[]
+  messages                 Message[]
+  notifications            Notification[]
+  reviews                  Review[]
+  wallet_transactions      WalletTransaction[]
+
+  @@index([phone])
+  @@index([role])
+}
+
+model FarmListing {
+  id                      String        @id @default(uuid())
+  farmer_id               String
+  name                    String
+  description             String?
+  area_acres              Float
+  price_per_acre          Float
+  crops                   String[]
+  location_name           String
+  latitude                Float
+  longitude               Float
+  soil_type               String?
+  irrigation_type         String?
+  is_organic              Boolean       @default(false)
+  organic_cert_url        String?
+  expected_harvest_month  String?
+  expected_yield_per_acre Float?
+  images                  String[]
+  status                  ListingStatus @default(DRAFT)
+  views                   Int           @default(0)
+  created_at              DateTime      @default(now())
+  updated_at              DateTime      @updatedAt
+  contracts               Contract[]
+  farmer                  User          @relation(fields: [farmer_id], references: [id], onDelete: Cascade)
+
+  @@index([farmer_id])
+  @@index([status])
+  @@index([is_organic])
+}
+
+model Contract {
+  id             String         @id @default(uuid())
+  listing_id     String
+  farmer_id      String
+  consumer_id    String
+  crop           String
+  acreage        Float
+  price_per_acre Float
+  total_amount   Float
+  total_cycles   Int            @default(4)
+  start_date     DateTime
+  end_date       DateTime
+  status         ContractStatus @default(PENDING)
+  escrow_held    Float          @default(0)
+  farmer_paid    Float          @default(0)
+  escrow_frozen  Float          @default(0)
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  consumer       User           @relation("ConsumerContracts", fields: [consumer_id], references: [id])
+  farmer         User           @relation("FarmerContracts", fields: [farmer_id], references: [id])
+  listing        FarmListing    @relation(fields: [listing_id], references: [id], onDelete: Cascade)
+  conversations  Conversation[]
+  deliveries     Delivery[]
+  disputes       Dispute[]
+  escrow_entries EscrowLedger[]
+  farm_updates   FarmUpdate[]
+
+  @@index([farmer_id])
+  @@index([consumer_id])
+  @@index([status])
+}
+
+model FarmUpdate {
+  id            String   @id @default(uuid())
+  contract_id   String
+  farmer_id     String
+  media_url     String
+  media_type    String
+  caption       String?
+  wage_released Float    @default(0)
+  latitude      Float?
+  longitude     Float?
+  created_at    DateTime @default(now())
+  contract      Contract @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  farmer        User     @relation(fields: [farmer_id], references: [id])
+
+  @@index([contract_id])
+}
+
+model EscrowLedger {
+  id                  String          @id @default(uuid())
+  contract_id         String
+  user_id             String
+  event               EscrowEvent
+  amount              Float
+  transaction_type    TransactionType
+  description         String?
+  razorpay_payment_id String?
+  created_at          DateTime        @default(now())
+  contract            Contract        @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  user                User            @relation(fields: [user_id], references: [id])
+
+  @@index([contract_id])
+}
+
+model Delivery {
+  id                 String         @id @default(uuid())
+  contract_id        String
+  batch_number       String?
+  yield_amount_kg    Float?
+  quality_grade      String?
+  delivery_date      DateTime?
+  delivery_proof_url String?
+  organic_verified   Boolean        @default(false)
+  status             DeliveryStatus @default(PENDING)
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+  contract           Contract       @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+
+  @@index([contract_id])
+}
+
+model Dispute {
+  id            String        @id @default(uuid())
+  contract_id   String
+  reporter_id   String
+  reason        String
+  description   String?
+  evidence_urls String[]
+  escrow_frozen Float         @default(0)
+  status        DisputeStatus @default(OPEN)
+  resolution    String?
+  resolved_at   DateTime?
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+  contract      Contract      @relation(fields: [contract_id], references: [id], onDelete: Cascade)
+  reporter      User          @relation(fields: [reporter_id], references: [id])
+
+  @@index([contract_id])
+}
+
+model WalletTransaction {
+  id                 String                  @id @default(uuid())
+  user_id            String
+  type               TransactionType
+  amount             Float
+  description        String?
+  balance_after      Float
+  razorpay_payout_id String?
+  created_at         DateTime                @default(now())
+  status             WalletTransactionStatus @default(SUCCESS)
+  user               User                    @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  contract_id String
+  reviewer_id String
+  rating      Int
+  comment     String?
+  created_at  DateTime @default(now())
+  reviewer    User     @relation(fields: [reviewer_id], references: [id])
+
+  @@unique([contract_id, reviewer_id])
+  @@index([contract_id])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  admin_id    String
+  action      String
+  entity_type String
+  entity_id   String
+  details     Json?
+  created_at  DateTime @default(now())
+  admin       User     @relation(fields: [admin_id], references: [id])
+
+  @@index([admin_id])
+  @@index([entity_type, entity_id])
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  user_id    String
+  type       NotificationType
+  title      String
+  message    String
+  read       Boolean          @default(false)
+  data       Json?
+  created_at DateTime         @default(now())
+  user       User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([read])
+}
+
+model Conversation {
+  id                 String    @id @default(uuid())
+  participant_one_id String
+  participant_two_id String
+  contract_id        String?
+  last_message       String?
+  last_message_at    DateTime?
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  contract           Contract? @relation(fields: [contract_id], references: [id])
+  participant_one    User      @relation("ParticipantOne", fields: [participant_one_id], references: [id])
+  participant_two    User      @relation("ParticipantTwo", fields: [participant_two_id], references: [id])
+  messages           Message[]
+
+  @@unique([participant_one_id, participant_two_id])
+  @@index([participant_one_id])
+  @@index([participant_two_id])
+}
+
+model Message {
+  id              String       @id @default(uuid())
+  conversation_id String
+  sender_id       String
+  text            String?
+  media_url       String?
+  read            Boolean      @default(false)
+  created_at      DateTime     @default(now())
+  conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  sender          User         @relation(fields: [sender_id], references: [id])
+
+  @@index([conversation_id])
+  @@index([sender_id])
+}
+
 enum UserRole {
   FARMER
   CONSUMER
@@ -47,9 +324,9 @@ enum EscrowEvent {
 enum DeliveryStatus {
   PENDING
   HARVESTED
-  IN_TRANSIT
   DELIVERED
   VERIFIED
+  IN_TRANSIT
   REJECTED
 }
 
@@ -86,287 +363,4 @@ enum NotificationType {
   FARM_UPDATE
   NEW_MESSAGE
   GENERAL
-}
-
-model User {
-  id                       String    @id @default(uuid())
-  phone                    String    @unique
-  name                     String?
-  email                    String?   @unique
-  avatar_url               String?
-  role                     UserRole  @default(FARMER)
-  kyc_status               KycStatus @default(PENDING)
-  kyc_documents            Json?
-  razorpay_customer_id     String?   @unique
-  razorpay_fund_account_id String?
-  address                  String?
-  city                     String?
-  state                    String?
-  pincode                  String?
-  latitude                 Float?
-  longitude                Float?
-  refresh_token            String?
-  expo_push_token          String?
-  otp                      String?
-  otp_expires_at           DateTime?
-  created_at               DateTime  @default(now())
-  updated_at               DateTime  @updatedAt
-
-  farm_size_acres     Float?
-  farm_type           String?
-  crops_grown         String[]
-  irrigation_type     String?
-  years_of_experience Int?
-  land_records_url    String?
-  soil_type           String?
-
-  investment_range     String?
-  investment_goals     String[]
-  preferred_farm_types String[]
-
-  bank_name           String?
-  bank_account_number String?
-  bank_ifsc           String?
-  farm_name           String?
-
-  farm_listings         FarmListing[]
-  contracts_as_farmer   Contract[]          @relation("FarmerContracts")
-  contracts_as_consumer Contract[]          @relation("ConsumerContracts")
-  farm_updates          FarmUpdate[]
-  escrow_entries        EscrowLedger[]
-  disputes              Dispute[]
-  wallet_transactions   WalletTransaction[]
-  reviews               Review[]
-  notifications         Notification[]
-  messages              Message[]
-  conversations_as_one  Conversation[]      @relation("ParticipantOne")
-  conversations_as_two  Conversation[]      @relation("ParticipantTwo")
-  audit_logs            AuditLog[]
-
-  @@index([phone])
-  @@index([role])
-}
-
-model FarmListing {
-  id                      String        @id @default(uuid())
-  farmer_id               String
-  farmer                  User          @relation(fields: [farmer_id], references: [id], onDelete: Cascade)
-  name                    String
-  description             String?
-  area_acres              Float
-  price_per_acre          Float
-  crops                   String[]
-  location_name           String
-  latitude                Float
-  longitude               Float
-  soil_type               String?
-  irrigation_type         String?
-  is_organic              Boolean       @default(false)
-  organic_cert_url        String?
-  expected_harvest_month  String?
-  expected_yield_per_acre Float?
-  images                  String[]
-  status                  ListingStatus @default(DRAFT)
-  views                   Int           @default(0)
-  created_at              DateTime      @default(now())
-  updated_at              DateTime      @updatedAt
-
-  contracts Contract[]
-
-  @@index([farmer_id])
-  @@index([status])
-  @@index([is_organic])
-}
-
-model Contract {
-  id             String         @id @default(uuid())
-  listing_id     String
-  listing        FarmListing    @relation(fields: [listing_id], references: [id], onDelete: Cascade)
-  farmer_id      String
-  farmer         User           @relation("FarmerContracts", fields: [farmer_id], references: [id])
-  consumer_id    String
-  consumer       User           @relation("ConsumerContracts", fields: [consumer_id], references: [id])
-  crop           String
-  acreage        Float
-  price_per_acre Float
-  total_amount   Float
-  start_date     DateTime
-  end_date       DateTime
-  status         ContractStatus @default(PENDING)
-  escrow_held    Float          @default(0)
-  farmer_paid    Float          @default(0)
-  escrow_frozen  Float          @default(0)
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
-
-  farm_updates   FarmUpdate[]
-  escrow_entries EscrowLedger[]
-  deliveries     Delivery[]
-  disputes       Dispute[]
-  conversations  Conversation[]
-
-  @@index([farmer_id])
-  @@index([consumer_id])
-  @@index([status])
-}
-
-model FarmUpdate {
-  id            String   @id @default(uuid())
-  contract_id   String
-  contract      Contract @relation(fields: [contract_id], references: [id], onDelete: Cascade)
-  farmer_id     String
-  farmer        User     @relation(fields: [farmer_id], references: [id])
-  media_url     String
-  media_type    String
-  caption       String?
-  wage_released Float    @default(0)
-  latitude      Float?
-  longitude     Float?
-  created_at    DateTime @default(now())
-
-  @@index([contract_id])
-}
-
-model EscrowLedger {
-  id                  String          @id @default(uuid())
-  contract_id         String
-  contract            Contract        @relation(fields: [contract_id], references: [id], onDelete: Cascade)
-  user_id             String
-  user                User            @relation(fields: [user_id], references: [id])
-  event               EscrowEvent
-  amount              Float
-  transaction_type    TransactionType
-  description         String?
-  razorpay_payment_id String?
-  created_at          DateTime        @default(now())
-
-  @@index([contract_id])
-}
-
-model Delivery {
-  id                 String         @id @default(uuid())
-  contract_id        String
-  contract           Contract       @relation(fields: [contract_id], references: [id], onDelete: Cascade)
-  batch_number       String?
-  yield_amount_kg    Float?
-  quality_grade      String?
-  delivery_date      DateTime?
-  delivery_proof_url String?
-  organic_verified   Boolean        @default(false)
-  status             DeliveryStatus @default(PENDING)
-  created_at         DateTime       @default(now())
-  updated_at         DateTime       @updatedAt
-
-  @@index([contract_id])
-}
-
-model Dispute {
-  id            String        @id @default(uuid())
-  contract_id   String
-  contract      Contract      @relation(fields: [contract_id], references: [id], onDelete: Cascade)
-  reporter_id   String
-  reporter      User          @relation(fields: [reporter_id], references: [id])
-  reason        String
-  description   String?
-  evidence_urls String[]
-  escrow_frozen Float         @default(0)
-  status        DisputeStatus @default(OPEN)
-  resolution    String?
-  resolved_at   DateTime?
-  created_at    DateTime      @default(now())
-  updated_at    DateTime      @updatedAt
-
-  @@index([contract_id])
-}
-
-model WalletTransaction {
-  id                 String                  @id @default(uuid())
-  user_id            String
-  user               User                    @relation(fields: [user_id], references: [id])
-  type               TransactionType
-  status             WalletTransactionStatus @default(SUCCESS)
-  amount             Float
-  description        String?
-  balance_after      Float
-  razorpay_payout_id String?
-  created_at         DateTime                @default(now())
-
-  @@index([user_id])
-}
-
-model Review {
-  id          String   @id @default(uuid())
-  contract_id String
-  reviewer_id String
-  reviewer    User     @relation(fields: [reviewer_id], references: [id])
-  rating      Int
-  comment     String?
-  created_at  DateTime @default(now())
-
-  @@unique([contract_id, reviewer_id])
-  @@index([contract_id])
-}
-
-model AuditLog {
-  id          String   @id @default(uuid())
-  admin_id    String
-  admin       User     @relation(fields: [admin_id], references: [id])
-  action      String
-  entity_type String
-  entity_id   String
-  details     Json?
-  created_at  DateTime @default(now())
-
-  @@index([admin_id])
-  @@index([entity_type, entity_id])
-}
-
-model Notification {
-  id         String           @id @default(uuid())
-  user_id    String
-  user       User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  type       NotificationType
-  title      String
-  message    String
-  read       Boolean          @default(false)
-  data       Json?
-  created_at DateTime         @default(now())
-
-  @@index([user_id])
-  @@index([read])
-}
-
-model Conversation {
-  id                 String    @id @default(uuid())
-  participant_one_id String
-  participant_one    User      @relation("ParticipantOne", fields: [participant_one_id], references: [id])
-  participant_two_id String
-  participant_two    User      @relation("ParticipantTwo", fields: [participant_two_id], references: [id])
-  contract_id        String?
-  contract           Contract? @relation(fields: [contract_id], references: [id])
-  last_message       String?
-  last_message_at    DateTime?
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-
-  messages Message[]
-
-  @@unique([participant_one_id, participant_two_id])
-  @@index([participant_one_id])
-  @@index([participant_two_id])
-}
-
-model Message {
-  id              String       @id @default(uuid())
-  conversation_id String
-  conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
-  sender_id       String
-  sender          User         @relation(fields: [sender_id], references: [id])
-  text            String?
-  media_url       String?
-  read            Boolean      @default(false)
-  created_at      DateTime     @default(now())
-
-  @@index([conversation_id])
-  @@index([sender_id])
 }

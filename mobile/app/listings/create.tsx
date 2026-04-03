@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, StatusBar, Alert, ActivityIndicator, Switch, Image } from 'react-native';
-import { ChevronLeft, ChevronRight, Camera, MapPin, X } from 'lucide-react-native';
+import React, { useState, useRef } from 'react';
+import { 
+  View, 
+  Text, 
+  ScrollView, 
+  TouchableOpacity, 
+  TextInput as RNTextInput, 
+  StatusBar, 
+  Alert, 
+  ActivityIndicator, 
+  Switch, 
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback
+} from 'react-native';
+import { ChevronLeft, ChevronRight, Camera, MapPin, X, FileText, Info, IndianRupee, Layers } from 'lucide-react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import api from '../../src/config/api';
+import { Input } from '../../src/components/ui/Input';
 
 const IRRIGATION_TYPES = ['Drip', 'Sprinkler', 'Flood', 'Rainfed', 'Manual'];
 const SOIL_TYPES = ['Alluvial', 'Black', 'Red', 'Laterite', 'Sandy', 'Clay'];
@@ -24,6 +40,14 @@ export default function CreateListingScreen() {
     expected_harvest_month: '',
   });
   const [images, setImages] = useState<string[]>([]);
+
+  // Refs for navigation
+  const descriptionRef = useRef<RNTextInput>(null);
+  const areaRef = useRef<RNTextInput>(null);
+  const priceRef = useRef<RNTextInput>(null);
+  const locationRef = useRef<RNTextInput>(null);
+  const cropsRef = useRef<RNTextInput>(null);
+  const harvestRef = useRef<RNTextInput>(null);
 
   const updateForm = (field: string, value: string | boolean) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -47,6 +71,7 @@ export default function CreateListingScreen() {
   };
 
   const handleSubmit = async () => {
+    Keyboard.dismiss();
     if (!form.name || !form.area_acres || !form.price_per_acre || !form.location_name) {
       Alert.alert('Missing Fields', 'Please fill in all required fields.');
       return;
@@ -71,7 +96,8 @@ export default function CreateListingScreen() {
       // Upload images
       for (const uri of images) {
         const formData = new FormData();
-        formData.append('image', { uri, name: 'listing.jpg', type: 'image/jpeg' } as any);
+        // @ts-ignore
+        formData.append('image', { uri, name: 'listing.jpg', type: 'image/jpeg' });
         try {
           await api.post(`/api/listings/${listingId}/upload-image`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
@@ -92,137 +118,243 @@ export default function CreateListingScreen() {
   };
 
   const renderStep1 = () => (
-    <View className="gap-4">
-      <Text className="text-xl font-bold text-slate-900 dark:text-white mb-2">Basic Information</Text>
-      <View>
-        <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Listing Name *</Text>
-        <TextInput value={form.name} onChangeText={(v: string) => updateForm('name', v)} placeholder="e.g., Sahyadri Farms - Plot #14" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
-      </View>
-      <View>
-        <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Description</Text>
-        <TextInput value={form.description} onChangeText={(v: string) => updateForm('description', v)} placeholder="Describe your farm..." placeholderTextColor="#9ca3af" multiline numberOfLines={4} className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" style={{ textAlignVertical: 'top' }} />
-      </View>
+    <View className="gap-1">
+      <Text className="text-xl font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-tight">Basic Information</Text>
+      
+      <Input
+        label="Listing Name *"
+        value={form.name}
+        onChangeText={(v) => updateForm('name', v)}
+        placeholder="e.g., Sahyadri Farms - Plot #14"
+        icon={<FileText size={18} color="#9ca3af" />}
+        returnKeyType="next"
+        onSubmitEditing={() => descriptionRef.current?.focus()}
+      />
+
+      <Input
+        ref={descriptionRef}
+        label="Description"
+        value={form.description}
+        onChangeText={(v) => updateForm('description', v)}
+        placeholder="Describe soil quality, history, etc..."
+        multiline
+        numberOfLines={3}
+        className="min-h-[100px]"
+        style={{ textAlignVertical: 'top' }}
+      />
+
       <View className="flex-row gap-3">
         <View className="flex-1">
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Area (Acres) *</Text>
-          <TextInput value={form.area_acres} onChangeText={(v: string) => updateForm('area_acres', v)} placeholder="45.8" placeholderTextColor="#9ca3af" keyboardType="numeric" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+          <Input
+            ref={areaRef}
+            label="Area (Acres) *"
+            value={form.area_acres}
+            onChangeText={(v) => updateForm('area_acres', v)}
+            placeholder="0.0"
+            keyboardType="numeric"
+            icon={<Layers size={18} color="#9ca3af" />}
+            returnKeyType="next"
+            onSubmitEditing={() => priceRef.current?.focus()}
+          />
         </View>
         <View className="flex-1">
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Price/Acre (₹) *</Text>
-          <TextInput value={form.price_per_acre} onChangeText={(v: string) => updateForm('price_per_acre', v)} placeholder="25000" placeholderTextColor="#9ca3af" keyboardType="numeric" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+          <Input
+            ref={priceRef}
+            label="Price/Acre *"
+            value={form.price_per_acre}
+            onChangeText={(v) => updateForm('price_per_acre', v)}
+            placeholder="0"
+            keyboardType="numeric"
+            icon={<IndianRupee size={18} color="#9ca3af" />}
+            returnKeyType="next"
+            onSubmitEditing={() => locationRef.current?.focus()}
+          />
         </View>
       </View>
-      <View>
-        <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Location *</Text>
-        <View className="flex-row items-center px-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e]">
-          <MapPin size={18} color="#9ca3af" />
-          <TextInput value={form.location_name} onChangeText={(v: string) => updateForm('location_name', v)} placeholder="Nashik District, Maharashtra" placeholderTextColor="#9ca3af" className="flex-1 py-3 ml-2 text-sm text-slate-900 dark:text-white" />
-        </View>
-      </View>
-      <View>
-        <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Crops (comma-separated)</Text>
-        <TextInput value={form.crops} onChangeText={(v: string) => updateForm('crops', v)} placeholder="Cotton, Sugarcane, Wheat" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
-      </View>
-      <TouchableOpacity onPress={() => setStep(2)} className="bg-[#4cae4f] py-4 rounded-xl items-center flex-row justify-center gap-2">
-        <Text className="text-white font-bold">Next</Text>
-        <ChevronRight size={18} color="white" />
+
+      <Input
+        ref={locationRef}
+        label="Location *"
+        value={form.location_name}
+        onChangeText={(v) => updateForm('location_name', v)}
+        placeholder="City, State"
+        icon={<MapPin size={18} color="#9ca3af" />}
+        returnKeyType="next"
+        onSubmitEditing={() => cropsRef.current?.focus()}
+      />
+
+      <Input
+        ref={cropsRef}
+        label="Crops Grown"
+        value={form.crops}
+        onChangeText={(v) => updateForm('crops', v)}
+        placeholder="Wheat, Rice, etc. (comma separated)"
+        icon={<Sprout size={18} color="#9ca3af" />}
+        returnKeyType="done"
+        onSubmitEditing={() => Keyboard.dismiss()}
+      />
+
+      <TouchableOpacity 
+        onPress={() => { Keyboard.dismiss(); setStep(2); }} 
+        className="bg-[#4cae4f] py-4.5 rounded-2xl items-center flex-row justify-center gap-2 shadow-lg shadow-[#4cae4f]/20 mt-4"
+      >
+        <Text className="text-white font-bold text-base uppercase tracking-wider">Continue</Text>
+        <ChevronRight size={20} color="white" strokeWidth={2.5} />
       </TouchableOpacity>
     </View>
   );
 
   const renderStep2 = () => (
     <View className="gap-4">
-      <Text className="text-xl font-bold text-slate-900 dark:text-white mb-2">Land Details</Text>
-      <View>
-        <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Soil Type</Text>
+      <Text className="text-xl font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-tight">Land Details</Text>
+      
+      <View className="mb-4">
+        <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Soil Type</Text>
         <View className="flex-row flex-wrap gap-2">
           {SOIL_TYPES.map(type => (
             <TouchableOpacity key={type} onPress={() => updateForm('soil_type', form.soil_type === type ? '' : type)}
-              className={`px-3 py-2 rounded-full border ${form.soil_type === type ? 'bg-[#4cae4f] border-[#4cae4f]' : 'border-gray-200 dark:border-gray-700'}`}>
-              <Text className={`text-xs font-medium ${form.soil_type === type ? 'text-white' : 'text-gray-700 dark:text-gray-300'}`}>{type}</Text>
+              className={`px-4 py-2.5 rounded-full border-2 transition-all ${form.soil_type === type ? 'bg-[#4cae4f] border-[#4cae4f]' : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'}`}>
+              <Text className={`text-xs font-bold ${form.soil_type === type ? 'text-white' : 'text-gray-600 dark:text-gray-400'}`}>{type}</Text>
             </TouchableOpacity>
           ))}
         </View>
       </View>
-      <View>
-        <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Irrigation Type</Text>
+
+      <View className="mb-4">
+        <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Irrigation Type</Text>
         <View className="flex-row flex-wrap gap-2">
           {IRRIGATION_TYPES.map(type => (
             <TouchableOpacity key={type} onPress={() => updateForm('irrigation_type', form.irrigation_type === type ? '' : type)}
-              className={`px-3 py-2 rounded-full border ${form.irrigation_type === type ? 'bg-[#4cae4f] border-[#4cae4f]' : 'border-gray-200 dark:border-gray-700'}`}>
-              <Text className={`text-xs font-medium ${form.irrigation_type === type ? 'text-white' : 'text-gray-700 dark:text-gray-300'}`}>{type}</Text>
+              className={`px-4 py-2.5 rounded-full border-2 transition-all ${form.irrigation_type === type ? 'bg-[#4cae4f] border-[#4cae4f]' : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'}`}>
+              <Text className={`text-xs font-bold ${form.irrigation_type === type ? 'text-white' : 'text-gray-600 dark:text-gray-400'}`}>{type}</Text>
             </TouchableOpacity>
           ))}
         </View>
       </View>
-      <View>
-        <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Expected Harvest Month</Text>
-        <TextInput value={form.expected_harvest_month} onChangeText={(v: string) => updateForm('expected_harvest_month', v)} placeholder="e.g., October" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e291e] text-sm text-slate-900 dark:text-white" />
+
+      <Input
+        ref={harvestRef}
+        label="Expected Harvest Month"
+        value={form.expected_harvest_month}
+        onChangeText={(v) => updateForm('expected_harvest_month', v)}
+        placeholder="e.g., October"
+        icon={<Info size={18} color="#9ca3af" />}
+        returnKeyType="done"
+        onSubmitEditing={() => Keyboard.dismiss()}
+      />
+
+      <View className="flex-row items-center justify-between bg-white dark:bg-[#1e291e] p-5 rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] mb-4">
+        <View>
+          <Text className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight">Organic Farming</Text>
+          <Text className="text-[10px] text-gray-500 font-medium mt-0.5">Is this land certified organic?</Text>
+        </View>
+        <Switch 
+          value={form.is_organic} 
+          onValueChange={(v: boolean) => updateForm('is_organic', v)} 
+          trackColor={{ false: '#d1d5db', true: '#4cae4f' }} 
+          ios_backgroundColor="#d1d5db"
+        />
       </View>
-      <View className="flex-row items-center justify-between py-3">
-        <Text className="text-sm font-medium text-slate-900 dark:text-white">Organic Farming</Text>
-        <Switch value={form.is_organic} onValueChange={(v: boolean) => updateForm('is_organic', v)} trackColor={{ false: '#d1d5db', true: '#4cae4f' }} />
-      </View>
-      <TouchableOpacity onPress={() => setStep(3)} className="bg-[#4cae4f] py-4 rounded-xl items-center flex-row justify-center gap-2">
-        <Text className="text-white font-bold">Next</Text>
-        <ChevronRight size={18} color="white" />
+
+      <TouchableOpacity 
+        onPress={() => { Keyboard.dismiss(); setStep(3); }} 
+        className="bg-[#4cae4f] py-4.5 rounded-2xl items-center flex-row justify-center gap-2 shadow-lg shadow-[#4cae4f]/20"
+      >
+        <Text className="text-white font-bold text-base uppercase tracking-wider">Next Step</Text>
+        <ChevronRight size={20} color="white" strokeWidth={2.5} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setStep(1)} className="py-3 items-center">
-        <Text className="text-[#4cae4f] font-semibold">Back</Text>
+      
+      <TouchableOpacity onPress={() => setStep(1)} className="py-4 items-center">
+        <Text className="text-[#4cae4f] font-bold uppercase tracking-widest text-xs">Back to Step 1</Text>
       </TouchableOpacity>
     </View>
   );
 
   const renderStep3 = () => (
     <View className="gap-4">
-      <Text className="text-xl font-bold text-slate-900 dark:text-white mb-2">Photos</Text>
-      <Text className="text-xs text-gray-500 mb-2">Add up to 5 photos of your farm.</Text>
-      <View className="flex-row flex-wrap gap-3">
+      <Text className="text-xl font-bold text-slate-900 dark:text-white mb-2 uppercase tracking-tight">Photos</Text>
+      <Text className="text-sm text-gray-500 mb-4 font-medium">Add up to 5 clear photos of your farm to attract investors.</Text>
+      
+      <View className="flex-row flex-wrap gap-4">
         {images.map((uri, i) => (
-          <View key={i} className="relative">
-            <Image source={{ uri }} className="w-24 h-24 rounded-xl" resizeMode="cover" />
-            <TouchableOpacity onPress={() => setImages(prev => prev.filter((_, idx) => idx !== i))} className="absolute -top-2 -right-2 size-6 bg-red-500 rounded-full items-center justify-center">
-              <X size={12} color="white" />
+          <View key={i} className="relative size-24 rounded-2xl overflow-hidden shadow-sm">
+            <Image source={{ uri }} className="w-full h-full" resizeMode="cover" />
+            <TouchableOpacity 
+              onPress={() => setImages(prev => prev.filter((_, idx) => idx !== i))} 
+              className="absolute top-1 right-1 size-6 bg-black/50 rounded-full items-center justify-center border border-white/20"
+            >
+              <X size={14} color="white" strokeWidth={3} />
             </TouchableOpacity>
           </View>
         ))}
         {images.length < 5 && (
-          <TouchableOpacity onPress={pickImages} className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 items-center justify-center">
-            <Camera size={24} color="#94a3b8" />
-            <Text className="text-[10px] text-gray-400 mt-1">Add Photo</Text>
+          <TouchableOpacity 
+            onPress={pickImages} 
+            className="size-24 rounded-2xl border-2 border-dashed border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] items-center justify-center active:bg-gray-50"
+          >
+            <Camera size={28} color="#4cae4f" strokeWidth={1.5} />
+            <Text className="text-[10px] font-bold text-gray-400 mt-1 uppercase">Add</Text>
           </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity onPress={handleSubmit} disabled={submitting} className={`bg-[#4cae4f] py-4 rounded-xl items-center ${submitting ? 'opacity-60' : ''}`}>
-        {submitting ? <ActivityIndicator color="white" /> : <Text className="text-white font-bold">Create Listing</Text>}
+
+      <TouchableOpacity 
+        onPress={handleSubmit} 
+        disabled={submitting} 
+        className={`bg-[#4cae4f] py-4.5 rounded-2xl items-center shadow-lg shadow-[#4cae4f]/30 mt-8 ${submitting ? 'opacity-60' : ''}`}
+      >
+        {submitting ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text className="text-white font-bold text-base uppercase tracking-widest">Publish Listing</Text>
+        )}
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setStep(2)} className="py-3 items-center">
-        <Text className="text-[#4cae4f] font-semibold">Back</Text>
+      
+      <TouchableOpacity onPress={() => setStep(2)} className="py-4 items-center">
+        <Text className="text-[#4cae4f] font-bold uppercase tracking-widest text-xs">Back to Details</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
-      <View className="bg-white dark:bg-[#1e291e] px-4 pt-12 pb-4 flex-row items-center gap-3 border-b border-[#eaf0ea] dark:border-[#2a382a]">
-        <TouchableOpacity onPress={() => step > 1 ? setStep(step - 1) : router.back()} className="p-2">
-          <ChevronLeft size={24} color="#4cae4f" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-900 dark:text-white">Create Listing</Text>
-        <Text className="text-xs text-gray-400 ml-auto">Step {step}/3</Text>
-      </View>
-      <View className="px-4 pt-4">
-        <View className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-          <View className="h-full bg-[#4cae4f] rounded-full" style={{ width: `${(step / 3) * 100}%` }} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
+        <StatusBar barStyle="dark-content" />
+        
+        {/* Header */}
+        <View className="bg-white dark:bg-[#1e291e] px-4 pt-12 pb-4 flex-row items-center gap-3 border-b border-[#eaf0ea] dark:border-[#2a382a]">
+          <TouchableOpacity onPress={() => step > 1 ? setStep(step - 1) : router.back()} className="p-2">
+            <ChevronLeft size={24} color="#4cae4f" />
+          </TouchableOpacity>
+          <View>
+            <Text className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">Create Listing</Text>
+            <Text className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Step {step} of 3</Text>
+          </View>
         </View>
+
+        {/* Progress Bar */}
+        <View className="px-6 pt-6">
+          <View className="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+            <View className="h-full bg-[#4cae4f] rounded-full shadow-sm" style={{ width: `${(step / 3) * 100}%` }} />
+          </View>
+        </View>
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          className="flex-1"
+        >
+          <ScrollView 
+            className="flex-1 px-6 pt-6" 
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {step === 1 && renderStep1()}
+            {step === 2 && renderStep2()}
+            {step === 3 && renderStep3()}
+            <View className="h-20" />
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
-      <ScrollView className="flex-1 px-4 pt-6" showsVerticalScrollIndicator={false}>
-        {step === 1 && renderStep1()}
-        {step === 2 && renderStep2()}
-        {step === 3 && renderStep3()}
-        <View className="h-20" />
-      </ScrollView>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }

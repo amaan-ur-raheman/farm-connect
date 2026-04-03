@@ -72,10 +72,19 @@ export default function PropertyDetailScreen() {
     if (!listing) return;
     setCreatingContract(true);
     try {
+      // Calculate total amount based on acreage and price per acre
+      const totalAmount = listing.area_acres * listing.price_per_acre;
+      const today = new Date();
+      const endDate = new Date(today);
+      endDate.setMonth(endDate.getMonth() + 6); // 6 months contract
+      
       await api.post('/api/contracts', {
         listing_id: listing.id,
-        amount_per_cycle: listing.price_per_acre,
-        total_cycles: 1,
+        crop: listing.crops[0] || 'General',
+        acreage: listing.area_acres,
+        price_per_acre: listing.price_per_acre,
+        start_date: today.toISOString(),
+        end_date: endDate.toISOString(),
       });
       Alert.alert('Success', 'Contract request sent to the farmer!');
       router.push('/contracts');
@@ -87,16 +96,19 @@ export default function PropertyDetailScreen() {
   };
 
   const handleStartChat = async () => {
-    if (!listing?.farmer_id) return;
+    if (!listing?.farmer_id) {
+      Alert.alert('Error', 'Could not find the farmer.');
+      return;
+    }
     try {
       const res = await api.post<{ data: { id: string } }>('/api/chat/conversations', {
-        other_user_id: listing.farmer_id,
-        contract_id: null,
+        participant_id: listing.farmer_id,
       });
       const conversationId = res.data.data?.id;
       router.push(`/chat/${conversationId}`);
-    } catch {
-      Alert.alert('Error', 'Failed to start conversation.');
+    } catch (err: any) {
+      console.error('Failed to start chat:', err);
+      Alert.alert('Error', err.response?.data?.message || 'Failed to start conversation.');
     }
   };
 

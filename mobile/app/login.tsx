@@ -1,271 +1,611 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StatusBar,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Phone, Sprout, ChevronRight } from 'lucide-react-native';
-import { router } from 'expo-router';
-import { Button } from '../src/components/ui/Button';
-import { useAuthStore } from '../src/stores';
-import { validatePhone, validateOtp } from '../src/utils/validation';
+	View,
+	Text,
+	TouchableOpacity,
+	StatusBar,
+	ImageBackground,
+	Platform,
+	ScrollView,
+	Alert,
+	Keyboard,
+	KeyboardEvent,
+	TouchableWithoutFeedback,
+	TextInput as RNTextInput,
+	StyleSheet,
+} from "react-native";
+import { Phone, Sprout, Lock, ShieldCheck } from "lucide-react-native";
+import { router } from "expo-router";
+import { Input } from "../src/components/ui/Input";
+import { useAuthStore } from "../src/stores";
+import { validatePhone, validateOtp } from "../src/utils/validation";
+import { BASE_URL, testConnection } from "../src/config/api";
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
+	scrollView: {
+		flex: 1,
+	},
+	scrollContent: {
+		flexGrow: 1,
+		justifyContent: "center",
+		padding: 16,
+	},
+	card: {
+		backgroundColor: "#ffffff",
+		borderRadius: 16,
+		padding: 32,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.1,
+		shadowRadius: 8,
+		elevation: 4,
+		maxWidth: 480,
+		width: "100%",
+		alignSelf: "center",
+	},
+	roleButtonContainer: {
+		flexDirection: "row",
+		backgroundColor: "#f0f4f0",
+		padding: 6,
+		borderRadius: 12,
+		marginBottom: 32,
+		width: "100%",
+	},
+	roleButton: {
+		flex: 1,
+		paddingVertical: 12,
+		borderRadius: 8,
+		alignItems: "center",
+		justifyContent: "center",
+		flexDirection: "row",
+		gap: 8,
+	},
+	roleButtonActive: {
+		backgroundColor: "#ffffff",
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 1 },
+		shadowOpacity: 0.1,
+		shadowRadius: 2,
+		elevation: 2,
+	},
+	roleTextActive: {
+		fontSize: 14,
+		fontWeight: "bold",
+		color: "#111b0e",
+	},
+	roleTextInactive: {
+		fontSize: 14,
+		fontWeight: "bold",
+		color: "#6b7280",
+	},
+	submitButton: {
+		width: "100%",
+		paddingVertical: 16,
+		borderRadius: 16,
+		backgroundColor: "#4cae4f",
+		shadowColor: "#4cae4f",
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.3,
+		shadowRadius: 8,
+		elevation: 4,
+		alignItems: "center",
+		marginTop: 8,
+	},
+	submitButtonDisabled: {
+		opacity: 0.5,
+	},
+});
 
 export default function LoginScreen() {
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
-  const [touchedPhone, setTouchedPhone] = useState(false);
-  const [touchedOtp, setTouchedOtp] = useState(false);
+	const [phone, setPhone] = useState("");
+	const [otp, setOtp] = useState("");
+	const [otpSent, setOtpSent] = useState(false);
+	const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
+	const [touchedPhone, setTouchedPhone] = useState(false);
+	const [touchedOtp, setTouchedOtp] = useState(false);
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  const {
-    userRole,
-    setUserRole,
-    loginWithOtp,
-    sendOtp,
-    isLoading,
-    error,
-    clearError,
-    setPhone: setStorePhone,
-  } = useAuthStore();
+	const {
+		userRole,
+		setUserRole,
+		loginWithOtp,
+		sendOtp,
+		isLoading,
+		error,
+		clearError,
+	} = useAuthStore();
 
-  const handlePhoneBlur = () => {
-    setTouchedPhone(true);
-    const result = validatePhone(phone);
-    if (!result.isValid) {
-      clearError();
-    }
-  };
+	const phoneRef = useRef<RNTextInput>(null);
+	const otpRef = useRef<RNTextInput>(null);
+	const scrollViewRef = useRef<ScrollView>(null);
 
-  const handleOtpBlur = () => {
-    setTouchedOtp(true);
-    const result = validateOtp(otp);
-    if (!result.isValid) {
-      clearError();
-    }
-  };
+	useEffect(() => {
+		// Test API connection on mount
+		testConnection().then(result => {
+			console.log('[Login] API Connection:', result.message);
+			console.log('[Login] Using API URL:', BASE_URL);
+		});
+		
+		const showSubscription = Keyboard.addListener(
+			Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+			(e: KeyboardEvent) => {
+				setKeyboardHeight(e.endCoordinates.height);
+			},
+		);
+		const hideSubscription = Keyboard.addListener(
+			Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+			() => {
+				setKeyboardHeight(0);
+			},
+		);
 
-  const isPhoneValid = validatePhone(phone).isValid;
-  const isOtpValid = validateOtp(otp).isValid;
+		return () => {
+			showSubscription.remove();
+			hideSubscription.remove();
+		};
+	}, []);
 
-  const handleSendOtp = async () => {
-    if (!userRole) {
-      Alert.alert('Select Role', 'Please select Investor or Farmer to continue.');
-      return;
-    }
+	const scrollToInput = (node: RNTextInput | null) => {
+		if (node && scrollViewRef.current && keyboardHeight > 0) {
+			setTimeout(() => {
+				scrollViewRef.current?.scrollToEnd({ animated: true });
+			}, 100);
+		}
+	};
 
-    const phoneValidation = validatePhone(phone);
-    if (!phoneValidation.isValid) {
-      Alert.alert('Invalid Phone', phoneValidation.error);
-      return;
-    }
+	const phoneValidation = validatePhone(phone);
+	const otpValidation = validateOtp(otp);
+	const isPhoneValid = phoneValidation.isValid;
+	const isOtpValid = otpValidation.isValid;
 
-    const success = await sendOtp(phone);
-    if (success) {
-      setOtpSent(true);
-      setDevOtpHint(null);
-      Alert.alert(
-        'OTP Sent',
-        `A 6-digit OTP was sent to ${phone}. Check server console in development mode.`
-      );
-    } else {
-      Alert.alert('Error', error || 'Failed to send OTP. Please try again.');
-    }
-  };
+	const handlePhoneBlur = () => {
+		setTouchedPhone(true);
+	};
 
-  const handleVerifyOtp = async () => {
-    const otpValidation = validateOtp(otp);
-    if (!otpValidation.isValid) {
-      Alert.alert('Invalid OTP', otpValidation.error);
-      return;
-    }
+	const handleOtpBlur = () => {
+		setTouchedOtp(true);
+	};
 
-    const success = await loginWithOtp(phone, otp);
-    if (success) {
-      if (userRole === 'farmer') {
-        router.replace('/dashboard');
-      } else {
-        router.replace('/marketplace');
-      }
-    } else {
-      Alert.alert('Error', error || 'Invalid OTP. Please try again.');
-    }
-  };
+	const handleSendOtp = async () => {
+		if (!userRole) {
+			Alert.alert(
+				"Select Role",
+				"Please select Investor or Farmer to continue.",
+			);
+			return;
+		}
 
-  const handleRoleSelect = (role: 'farmer' | 'investor') => {
-    setUserRole(role);
-    clearError();
-  };
+		if (!isPhoneValid) {
+			Alert.alert("Invalid Phone", phoneValidation.error);
+			return;
+		}
 
-  return (
-    <ImageBackground
-      source={{ uri: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800' }}
-      className="flex-1"
-    >
-      <View className="flex-1 bg-[#f6f8f6]/80 dark:bg-[#152111]/80 items-center justify-center p-4">
-        <StatusBar barStyle="dark-content" />
+		const result = await sendOtp(phone);
+		if (result.success) {
+			setOtpSent(true);
+			if (result.devOtp) {
+				setDevOtpHint(result.devOtp);
+				Alert.alert("OTP Sent", `Your OTP is: ${result.devOtp}`, [
+					{ text: "OK" },
+				]);
+			} else {
+				Alert.alert(
+					"OTP Sent",
+					"Check backend terminal for the OTP code.",
+				);
+			}
+		} else {
+			Alert.alert(
+				"Error",
+				error || "Failed to send OTP. Please try again.",
+			);
+		}
+	};
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="w-full max-w-[480px] bg-white dark:bg-[#1a2c15] rounded-xl p-8 shadow-2xl overflow-hidden"
-        >
-          <ScrollView showsVerticalScrollIndicator={false} className="w-full">
-            <View className="items-center w-full">
-              <View className="size-12 bg-primary/20 rounded-full items-center justify-center mb-4">
-                <Sprout size={30} color="#3db814" strokeWidth={1.5} />
-              </View>
+	const handleVerifyOtp = async () => {
+		if (!isOtpValid) {
+			Alert.alert("Invalid OTP", otpValidation.error);
+			return;
+		}
 
-              <Text className="text-3xl font-bold text-[#111b0e] dark:text-white tracking-tight text-center">
-                Welcome Back
-              </Text>
-              <Text className="mt-2 text-sm text-slate-500 dark:text-slate-400 mb-8 text-center">
-                Log in to manage your farm or portfolio.
-              </Text>
+		const success = await loginWithOtp(phone, otp);
+		if (success) {
+			if (userRole === "farmer") {
+				router.replace("/dashboard");
+			} else {
+				router.replace("/marketplace");
+			}
+		} else {
+			Alert.alert("Error", error || "Invalid OTP. Please try again.");
+		}
+	};
 
-              {/* Role Selector */}
-              <View className="flex-row bg-[#eaf3e7] dark:bg-[#2a3e24] p-1 rounded-lg mb-8 w-full">
-                <TouchableOpacity
-                  onPress={() => handleRoleSelect('investor')}
-                  className={`flex-1 py-2.5 rounded-md items-center justify-center ${userRole === 'investor' ? 'bg-white dark:bg-primary shadow-sm' : ''}`}
-                >
-                  <Text className={`text-sm font-medium ${userRole === 'investor' ? 'text-[#111b0e] dark:text-black' : 'text-slate-600 dark:text-slate-300'}`}>
-                    Investor
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleRoleSelect('farmer')}
-                  className={`flex-1 py-2.5 rounded-md items-center justify-center ${userRole === 'farmer' ? 'bg-white dark:bg-primary shadow-sm' : ''}`}
-                >
-                  <Text className={`text-sm font-medium ${userRole === 'farmer' ? 'text-[#111b0e] dark:text-black' : 'text-slate-600 dark:text-slate-300'}`}>
-                    Farmer
-                  </Text>
-                </TouchableOpacity>
-              </View>
+	const handleRoleSelect = (role: "farmer" | "investor") => {
+		setUserRole(role);
+		clearError();
+	};
 
-              <View className="w-full gap-5">
-                {/* Phone Input */}
-                <View className="gap-2">
-                  <Text className="text-sm font-medium text-[#111b0e] dark:text-slate-200">
-                    Phone Number
-                  </Text>
-                  <View className={`h-12 bg-[#f9fcf8] dark:bg-[#152111] rounded-lg px-4 flex-row items-center border ${
-                    touchedPhone && !isPhoneValid ? 'border-red-500' : 'border-[#d6e7d0] dark:border-[#3a5033]'
-                  }`}>
-                    <Phone size={20} color="#60974e" style={{ marginRight: 8 }} />
-                    <TextInput
-                      placeholder="+919876543210"
-                      placeholderTextColor="rgba(96, 151, 78, 0.6)"
-                      value={phone}
-                      onChangeText={(text: string) => {
-                        setPhone(text);
-                        clearError();
-                      }}
-                      onBlur={handlePhoneBlur}
-                      className="flex-1 text-base text-[#111b0e] dark:text-white"
-                      keyboardType="phone-pad"
-                      autoComplete="tel"
-                      maxLength={13}
-                    />
-                  </View>
-                  {touchedPhone && !isPhoneValid && (
-                    <Text className="text-xs text-red-500">{validatePhone(phone).error}</Text>
-                  )}
-                </View>
+	const isSubmitDisabled =
+		isLoading ||
+		(!otpSent && (!userRole || !isPhoneValid)) ||
+		(otpSent && !isOtpValid);
 
-                {/* OTP Input - shown after OTP sent */}
-                {otpSent && (
-                  <View className="gap-2">
-                    <Text className="text-sm font-medium text-[#111b0e] dark:text-slate-200">
-                      Enter OTP
-                    </Text>
-                    <View className={`h-12 bg-[#f9fcf8] dark:bg-[#152111] rounded-lg px-4 flex-row items-center border ${
-                      touchedOtp && !isOtpValid ? 'border-red-500' : 'border-[#d6e7d0] dark:border-[#3a5033]'
-                    }`}>
-                      <TextInput
-                        placeholder="6-digit OTP"
-                        placeholderTextColor="rgba(96, 151, 78, 0.6)"
-                        value={otp}
-                        onChangeText={(text: string) => {
-                          setOtp(text.replace(/\D/g, '').slice(0, 6));
-                          clearError();
-                        }}
-                        onBlur={handleOtpBlur}
-                        className="flex-1 text-base text-[#111b0e] dark:text-white"
-                        keyboardType="number-pad"
-                        maxLength={6}
-                        secureTextEntry={false}
-                      />
-                    </View>
-                    {touchedOtp && !isOtpValid && (
-                      <Text className="text-xs text-red-500">{validateOtp(otp).error}</Text>
-                    )}
+	const submitText = isLoading
+		? "Processing..."
+		: !otpSent
+			? "Send OTP"
+			: "Verify & Login";
 
-                    {/* Dev OTP hint */}
-                    {devOtpHint && (
-                      <View className="bg-yellow-100 dark:bg-yellow-900/30 rounded-lg px-3 py-2">
-                        <Text className="text-xs text-yellow-700 dark:text-yellow-400 font-mono">
-                          Dev OTP: {devOtpHint}
-                        </Text>
-                      </View>
-                    )}
+	return (
+		<ImageBackground
+			source={{
+				uri: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+			}}
+			style={styles.container}
+		>
+			<StatusBar barStyle="dark-content" />
+			<View
+				style={[
+					styles.container,
+					{ backgroundColor: "rgba(246, 248, 246, 0.8)" },
+				]}
+			>
+				<ScrollView
+					ref={scrollViewRef}
+					style={styles.scrollView}
+					contentContainerStyle={[
+						styles.scrollContent,
+						{ paddingBottom: keyboardHeight + 20 },
+					]}
+					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+					bounces={false}
+				>
+					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+						<View style={styles.card}>
+							{/* Logo */}
+							<View
+								style={{
+									width: 56,
+									height: 56,
+									backgroundColor: "rgba(76, 175, 80, 0.1)",
+									borderRadius: 16,
+									alignItems: "center",
+									justifyContent: "center",
+									marginBottom: 16,
+									alignSelf: "center",
+								}}
+							>
+								<Sprout
+									size={28}
+									color="#3db814"
+									strokeWidth={1.5}
+								/>
+							</View>
 
-                    <TouchableOpacity onPress={() => { setOtpSent(false); setOtp(''); }}>
-                      <Text className="text-sm font-medium text-[#60974e] dark:text-primary">
-                        Didn't receive OTP? Resend
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
+							<Text
+								style={{
+									fontSize: 28,
+									fontWeight: "bold",
+									color: "#111b0e",
+									letterSpacing: -0.5,
+									textAlign: "center",
+								}}
+							>
+								Welcome Back
+							</Text>
+							<Text
+								style={{
+									marginTop: 8,
+									fontSize: 14,
+									color: "#6b7280",
+									textAlign: "center",
+									marginBottom: 32,
+								}}
+							>
+								{otpSent
+									? `We've sent a 6-digit code to ${phone}`
+									: "Log in to manage your farm or portfolio."}
+							</Text>
 
-                {/* Error display */}
-                {error && (
-                  <View className="bg-red-50 dark:bg-red-900/30 rounded-lg px-3 py-2">
-                    <Text className="text-xs text-red-600 dark:text-red-400">{error}</Text>
-                  </View>
-                )}
+							{/* Role Selection */}
+							{!otpSent && (
+								<View style={styles.roleButtonContainer}>
+									{/* Investor Button */}
+									<TouchableOpacity
+										onPress={() =>
+											handleRoleSelect("investor")
+										}
+										style={[
+											styles.roleButton,
+											userRole === "investor" &&
+												styles.roleButtonActive,
+										]}
+									>
+										<Text
+											style={
+												userRole === "investor"
+													? styles.roleTextActive
+													: styles.roleTextInactive
+											}
+										>
+											Investor
+										</Text>
+									</TouchableOpacity>
 
-                {/* Primary action button */}
-                {!otpSent ? (
-                  <Button
-                    title="Send OTP"
-                    onPress={handleSendOtp}
-                    className="w-full py-3.5 rounded-lg bg-primary mt-3 shadow-md active:scale-95"
-                    textClassName="text-white font-bold text-base"
-                    loading={isLoading}
-                    disabled={!userRole || !isPhoneValid}
-                  />
-                ) : (
-                  <Button
-                    title="Verify & Login"
-                    onPress={handleVerifyOtp}
-                    className="w-full py-3.5 rounded-lg bg-primary mt-3 shadow-md active:scale-95"
-                    textClassName="text-white font-bold text-base"
-                    loading={isLoading}
-                    disabled={!isOtpValid}
-                  />
-                )}
-              </View>
+									{/* Farmer Button */}
+									<TouchableOpacity
+										onPress={() =>
+											handleRoleSelect("farmer")
+										}
+										style={[
+											styles.roleButton,
+											userRole === "farmer" &&
+												styles.roleButtonActive,
+										]}
+									>
+										<Text
+											style={
+												userRole === "farmer"
+													? styles.roleTextActive
+													: styles.roleTextInactive
+											}
+										>
+											Farmer
+										</Text>
+									</TouchableOpacity>
+								</View>
+							)}
 
-              <View className="mt-8 flex-row items-center justify-center gap-1">
-                <Text className="text-sm text-slate-500 dark:text-slate-400">
-                  Don't have an account?
-                </Text>
-                <TouchableOpacity onPress={() => router.push('/register')}>
-                  <Text className="text-sm font-bold text-[#4cae4f]"> Sign up</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
-    </ImageBackground>
-  );
+							{/* Phone Input */}
+							<Input
+								ref={phoneRef}
+								label="Phone Number"
+								placeholder="+91 98765 43210"
+								value={phone}
+								onFocus={() => scrollToInput(phoneRef.current)}
+								onChangeText={(text) => {
+									setPhone(text);
+									if (error) clearError();
+								}}
+								onBlur={handlePhoneBlur}
+								error={
+									touchedPhone && !isPhoneValid
+										? phoneValidation.error
+										: undefined
+								}
+								keyboardType="phone-pad"
+								autoComplete="tel"
+								maxLength={13}
+								editable={!otpSent && !isLoading}
+								icon={
+									<Phone
+										size={20}
+										color={!otpSent ? "#4cae4f" : "#9ca3af"}
+									/>
+								}
+								onClear={
+									!otpSent ? () => setPhone("") : undefined
+								}
+								returnKeyType="done"
+								onSubmitEditing={handleSendOtp}
+							/>
+
+							{/* OTP Input */}
+							{otpSent && (
+								<View style={{ marginTop: 8 }}>
+									<Input
+										ref={otpRef}
+										label="Verification Code"
+										placeholder="0 0 0 0 0 0"
+										value={otp}
+										onFocus={() =>
+											scrollToInput(otpRef.current)
+										}
+										onChangeText={(text) => {
+											setOtp(
+												text
+													.replace(/\D/g, "")
+													.slice(0, 6),
+											);
+											if (error) clearError();
+										}}
+										onBlur={handleOtpBlur}
+										error={
+											touchedOtp && !isOtpValid
+												? otpValidation.error
+												: undefined
+										}
+										keyboardType="number-pad"
+										maxLength={6}
+										icon={
+											<Lock size={20} color="#4cae4f" />
+										}
+										returnKeyType="go"
+										onSubmitEditing={handleVerifyOtp}
+									/>
+
+									{devOtpHint && (
+										<View
+											style={{
+												backgroundColor:
+													"rgba(254, 252, 232, 1)",
+												borderRadius: 12,
+												paddingHorizontal: 16,
+												paddingVertical: 12,
+												marginBottom: 16,
+												borderWidth: 1,
+												borderColor:
+													"rgba(254, 243, 199, 1)",
+											}}
+										>
+											<Text
+												style={{
+													fontSize: 11,
+													fontWeight: "bold",
+													color: "#a16207",
+													textTransform: "uppercase",
+													letterSpacing: 1,
+													marginBottom: 4,
+												}}
+											>
+												Developer Mode
+											</Text>
+											<Text
+												style={{
+													fontSize: 14,
+													fontWeight: "500",
+													color: "#ca8a04",
+													fontFamily: "monospace",
+												}}
+											>
+												Auto-fill: {devOtpHint}
+											</Text>
+										</View>
+									)}
+
+									<TouchableOpacity
+										onPress={() => {
+											setOtpSent(false);
+											setOtp("");
+											setTouchedOtp(false);
+										}}
+										style={{
+											paddingVertical: 8,
+											marginBottom: 16,
+										}}
+									>
+										<Text
+											style={{
+												fontSize: 14,
+												fontWeight: "500",
+												color: "#4cae4f",
+												textAlign: "center",
+											}}
+										>
+											Didn't receive code? Resend
+										</Text>
+									</TouchableOpacity>
+								</View>
+							)}
+
+							{/* Error display */}
+							{error && (
+								<View
+									style={{
+										backgroundColor:
+											"rgba(254, 242, 242, 1)",
+										borderRadius: 12,
+										paddingHorizontal: 16,
+										paddingVertical: 12,
+										marginBottom: 16,
+										borderWidth: 1,
+										borderColor: "rgba(254, 226, 226, 1)",
+										width: "100%",
+									}}
+								>
+									<Text
+										style={{
+											fontSize: 14,
+											fontWeight: "500",
+											color: "#dc2626",
+										}}
+									>
+										{error}
+									</Text>
+								</View>
+							)}
+
+							{/* Submit Button */}
+							<TouchableOpacity
+								onPress={
+									!otpSent ? handleSendOtp : handleVerifyOtp
+								}
+								disabled={isSubmitDisabled}
+								activeOpacity={0.8}
+								style={[
+									styles.submitButton,
+									isSubmitDisabled &&
+										styles.submitButtonDisabled,
+								]}
+							>
+								<Text
+									style={{
+										color: "#ffffff",
+										fontWeight: "bold",
+										fontSize: 16,
+									}}
+								>
+									{submitText}
+								</Text>
+							</TouchableOpacity>
+
+							{/* Sign Up Link */}
+							<View
+								style={{
+									marginTop: 32,
+									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "center",
+									gap: 4,
+								}}
+							>
+								<Text
+									style={{
+										fontSize: 14,
+										color: "#6b7280",
+									}}
+								>
+									Don't have an account?
+								</Text>
+								<TouchableOpacity
+									onPress={() => router.push("/register")}
+								>
+									<Text
+										style={{
+											fontSize: 14,
+											fontWeight: "bold",
+											color: "#4cae4f",
+										}}
+									>
+										{" "}
+										Sign up
+									</Text>
+								</TouchableOpacity>
+							</View>
+
+							{/* Security Badge */}
+							<View
+								style={{
+									marginTop: 24,
+									flexDirection: "row",
+									alignItems: "center",
+									gap: 8,
+									backgroundColor: "rgba(249, 250, 251, 1)",
+									paddingHorizontal: 16,
+									paddingVertical: 8,
+									borderRadius: 8,
+									justifyContent: "center",
+								}}
+							>
+								<ShieldCheck size={14} color="#9ca3af" />
+								<Text
+									style={{
+										fontSize: 12,
+										color: "#6b7280",
+										fontWeight: "500",
+									}}
+								>
+									Secure login with OTP verification
+								</Text>
+							</View>
+						</View>
+					</TouchableWithoutFeedback>
+				</ScrollView>
+			</View>
+		</ImageBackground>
+	);
 }

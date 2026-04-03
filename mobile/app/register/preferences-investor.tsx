@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
+  TextInput as RNTextInput,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Alert,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { validateIfsc, validateBankAccount, validateName } from '../../src/utils/validation';
@@ -19,8 +20,10 @@ import {
   Wallet,
   Building2,
   CheckCircle,
+  User,
 } from 'lucide-react-native';
 import { useRegistrationStore } from '../../src/stores';
+import { Input } from '../../src/components/ui/Input';
 import api from '../../src/config/api';
 
 const INVESTMENT_RANGES = [
@@ -56,6 +59,11 @@ export default function InvestorPreferences() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Refs for Step 2
+  const bankNameRef = useRef<RNTextInput>(null);
+  const accountNumberRef = useRef<RNTextInput>(null);
+  const ifscRef = useRef<RNTextInput>(null);
+
   const toggleSelection = (
     item: string,
     selected: string[],
@@ -77,8 +85,8 @@ export default function InvestorPreferences() {
       Alert.alert('Missing Investment Range', 'Please select your investment range.');
       return false;
     }
-    if (!investmentGoals) {
-      Alert.alert('Missing Investment Goals', 'Please select your investment goals.');
+    if (investmentGoals.length === 0) {
+      Alert.alert('Missing Investment Goals', 'Please select at least one investment goal.');
       return false;
     }
     return true;
@@ -107,6 +115,7 @@ export default function InvestorPreferences() {
   };
 
   const handleNext = () => {
+    Keyboard.dismiss();
     if (step === 1 && validatePreferences()) {
       setInvestorDetails({
         investmentRange,
@@ -119,6 +128,7 @@ export default function InvestorPreferences() {
   };
 
   const handleComplete = async () => {
+    Keyboard.dismiss();
     if (!validateBank()) return;
     setIsSubmitting(true);
     try {
@@ -134,7 +144,7 @@ export default function InvestorPreferences() {
         preferred_farm_types: preferredFarmTypes,
       });
       reset();
-      router.replace('/marketplace');
+      router.replace('/investor-dashboard');
     } catch (err: any) {
       Alert.alert(
         'Registration Failed',
@@ -152,46 +162,46 @@ export default function InvestorPreferences() {
         <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
           <View className="h-full w-full bg-primary rounded-full" />
         </View>
-        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Step 3 of 3 • Investment Preferences
+        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
+          Step 3 of 3 • Investor Profile
         </Text>
       </View>
 
       {/* Title */}
       <View className="flex-row items-center gap-3 mb-6">
-        <View className="size-12 rounded-full bg-primary/10 items-center justify-center">
-          <TrendingUp size={24} color="#2be619" />
+        <View className="size-12 rounded-2xl bg-primary/10 items-center justify-center">
+          <TrendingUp size={24} color="#4cae4f" strokeWidth={2.5} />
         </View>
         <View>
-          <Text className="text-xl font-bold text-text-main dark:text-white">
-            Investment Preferences
+          <Text className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
+            Investment Goals
           </Text>
-          <Text className="text-xs text-gray-500 dark:text-gray-400">
-            Help us personalize your experience
+          <Text className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+            Personalize your agricultural portfolio
           </Text>
         </View>
       </View>
 
       {/* Investment Range */}
       <View className="mb-6">
-        <Text className="text-sm font-semibold text-text-main dark:text-white mb-3">
-          Preferred Investment Range
+        <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
+          Capital Allocation
         </Text>
-        <View className="grid grid-cols-2 gap-2">
+        <View className="flex-row flex-wrap gap-2">
           {INVESTMENT_RANGES.map((range) => (
             <TouchableOpacity
               key={range.value}
               onPress={() => setInvestmentRange(range.value)}
-              className={`p-3 rounded-xl border-2 transition-all ${
+              className={`flex-1 min-w-[150px] p-4 rounded-2xl border-2 transition-all ${
                 investmentRange === range.value
                   ? 'border-primary bg-primary/5'
                   : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
               }`}
             >
-              <Text className={`text-sm font-medium text-center ${
+              <Text className={`text-xs font-bold text-center ${
                 investmentRange === range.value
                   ? 'text-primary'
-                  : 'text-text-main dark:text-white'
+                  : 'text-slate-600 dark:text-gray-400'
               }`}>
                 {range.label}
               </Text>
@@ -202,24 +212,24 @@ export default function InvestorPreferences() {
 
       {/* Investment Goals */}
       <View className="mb-6">
-        <Text className="text-sm font-semibold text-text-main dark:text-white mb-3">
-          Investment Goals
+        <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
+          Primary Objectives
         </Text>
         <View className="flex-row flex-wrap gap-2">
           {INVESTMENT_GOALS.map((goal) => (
             <TouchableOpacity
               key={goal}
               onPress={() => toggleSelection(goal, investmentGoals, setInvestmentGoals)}
-              className={`px-4 py-2 rounded-full border-2 transition-all ${
+              className={`px-4 py-2.5 rounded-full border-2 transition-all ${
                 investmentGoals.includes(goal)
                   ? 'border-primary bg-primary'
                   : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
               }`}
             >
-              <Text className={`text-xs font-medium ${
+              <Text className={`text-xs font-bold ${
                 investmentGoals.includes(goal)
                   ? 'text-white'
-                  : 'text-text-main dark:text-white'
+                  : 'text-slate-600 dark:text-gray-400'
               }`}>
                 {goal}
               </Text>
@@ -230,24 +240,24 @@ export default function InvestorPreferences() {
 
       {/* Farm Types */}
       <View className="mb-6">
-        <Text className="text-sm font-semibold text-text-main dark:text-white mb-3">
-          Preferred Farm Types
+        <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
+          Preferred Farm Sectors
         </Text>
         <View className="flex-row flex-wrap gap-2">
           {FARM_TYPES.map((type) => (
             <TouchableOpacity
               key={type}
               onPress={() => toggleSelection(type, preferredFarmTypes, setPreferredFarmTypes)}
-              className={`px-4 py-2 rounded-full border-2 transition-all ${
+              className={`px-4 py-2.5 rounded-full border-2 transition-all ${
                 preferredFarmTypes.includes(type)
                   ? 'border-primary bg-primary'
                   : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
               }`}
             >
-              <Text className={`text-xs font-medium ${
+              <Text className={`text-xs font-bold ${
                 preferredFarmTypes.includes(type)
                   ? 'text-white'
-                  : 'text-text-main dark:text-white'
+                  : 'text-slate-600 dark:text-gray-400'
               }`}>
                 {type}
               </Text>
@@ -258,10 +268,10 @@ export default function InvestorPreferences() {
 
       <TouchableOpacity
         onPress={handleNext}
-        className="py-4 rounded-xl bg-primary flex-row items-center justify-center gap-2"
+        className="py-4.5 rounded-2xl bg-primary flex-row items-center justify-center gap-2 shadow-lg shadow-primary/20 mb-10"
       >
-        <Text className="text-white font-semibold text-sm">Next: Bank Details</Text>
-        <ChevronRight size={18} color="white" />
+        <Text className="text-white font-bold text-base uppercase tracking-widest">Continue</Text>
+        <ChevronRight size={20} color="white" strokeWidth={2.5} />
       </TouchableOpacity>
     </>
   );
@@ -273,87 +283,75 @@ export default function InvestorPreferences() {
         <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
           <View className="h-full w-full bg-primary rounded-full" />
         </View>
-        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          Step 3 of 3 • Bank Details
+        <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
+          Step 3 of 3 • Settlement Details
         </Text>
       </View>
 
       {/* Title */}
       <View className="flex-row items-center gap-3 mb-6">
-        <View className="size-12 rounded-full bg-primary/10 items-center justify-center">
-          <Wallet size={24} color="#2be619" />
+        <View className="size-12 rounded-2xl bg-primary/10 items-center justify-center">
+          <Wallet size={24} color="#4cae4f" strokeWidth={2.5} />
         </View>
         <View>
-          <Text className="text-xl font-bold text-text-main dark:text-white">
-            Bank Details
+          <Text className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
+            Bank Setup
           </Text>
-          <Text className="text-xs text-gray-500 dark:text-gray-400">
-            For receiving investment returns
+          <Text className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+            Where you'll receive your farm returns
           </Text>
         </View>
       </View>
 
       {/* Bank Form */}
-      <View className="gap-4">
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Account Holder Name
-          </Text>
-          <TextInput
-            value={bankDetails.accountHolderName}
-            onChangeText={(v: string) => updateBank('accountHolderName', v)}
-            placeholder="Enter account holder name"
-            placeholderTextColor="#9ca3af"
-            className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
-          />
-        </View>
+      <View className="gap-1">
+        <Input
+          label="Account Holder Name"
+          value={bankDetails.accountHolderName}
+          onChangeText={(v) => updateBank('accountHolderName', v)}
+          placeholder="e.g. John Doe"
+          icon={<User size={18} color="#9ca3af" />}
+          returnKeyType="next"
+          onSubmitEditing={() => bankNameRef.current?.focus()}
+        />
 
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Bank Name
-          </Text>
-          <View className="flex-row items-center bg-white dark:bg-[#1e291e] border border-[#eaf0ea] dark:border-[#2a382a] rounded-xl px-4">
-            <Building2 size={18} color="#9ca3af" />
-            <TextInput
-              value={bankDetails.bankName}
-              onChangeText={(v: string) => updateBank('bankName', v)}
-              placeholder="Enter bank name"
-              placeholderTextColor="#9ca3af"
-              className="flex-1 py-3.5 ml-3 text-sm text-text-main dark:text-white"
-            />
-          </View>
-        </View>
+        <Input
+          ref={bankNameRef}
+          label="Bank Name"
+          value={bankDetails.bankName}
+          onChangeText={(v) => updateBank('bankName', v)}
+          placeholder="e.g. State Bank of India"
+          icon={<Building2 size={18} color="#9ca3af" />}
+          returnKeyType="next"
+          onSubmitEditing={() => accountNumberRef.current?.focus()}
+        />
 
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            Account Number
-          </Text>
-          <TextInput
-            value={bankDetails.accountNumber}
-            onChangeText={(v: string) => updateBank('accountNumber', v)}
-            placeholder="Enter account number"
-            placeholderTextColor="#9ca3af"
-            keyboardType="numeric"
-            className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
-          />
-        </View>
+        <Input
+          ref={accountNumberRef}
+          label="Account Number"
+          value={bankDetails.accountNumber}
+          onChangeText={(v) => updateBank('accountNumber', v)}
+          placeholder="0000 0000 0000 0000"
+          keyboardType="numeric"
+          icon={<Wallet size={18} color="#9ca3af" />}
+          returnKeyType="next"
+          onSubmitEditing={() => ifscRef.current?.focus()}
+        />
 
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
-            IFSC Code
-          </Text>
-          <TextInput
-            value={bankDetails.ifscCode}
-            onChangeText={(v: string) => updateBank('ifscCode', v)}
-            placeholder="Enter IFSC code"
-            placeholderTextColor="#9ca3af"
-            autoCapitalize="characters"
-            className="px-4 py-3.5 rounded-xl border border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e] text-sm text-text-main dark:text-white"
-          />
-        </View>
+        <Input
+          ref={ifscRef}
+          label="IFSC Code"
+          value={bankDetails.ifscCode}
+          onChangeText={(v) => updateBank('ifscCode', v)}
+          placeholder="SBIN0001234"
+          autoCapitalize="characters"
+          icon={<CheckCircle size={18} color="#9ca3af" />}
+          returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
+        />
 
-        <View>
-          <Text className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">
+        <View className="mb-6">
+          <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">
             Account Type
           </Text>
           <View className="flex-row gap-3">
@@ -361,16 +359,16 @@ export default function InvestorPreferences() {
               <TouchableOpacity
                 key={type}
                 onPress={() => setAccountType(type)}
-                className={`flex-1 py-3 rounded-xl border-2 text-center capitalize transition-all ${
+                className={`flex-1 py-4 rounded-2xl border-2 text-center capitalize transition-all ${
                   accountType === type
                     ? 'border-primary bg-primary/5'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
-                <Text className={`text-sm font-medium ${
+                <Text className={`text-sm font-bold uppercase tracking-widest ${
                   accountType === type
                     ? 'text-primary'
-                    : 'text-text-main dark:text-white'
+                    : 'text-slate-600 dark:text-gray-400'
                 }`}>
                   {type}
                 </Text>
@@ -381,25 +379,25 @@ export default function InvestorPreferences() {
       </View>
 
       {/* Navigation */}
-      <View className="flex-row gap-3 mt-6">
+      <View className="flex-row gap-3 mt-6 mb-10">
         <TouchableOpacity
           onPress={() => setStep(1)}
-          className="flex-1 py-4 rounded-xl bg-[#eaf0ea] dark:bg-[#2a382a] flex-row items-center justify-center gap-2"
+          className="flex-1 h-14 rounded-2xl bg-gray-100 dark:bg-[#2a382a] flex-row items-center justify-center gap-2"
         >
-          <ChevronLeft size={18} color="#4cae4f" />
-          <Text className="text-primary font-semibold text-sm">Back</Text>
+          <ChevronLeft size={18} color="#4cae4f" strokeWidth={2.5} />
+          <Text className="text-gray-600 dark:text-gray-300 font-bold uppercase tracking-widest text-xs">Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleComplete}
           disabled={isSubmitting}
-          className={`flex-[2] py-4 rounded-xl bg-primary flex-row items-center justify-center gap-2 ${isSubmitting ? 'opacity-60' : ''}`}
+          className={`flex-[2] h-14 rounded-2xl bg-primary flex-row items-center justify-center gap-2 shadow-lg shadow-primary/20 ${isSubmitting ? 'opacity-60' : ''}`}
         >
           {isSubmitting ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
             <>
-              <Text className="text-white font-semibold text-sm">Complete Registration</Text>
-              <CheckCircle size={18} color="white" />
+              <Text className="text-white font-bold uppercase tracking-widest text-xs">Finalize</Text>
+              <CheckCircle size={18} color="white" strokeWidth={2.5} />
             </>
           )}
         </TouchableOpacity>
@@ -408,19 +406,22 @@ export default function InvestorPreferences() {
   );
 
   return (
-    <>
+    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerClassName="flex-grow px-6 py-8"
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingTop: 32, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          alwaysBounceVertical={false}
         >
           {step === 1 ? renderStep1() : renderStep2()}
         </ScrollView>
       </KeyboardAvoidingView>
-    </>
+    </View>
   );
 }

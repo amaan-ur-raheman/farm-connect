@@ -20,7 +20,9 @@ export const handleKycActionHandler = asyncHandler(async (req: Request, res: Res
 });
 
 export const getDisputesHandler = asyncHandler(async (req: Request, res: Response) => {
-	const disputes = await adminService.getAllDisputes();
+	const page = parseInt(req.query.page as string) || 1;
+	const limit = parseInt(req.query.limit as string) || 20;
+	const disputes = await adminService.getAllDisputes(page, limit);
 	res.json({ success: true, data: disputes });
 });
 
@@ -31,11 +33,15 @@ export const resolveDisputeHandler = asyncHandler(async (req: Request, res: Resp
 });
 
 export const getUsersHandler = asyncHandler(async (req: Request, res: Response) => {
-	const users = await adminService.getAllUsers();
+	const page = parseInt(req.query.page as string) || 1;
+	const limit = parseInt(req.query.limit as string) || 20;
+	const users = await adminService.getAllUsers(page, limit);
 	res.json({ success: true, data: users });
 });
 
 export const getListingsHandler = asyncHandler(async (req: Request, res: Response) => {
-	const listings = await adminService.getAllListings();
+	const page = parseInt(req.query.page as string) || 1;
+	const limit = parseInt(req.query.limit as string) || 20;
+	const listings = await adminService.getAllListings(page, limit);
 	res.json({ success: true, data: listings });
 });

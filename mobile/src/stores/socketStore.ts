@@ -9,6 +9,7 @@ interface SocketState {
 	connect: () => void;
 	disconnect: () => void;
 	emit: (event: string, data: any) => void;
+	reconnectWithNewToken: () => void;
 }
 
 export const useSocketStore = create<SocketState>((set, get) => ({
@@ -89,5 +90,19 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 		} else {
 			console.warn(`Attempted to emit ${event} while socket is disconnected`);
 		}
+	},
+
+	// NEW: Reconnect socket with fresh token after token refresh
+	reconnectWithNewToken: () => {
+		const { socket } = get();
+		
+		// Disconnect old socket if it exists
+		if (socket) {
+			socket.disconnect();
+			socket.removeAllListeners();
+		}
+
+		// Connect with new token
+		get().connect();
 	},
 }));

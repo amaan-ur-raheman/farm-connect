@@ -31,10 +31,21 @@ export default function NotificationsScreen() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const res = await api.get<{ data: Notification[] }>('/api/notifications');
-      setNotifications(res.data.data || []);
+      const res = await api.get<any>('/api/notifications');
+      const responseData = res.data?.data;
+      
+      // Backend returns { notifications: [...], unread_count: X, pagination: {...} }
+      const notificationsArray = responseData?.notifications || responseData || [];
+      
+      if (!Array.isArray(notificationsArray)) {
+        console.error('Notifications API returned unexpected format:', typeof responseData);
+        setNotifications([]);
+      } else {
+        setNotifications(notificationsArray);
+      }
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
+      setNotifications([]); // Ensure it's always an array
     } finally {
       setLoading(false);
     }

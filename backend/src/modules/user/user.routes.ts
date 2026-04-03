@@ -27,7 +27,8 @@ userRouter.patch(
 	validate(updateProfileSchema),
 	updateProfileHandler,
 );
-userRouter.post("/upload-kyc", authenticate, ...uploadKycHandler);
+// @deprecated - This endpoint is deprecated. Use /api/kyc/upload instead
+userRouter.post("/upload-kyc", authenticate, uploadKycHandler);
 userRouter.post(
 	"/push-token",
 	authenticate,

@@ -55,41 +55,48 @@ export default function ContractDetailScreen() {
     }
   };
 
-  const handleDeposit = () => {
+  const handleDeposit = async () => {
     if (!contract) return;
-    const total = contract.amount_per_cycle * contract.total_cycles;
-    const remaining = total - contract.escrow_held;
+    const remaining = (contract.total_amount || 0) - (contract.escrow_held || 0);
 
     if (remaining <= 0) {
       Alert.alert('Escrow Full', 'Total contract amount is already in escrow.');
       return;
     }
 
-    startRazorpayPayment({
-      amount: remaining,
-      contract_id: contract.id,
-      onSuccess: () => {
-        Alert.alert('Success', 'Escrow deposit successful!');
-        fetchData();
-      },
-      onFailure: (err) => {
-        Alert.alert('Payment Failed', err.message || 'Deposit failed.');
-      },
-    });
+    try {
+      await startRazorpayPayment({
+        amount: remaining,
+        contract_id: contract.id,
+        description: `Payment for ${contract.listing?.name || 'contract'}`,
+        prefill: {
+          name: contract.listing?.farmer?.name || '',
+          contact: contract.listing?.farmer?.phone || '',
+        },
+      });
+      Alert.alert('Success', 'Escrow deposit successful!');
+      fetchData();
+    } catch (err: any) {
+      Alert.alert('Payment Failed', err.message || 'Deposit failed.');
+    }
   };
 
   const handleStartChat = async () => {
     if (!contract) return;
     const otherUserId = userRole === 'farmer' ? contract.consumer_id : contract.listing?.farmer_id;
-    if (!otherUserId) return;
+    if (!otherUserId) {
+      Alert.alert('Error', 'Could not find the other user.');
+      return;
+    }
     try {
       const res = await api.post<{ data: { id: string } }>('/api/chat/conversations', {
-        other_user_id: otherUserId,
+        participant_id: otherUserId,
         contract_id: contract.id,
       });
       router.push(`/chat/${res.data.data?.id || ''}`);
-    } catch {
-      Alert.alert('Error', 'Failed to start conversation.');
+    } catch (err: any) {
+      console.error('Failed to start chat:', err);
+      Alert.alert('Error', err.response?.data?.message || 'Failed to start conversation.');
     }
   };
 
@@ -112,7 +119,7 @@ export default function ContractDetailScreen() {
     );
   }
 
-  const totalContractAmount = contract.amount_per_cycle * contract.total_cycles;
+  const totalContractAmount = contract.total_amount || 0;
 
   return (
     <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
@@ -143,12 +150,12 @@ export default function ContractDetailScreen() {
           )}
           <View className="flex-row justify-between mb-4">
             <View className="items-center">
-              <Text className="text-[10px] text-gray-400 uppercase">Amount/Cycle</Text>
-              <Text className="text-lg font-bold text-[#4cae4f]">₹{contract.amount_per_cycle.toLocaleString('en-IN')}</Text>
+              <Text className="text-[10px] text-gray-400 uppercase">Price/Acre</Text>
+              <Text className="text-lg font-bold text-[#4cae4f]">₹{(contract.price_per_acre || 0).toLocaleString('en-IN')}</Text>
             </View>
             <View className="items-center">
-              <Text className="text-[10px] text-gray-400 uppercase">Cycles</Text>
-              <Text className="text-lg font-bold text-slate-900 dark:text-white">{contract.total_cycles}</Text>
+              <Text className="text-[10px] text-gray-400 uppercase">Acreage</Text>
+              <Text className="text-lg font-bold text-slate-900 dark:text-white">{contract.acreage || 0}</Text>
             </View>
             <View className="items-center">
               <Text className="text-[10px] text-gray-400 uppercase">Total</Text>
@@ -161,11 +168,11 @@ export default function ContractDetailScreen() {
           <View className="pt-4 border-t border-[#eaf0ea] dark:border-[#2a382a] flex-row justify-between">
             <View>
               <Text className="text-[10px] text-gray-400 uppercase">Escrow Held</Text>
-              <Text className="text-sm font-bold text-[#f59e0b]">₹{contract.escrow_held.toLocaleString('en-IN')}</Text>
+              <Text className="text-sm font-bold text-[#f59e0b]">₹{(contract.escrow_held || 0).toLocaleString('en-IN')}</Text>
             </View>
             <View className="items-end">
               <Text className="text-[10px] text-gray-400 uppercase">Paid to Farmer</Text>
-              <Text className="text-sm font-bold text-[#3b82f6]">₹{contract.farmer_paid.toLocaleString('en-IN')}</Text>
+              <Text className="text-sm font-bold text-[#3b82f6]">₹{(contract.farmer_paid || 0).toLocaleString('en-IN')}</Text>
             </View>
           </View>
         </View>

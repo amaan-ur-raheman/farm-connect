@@ -1,49 +1,102 @@
-import { TextInput, View, Text, TextInputProps } from 'react-native';
-import { Mail, Lock, Search, MapPin, ChevronDown } from 'lucide-react-native';
+import React, { useState, forwardRef } from 'react';
+import { TextInput, View, Text, TouchableOpacity, TextInputProps, StyleSheet } from 'react-native';
+import { XCircle } from 'lucide-react-native';
 
-interface InputProps extends TextInputProps {
+export interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
-  icon?: 'mail' | 'lock' | 'search' | 'map-pin' | 'chevron-down';
+  icon?: React.ReactNode;
+  onClear?: () => void;
+  containerClassName?: string;
+  className?: string;
 }
 
-export function Input({
+export const Input = forwardRef<TextInput, InputProps>(({
   label,
   error,
   icon,
+  onClear,
   className,
+  containerClassName,
   ...props
-}: InputProps) {
-  const ICON_SIZE = 20;
-  const ICON_COLOR = '#60974e';
+}, ref) => {
+  const [isFocused, setIsFocused] = useState(false);
 
-  const RenderIcon = () => {
-    switch (icon) {
-      case 'mail': return <Mail size={ICON_SIZE} color={ICON_COLOR} />;
-      case 'lock': return <Lock size={ICON_SIZE} color={ICON_COLOR} />;
-      case 'search': return <Search size={ICON_SIZE} color={ICON_COLOR} />;
-      case 'map-pin': return <MapPin size={ICON_SIZE} color={ICON_COLOR} />;
-      case 'chevron-down': return <ChevronDown size={ICON_SIZE} color={ICON_COLOR} />;
-      default: return null;
-    }
-  };
+  const hasValue = Boolean(props.value);
+  const showClear = hasValue && props.editable !== false && onClear;
+
+  // Use style instead of complex conditional classNames to avoid NativeWind parsing errors
+  const containerStyle = [
+    styles.inputContainer,
+    isFocused && styles.inputContainerFocused,
+    Boolean(error) && styles.inputContainerError,
+  ];
 
   return (
-    <View className="mb-4">
-      {label && <Text className="text-sm font-medium text-slate-900 dark:text-slate-200 mb-2">{label}</Text>}
-      <View className={`relative flex-row items-center rounded-xl bg-agri-input border border-agri-border px-4 py-3.5 dark:bg-slate-900 dark:border-slate-800 ${error ? 'border-red-500' : ''} ${className}`}>
+    <View className={`mb-4 ${containerClassName || ''}`}>
+      {label && (
+        <Text className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">
+          {label}
+        </Text>
+      )}
+      <View style={containerStyle as any}>
         <TextInput
-          className="flex-1 text-base text-slate-900 dark:text-white font-medium"
-          placeholderTextColor="#94a3b8"
+          ref={ref}
+          className={`flex-1 text-base text-slate-900 dark:text-white font-medium py-3 ${className || ''}`}
+          placeholderTextColor="#9ca3af"
+          onFocus={(e) => {
+            setIsFocused(true);
+            props.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            props.onBlur?.(e);
+          }}
+          selectionColor="#4cae4f"
           {...props}
         />
+
+        {showClear && (
+          <TouchableOpacity onPress={onClear} className="ml-2 p-1">
+            <XCircle size={18} color="#9ca3af" />
+          </TouchableOpacity>
+        )}
+
         {icon && (
-          <View className="ml-2 pl-3 border-l border-slate-100 dark:border-slate-800">
-            <RenderIcon />
+          <View className={`ml-2 ${showClear ? 'pl-2 border-l border-gray-100 dark:border-gray-800' : ''}`}>
+            {icon}
           </View>
         )}
       </View>
-      {error && <Text className="text-xs text-red-500 mt-1 ml-1">{error}</Text>}
+      {error && (
+        <Text className="text-xs text-red-500 mt-1 ml-1 font-medium">{error}</Text>
+      )}
     </View>
   );
-}
+});
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#eaf0ea',
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    minHeight: 52,
+  },
+  inputContainerFocused: {
+    borderColor: '#4cae4f',
+    shadowColor: '#4cae4f',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  inputContainerError: {
+    borderColor: '#ef4444',
+  },
+});
+
+Input.displayName = 'Input';

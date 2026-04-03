@@ -6,6 +6,9 @@ export const redisConnection: ConnectionOptions = {
 	port: env.redis.port,
 	password: env.redis.password,
 	username: env.redis.username,
+	// Upstash and most cloud providers require TLS. 
+	// We enable it if we're not on localhost.
+	tls: env.redis.host !== "localhost" && env.redis.host !== "127.0.0.1" ? {} : undefined,
 };
 
 export const escrowQueue = new Queue("escrow-release", {

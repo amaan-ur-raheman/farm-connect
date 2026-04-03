@@ -68,16 +68,20 @@ export default function ContractsScreen() {
 
   const handleStartChat = async (contract: Contract) => {
     const otherUserId = userRole === 'farmer' ? contract.consumer_id : contract.listing?.farmer_id;
-    if (!otherUserId) return;
+    if (!otherUserId) {
+      Alert.alert('Error', 'Could not find the other user.');
+      return;
+    }
     try {
       const res = await api.post<{ data: { id: string } }>('/api/chat/conversations', {
-        other_user_id: otherUserId,
+        participant_id: otherUserId,
         contract_id: contract.id,
       });
       const conversationId = res.data.data?.id;
       router.push(`/chat/${conversationId}`);
-    } catch {
-      Alert.alert('Error', 'Failed to start conversation.');
+    } catch (err: any) {
+      console.error('Failed to start chat:', err);
+      Alert.alert('Error', err.response?.data?.message || 'Failed to start conversation.');
     }
   };
 
@@ -171,17 +175,17 @@ export default function ContractsScreen() {
 
                 <View className="flex-row items-center justify-between mb-3">
                   <View>
-                    <Text className="text-[10px] text-gray-400 uppercase">Amount/Cycle</Text>
-                    <Text className="text-sm font-bold text-[#4cae4f]">₹{contract.amount_per_cycle.toLocaleString('en-IN')}</Text>
+                    <Text className="text-[10px] text-gray-400 uppercase">Price/Acre</Text>
+                    <Text className="text-sm font-bold text-[#4cae4f]">₹{contract.price_per_acre?.toLocaleString('en-IN') || '0'}</Text>
                   </View>
                   <View>
-                    <Text className="text-[10px] text-gray-400 uppercase">Cycles</Text>
-                    <Text className="text-sm font-bold text-slate-900 dark:text-white">{contract.total_cycles}</Text>
+                    <Text className="text-[10px] text-gray-400 uppercase">Acreage</Text>
+                    <Text className="text-sm font-bold text-slate-900 dark:text-white">{contract.acreage}</Text>
                   </View>
                   <View>
                     <Text className="text-[10px] text-gray-400 uppercase">Total</Text>
                     <Text className="text-sm font-bold text-slate-900 dark:text-white">
-                      ₹{(contract.amount_per_cycle * contract.total_cycles).toLocaleString('en-IN')}
+                      ₹{(contract.total_amount || 0).toLocaleString('en-IN')}
                     </Text>
                   </View>
                 </View>

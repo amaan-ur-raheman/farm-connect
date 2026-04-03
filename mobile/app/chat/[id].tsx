@@ -10,6 +10,7 @@ import {
 	KeyboardAvoidingView,
 	Platform,
 	ActivityIndicator,
+	Keyboard,
 } from "react-native";
 import { Camera, MapPin, Mic, Send, Play } from "lucide-react-native";
 import { useLocalSearchParams, router } from "expo-router";
@@ -27,6 +28,7 @@ export default function ChatScreen() {
 	const [inputText, setInputText] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [sending, setSending] = useState(false);
+	const [inputHeight, setInputTextHeight] = useState(48);
 	const [otherUser, setOtherUser] = useState<{
 		name: string;
 		avatar: string;
@@ -88,11 +90,12 @@ export default function ChatScreen() {
 		if (!inputText.trim() || sending) return;
 		const text = inputText.trim();
 		setInputText("");
+		setInputTextHeight(48);
 		setSending(true);
 		try {
 			await api.post(`/api/chat/conversations/${id}/messages`, { text });
 			await fetchMessages();
-			scrollViewRef.current?.scrollToEnd({ animated: true });
+			setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
 		} catch {
 			setInputText(text); // restore on error
 		} finally {
@@ -112,7 +115,8 @@ export default function ChatScreen() {
 
 	return (
 		<KeyboardAvoidingView
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			behavior={Platform.OS === "ios" ? "padding" : undefined}
+			keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
 			className="flex-1 bg-background-light dark:bg-background-dark"
 		>
 			<StatusBar barStyle="dark-content" />
@@ -134,10 +138,11 @@ export default function ChatScreen() {
 					ref={scrollViewRef}
 					className="flex-1"
 					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
 					contentContainerStyle={{
 						paddingHorizontal: 16,
 						paddingVertical: 20,
-						paddingBottom: 150,
+						paddingBottom: 20,
 					}}
 					onContentSizeChange={() =>
 						scrollViewRef.current?.scrollToEnd({ animated: false })
@@ -239,9 +244,9 @@ export default function ChatScreen() {
 				</ScrollView>
 			)}
 
-			<View className="bg-white/80 dark:bg-[#1e291e]/80 backdrop-blur-xl border-t border-[#eaf0ea] dark:border-[#2a382a] px-4 pt-4 pb-10">
-				<View className="flex-row items-center gap-2">
-					<View className="flex-row bg-gray-100/80 dark:bg-gray-800/80 rounded-2xl p-1 gap-1 border border-gray-100/50 dark:border-white/5">
+			<View className="bg-white dark:bg-[#1e291e] border-t border-[#eaf0ea] dark:border-[#2a382a] px-4 pt-3 pb-8">
+				<View className="flex-row items-end gap-2">
+					<View className="flex-row bg-gray-100 dark:bg-gray-800 rounded-2xl p-1 gap-1 border border-gray-100 dark:border-white/5 mb-1">
 						<TouchableOpacity className="size-10 items-center justify-center rounded-xl">
 							<Camera
 								size={20}
@@ -249,26 +254,22 @@ export default function ChatScreen() {
 								strokeWidth={2.2}
 							/>
 						</TouchableOpacity>
-						<TouchableOpacity className="size-10 items-center justify-center rounded-xl">
-							<MapPin
-								size={20}
-								color="#608562"
-								strokeWidth={2.2}
-							/>
-						</TouchableOpacity>
 					</View>
 
-					<View className="flex-1 h-12 bg-white dark:bg-gray-900 rounded-full px-5 flex-row items-center border border-[#eaf0ea] dark:border-[#2a382a] shadow-sm shadow-black/5">
+					<View className="flex-1 bg-gray-50 dark:bg-gray-900 rounded-[24px] px-4 py-1 flex-row items-end border border-[#eaf0ea] dark:border-[#2a382a]">
 						<TextInput
-							placeholder="Type message..."
+							placeholder="Message..."
 							placeholderTextColor="#8ba88c"
 							value={inputText}
 							onChangeText={setInputText}
-							onSubmitEditing={handleSend}
-							returnKeyType="send"
-							className="flex-1 h-full text-[15px] text-[#111811] dark:text-white font-semibold"
+							multiline
+							onContentSizeChange={(e) => {
+								setInputTextHeight(Math.min(120, Math.max(48, e.nativeEvent.contentSize.height + 10)));
+							}}
+							style={{ height: inputHeight }}
+							className="flex-1 text-[15px] text-[#111811] dark:text-white font-semibold py-2"
 						/>
-						<TouchableOpacity className="p-1">
+						<TouchableOpacity className="p-2 mb-1">
 							<Mic size={20} color="#4cae4f" strokeWidth={2.2} />
 						</TouchableOpacity>
 					</View>
@@ -276,7 +277,7 @@ export default function ChatScreen() {
 					<TouchableOpacity
 						onPress={handleSend}
 						disabled={!inputText.trim() || sending}
-						className={`size-12 rounded-full items-center justify-center shadow-lg ${inputText.trim() ? "bg-[#4cae4f] shadow-[#4cae4f]/30" : "bg-gray-300 dark:bg-gray-700"}`}
+						className={`size-12 rounded-full items-center justify-center shadow-lg mb-0.5 ${inputText.trim() ? "bg-[#4cae4f] shadow-[#4cae4f]/30" : "bg-gray-300 dark:bg-gray-700"}`}
 					>
 						<Send
 							size={22}

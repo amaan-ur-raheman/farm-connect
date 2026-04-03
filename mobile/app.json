@@ -29,24 +29,16 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "https://YOUR_PRODUCTION_URL/api",
+      "apiUrl": "http://192.168.31.197:3000",
       "eas": {
         "projectId": "YOUR_EAS_PROJECT_ID"
       }
     },
     "plugins": [
-      "nativewind",
       [
         "expo-router",
         {
           "root": "./app"
-        }
-      ],
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/icon.png",
-          "color": "#4a7c59"
         }
       ],
       "expo-image",

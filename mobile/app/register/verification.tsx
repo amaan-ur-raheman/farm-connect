@@ -9,6 +9,8 @@ import {
   Platform,
   Alert,
   TextInput,
+  Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -51,22 +53,34 @@ const getMimeType = (uri: string): string => {
 };
 
 const uploadKycDocument = async (
-  documentType: BackendDocType,
+  documentType: 'aadhaar' | 'pan' | 'bank_statement',
   assetUri: string,
   fileName: string
 ): Promise<void> => {
   const mimeType = getMimeType(assetUri);
   const formData = new FormData();
-  formData.append('documentType', documentType);
-  formData.append('file', {
+  
+  // Use the correct field names for /api/kyc/upload endpoint
+  const fieldName = documentType === 'aadhaar' ? 'aadhaar' : 'land_record';
+  
+  // @ts-ignore - FormData type issue with React Native
+  formData.append(fieldName, {
     uri: assetUri,
     name: fileName,
     type: mimeType,
   } as any);
 
-  await api.post('/api/users/upload-kyc', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  console.log('Uploading KYC document to /api/kyc/upload...', { fieldName, mimeType, fileName });
+
+  try {
+    const response = await api.post('/api/kyc/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    console.log('KYC upload successful:', response.data);
+  } catch (error: any) {
+    console.error('KYC upload failed:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export default function RegisterStep2() {
@@ -83,6 +97,7 @@ export default function RegisterStep2() {
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [isOtpFocused, setIsOtpFocused] = useState(false);
   const [uploadedDocs, setUploadedDocs] = useState({
     idFront: documents.some((d) => d.type === 'aadhaar'),
     idBack: documents.some(d => d.type === 'pan'),
@@ -136,6 +151,7 @@ export default function RegisterStep2() {
   };
 
   const handleVerifyOtp = async () => {
+    Keyboard.dismiss();
     if (otpInput.length !== 6) {
       setOtpError('Please enter the 6-digit OTP');
       return;
@@ -184,21 +200,29 @@ export default function RegisterStep2() {
       const asset = result.assets[0];
       const apiDocType = API_TYPE_MAP[type];
       try {
+        Alert.alert('Uploading', 'Please wait while we upload your document...');
         await uploadKycDocument(apiDocType, asset.uri, `${type}.jpg`);
-      } catch {
-        Alert.alert('Upload Failed', 'Could not upload document. Please try again.');
-        return;
+        Keyboard.dismiss();
+        
+        addDocument({
+          type: LOCAL_TYPE_MAP[type],
+          uri: asset.uri,
+          fileName: `${type}.jpg`,
+          uploadedAt: new Date().toISOString(),
+        });
+        setUploadedDocs((prev) => ({
+          ...prev,
+          [type]: true,
+        }));
+        
+        Alert.alert('Success', 'Document uploaded successfully!');
+      } catch (err: any) {
+        console.error('Upload error:', err);
+        Alert.alert(
+          'Upload Failed',
+          err.message || 'Could not upload document. Please check your connection and try again.',
+        );
       }
-      addDocument({
-        type: LOCAL_TYPE_MAP[type],
-        uri: asset.uri,
-        fileName: `${type}.jpg`,
-        uploadedAt: new Date().toISOString(),
-      });
-      setUploadedDocs((prev) => ({
-        ...prev,
-        [type]: true,
-      }));
     }
   };
 
@@ -344,199 +368,182 @@ export default function RegisterStep2() {
   };
 
   return (
-    <>
+    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerClassName="flex-grow px-6 py-8"
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingTop: 32, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          alwaysBounceVertical={false}
         >
-          {/* Progress Bar */}
-          <View className="mb-6">
-            <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
-              <View className="h-full w-[66%] bg-primary rounded-full" />
-            </View>
-            <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              Step 2 of 3 • Verification
-            </Text>
-          </View>
-
-          {/* Title */}
-          <View className="flex-row items-center gap-3 mb-4">
-            <View className="size-12 rounded-full bg-primary/10 items-center justify-center">
-              <ShieldCheck size={24} color="#2be619" />
-            </View>
-            <View>
-              <Text className="text-xl font-bold text-text-main dark:text-white">
-                Verify Identity
-              </Text>
-              <Text className="text-xs text-gray-500 dark:text-gray-400">
-                {role === 'investor'
-                  ? 'Required for investment compliance'
-                  : 'Required for farm listing verification'}
-              </Text>
-            </View>
-          </View>
-
-          {/* Role Badge */}
-          <View className="flex-row items-center justify-center gap-2 mb-4">
-            <View className="px-3 py-1.5 rounded-full bg-[#4cae4f]/10">
-              <Text className="text-xs font-semibold text-primary capitalize">
-                {role}
-              </Text>
-            </View>
-            <Text className="text-xs text-gray-500 dark:text-gray-400">
-              Account Type
-            </Text>
-          </View>
-
-          {/* OTP Verification Card */}
-          <View className="bg-white dark:bg-[#1e291e] rounded-xl p-4 mb-4">
-            <View className="flex-row items-center gap-2 mb-3">
-              <Smartphone size={18} color="#4cae4f" />
-              <Text className="text-sm font-semibold text-text-main dark:text-white">
-                Phone Verification
+            {/* Progress Bar */}
+            <View className="mb-6">
+              <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
+                <View className="h-full w-[66%] bg-primary rounded-full" />
+              </View>
+              <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
+                Step 2 of 3 • Verification
               </Text>
             </View>
 
-            {phone ? (
-              <Text className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                OTP sent to {formatPhone(phone)}
-              </Text>
-            ) : null}
-
-            <TextInput
-              ref={otpInputRef}
-              className="bg-[#f5f5f5] dark:bg-[#2a2a2a] rounded-xl px-4 py-3 text-center text-lg font-bold tracking-widest text-text-main dark:text-white mb-2 border border-[#e0e0e0] dark:border-[#3a3a3a]"
-              placeholder="_ _ _ _ _ _"
-              placeholderTextColor="#aaa"
-              keyboardType="number-pad"
-              maxLength={6}
-              value={otpInput}
-              onChangeText={(text: string) => {
-                setOtpInput(text.replace(/[^0-9]/g, ''));
-                setOtpError(null);
-              }}
-              editable={!otpVerified}
-            />
-
-            {otpError ? (
-              <Text className="text-xs text-red-500 text-center mb-2">
-                {otpError}
-              </Text>
-            ) : null}
-
-            {otpVerified ? (
-              <View className="flex-row items-center justify-center gap-2 py-2">
-                <CheckCircle size={16} color="#4cae4f" />
-                <Text className="text-sm font-medium text-primary">
-                  Phone verified
+            {/* Title */}
+            <View className="flex-row items-center gap-3 mb-6">
+              <View className="size-12 rounded-2xl bg-primary/10 items-center justify-center">
+                <ShieldCheck size={24} color="#4cae4f" strokeWidth={2.5} />
+              </View>
+              <View>
+                <Text className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
+                  Verify Identity
+                </Text>
+                <Text className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                  {role === 'investor'
+                    ? 'Required for investment compliance'
+                    : 'Required for farm listing verification'}
                 </Text>
               </View>
-            ) : (
-              <View className="flex-row items-center justify-between mt-1">
-                <TouchableOpacity
-                  onPress={handleVerifyOtp}
-                  disabled={otpInput.length !== 6 || isLoading}
-                  className="flex-1 py-3 rounded-xl bg-primary items-center"
-                >
-                  {isLoading ? (
-                    <Loader size={16} color="white" className="animate-spin" />
-                  ) : (
-                    <Text className="text-white font-semibold text-sm">
-                      Verify OTP
-                    </Text>
-                  )}
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleResendOtp}
-                  disabled={resendCooldown > 0 || isLoading}
-                  className="ml-2 px-3 py-3 rounded-xl bg-[#eaf0ea] dark:bg-[#2a382a]"
-                >
-                  <Text
-                    className={`text-xs font-medium ${
-                      resendCooldown > 0
-                        ? 'text-gray-400'
-                        : 'text-primary'
+            </View>
+
+            {/* OTP Verification Card */}
+            <View className="bg-white dark:bg-[#1e291e] rounded-3xl p-6 mb-6 border border-[#eaf0ea] dark:border-[#2a382a] shadow-sm">
+              <View className="flex-row items-center gap-2 mb-4">
+                <View className="size-8 bg-[#4cae4f]/10 rounded-lg items-center justify-center">
+                  <Smartphone size={16} color="#4cae4f" />
+                </View>
+                <Text className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  Phone Verification
+                </Text>
+              </View>
+
+              {phone ? (
+                <Text className="text-xs text-gray-500 dark:text-gray-400 mb-4 font-medium">
+                  We've sent an OTP to <Text className="text-slate-900 dark:text-white font-bold">{formatPhone(phone)}</Text>
+                </Text>
+              ) : null}
+
+              <TextInput
+                ref={otpInputRef}
+                className={`bg-gray-50 dark:bg-gray-900 rounded-2xl px-4 py-4 text-center text-2xl font-black tracking-[10px] text-slate-900 dark:text-white mb-2 border-2 transition-all ${
+                  isOtpFocused ? 'border-primary bg-white dark:bg-[#1e291e]' : 'border-[#eaf0ea] dark:border-[#3a3a3a]'
+                } ${otpError ? 'border-red-500' : ''}`}
+                placeholder="000000"
+                placeholderTextColor="#94a3b8"
+                keyboardType="number-pad"
+                maxLength={6}
+                value={otpInput}
+                onFocus={() => setIsOtpFocused(true)}
+                onBlur={() => setIsOtpFocused(false)}
+                onChangeText={(text: string) => {
+                  setOtpInput(text.replace(/[^0-9]/g, ''));
+                  setOtpError(null);
+                }}
+                editable={!otpVerified && !isLoading}
+                onSubmitEditing={handleVerifyOtp}
+                returnKeyType="done"
+              />
+
+              {otpError ? (
+                <Text className="text-xs text-red-500 text-center mb-2 font-medium">
+                  {otpError}
+                </Text>
+              ) : null}
+
+              {otpVerified ? (
+                <View className="flex-row items-center justify-center gap-2 py-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-900/30">
+                  <CheckCircle size={18} color="#4cae4f" strokeWidth={2.5} />
+                  <Text className="text-sm font-bold text-green-700 dark:text-green-400 uppercase tracking-wide">
+                    Phone verified
+                  </Text>
+                </View>
+              ) : (
+                <View className="flex-row items-center justify-between mt-2 gap-3">
+                  <TouchableOpacity
+                    onPress={handleVerifyOtp}
+                    disabled={otpInput.length !== 6 || isLoading}
+                    className={`flex-1 h-14 rounded-2xl bg-primary items-center justify-center shadow-lg shadow-primary/20 ${
+                      otpInput.length !== 6 || isLoading ? 'opacity-50' : ''
                     }`}
                   >
-                    {resendCooldown > 0 ? `${resendCooldown}s` : 'Resend'}
-                  </Text>
-                </TouchableOpacity>
+                    {isLoading ? (
+                      <ActivityIndicator color="white" size="small" />
+                    ) : (
+                      <Text className="text-white font-bold text-sm uppercase tracking-widest">
+                        Verify OTP
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleResendOtp}
+                    disabled={resendCooldown > 0 || isLoading}
+                    className="px-6 h-14 rounded-2xl bg-gray-100 dark:bg-[#2a382a] items-center justify-center"
+                  >
+                    <Text
+                      className={`text-xs font-bold uppercase tracking-wider ${
+                        resendCooldown > 0
+                          ? 'text-gray-400'
+                          : 'text-primary'
+                      }`}
+                    >
+                      {resendCooldown > 0 ? `${resendCooldown}s` : 'Resend'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
+            {/* KYC Documents Card */}
+            <View className="bg-white dark:bg-[#1e291e] rounded-3xl p-6 mb-6 border border-[#eaf0ea] dark:border-[#2a382a] shadow-sm">
+              <View className="flex-row items-center gap-2 mb-6">
+                <View className="size-8 bg-[#4cae4f]/10 rounded-lg items-center justify-center">
+                  <FileText size={16} color="#4cae4f" />
+                </View>
+                <Text className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                  KYC Documents
+                </Text>
               </View>
-            )}
 
-            <Text className="text-[10px] text-gray-400 dark:text-gray-500 mt-2 text-center">
-              {otpVerified
-                ? 'Your phone number has been verified'
-                : 'Enter the 6-digit code sent to your phone'}
-            </Text>
-          </View>
+              <DocumentUpload
+                title="Government ID (Front)"
+                subtitle="Clear photo of the front of your ID"
+                type="idFront"
+              />
 
-          {/* KYC Documents Card */}
-          <View className="bg-white dark:bg-[#1e291e] rounded-xl p-4 mb-4">
-            <View className="flex-row items-center gap-2 mb-4">
-              <ShieldCheck size={18} color="#4cae4f" />
-              <Text className="text-sm font-semibold text-text-main dark:text-white">
-                Upload KYC Documents
-              </Text>
+              <DocumentUpload
+                title="Government ID (Back)"
+                subtitle="Clear photo of the back of your ID"
+                type="idBack"
+              />
+
+              <DocumentUpload
+                title="Proof of Address"
+                subtitle="Bank statement or Utility bill"
+                type="proofOfAddress"
+              />
             </View>
 
-            <DocumentUpload
-              title="Government ID (Front)"
-              subtitle="Passport, Driver's License, or National ID"
-              type="idFront"
-            />
-
-            <DocumentUpload
-              title="Government ID (Back)"
-              subtitle="The back of your ID document"
-              type="idBack"
-            />
-
-            <DocumentUpload
-              title="Proof of Address"
-              subtitle="Utility bill, bank statement, or official document (within 3 months)"
-              type="proofOfAddress"
-            />
-          </View>
-
-          {/* Security Note */}
-          <View className="flex-row items-start gap-3 p-4 bg-[#4cae4f]/5 rounded-xl mb-6">
-            <ShieldCheck size={18} color="#4cae4f" className="mt-0.5" />
-            <View className="flex-1">
-              <Text className="text-sm font-medium text-text-main dark:text-white">
-                Your documents are secure
-              </Text>
-              <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                All documents are encrypted and stored securely. We use
-                industry-standard security measures to protect your information.
-              </Text>
+            {/* Navigation Buttons */}
+            <View className="flex-row gap-3 mb-10">
+              <TouchableOpacity
+                onPress={() => router.back()}
+                className="flex-1 h-14 rounded-2xl bg-gray-100 dark:bg-[#2a382a] flex-row items-center justify-center gap-2"
+              >
+                <ChevronLeft size={18} color="#4cae4f" strokeWidth={2.5} />
+                <Text className="text-gray-600 dark:text-gray-300 font-bold uppercase tracking-widest text-xs">Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleNext}
+                className="flex-[2] h-14 rounded-2xl bg-primary flex-row items-center justify-center gap-2 shadow-lg shadow-primary/20"
+              >
+                <Text className="text-white font-bold uppercase tracking-widest text-xs">Continue</Text>
+                <ChevronRight size={18} color="white" strokeWidth={2.5} />
+              </TouchableOpacity>
             </View>
-          </View>
-
-          {/* Navigation Buttons */}
-          <View className="flex-row gap-3">
-            <TouchableOpacity
-              onPress={() => router.back()}
-              className="flex-1 py-4 rounded-xl bg-[#eaf0ea] dark:bg-[#2a382a] flex-row items-center justify-center gap-2"
-            >
-              <ChevronLeft size={18} color="#4cae4f" />
-              <Text className="text-primary font-semibold text-sm">Back</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleNext}
-              className="flex-[2] py-4 rounded-xl bg-primary flex-row items-center justify-center gap-2"
-            >
-              <Text className="text-white font-semibold text-sm">Continue</Text>
-              <ChevronRight size={18} color="white" />
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
   );
 }

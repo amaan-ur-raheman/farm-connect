@@ -137,9 +137,9 @@ export type EscrowEvent = (typeof EscrowEvent)[keyof typeof EscrowEvent]
 export const DeliveryStatus: {
   PENDING: 'PENDING',
   HARVESTED: 'HARVESTED',
-  IN_TRANSIT: 'IN_TRANSIT',
   DELIVERED: 'DELIVERED',
   VERIFIED: 'VERIFIED',
+  IN_TRANSIT: 'IN_TRANSIT',
   REJECTED: 'REJECTED'
 };
 
@@ -2108,35 +2108,35 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    farm_listings: number
-    contracts_as_farmer: number
+    audit_logs: number
     contracts_as_consumer: number
-    farm_updates: number
-    escrow_entries: number
-    disputes: number
-    wallet_transactions: number
-    reviews: number
-    notifications: number
-    messages: number
+    contracts_as_farmer: number
     conversations_as_one: number
     conversations_as_two: number
-    audit_logs: number
+    disputes: number
+    escrow_entries: number
+    farm_listings: number
+    farm_updates: number
+    messages: number
+    notifications: number
+    reviews: number
+    wallet_transactions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    farm_listings?: boolean | UserCountOutputTypeCountFarm_listingsArgs
-    contracts_as_farmer?: boolean | UserCountOutputTypeCountContracts_as_farmerArgs
+    audit_logs?: boolean | UserCountOutputTypeCountAudit_logsArgs
     contracts_as_consumer?: boolean | UserCountOutputTypeCountContracts_as_consumerArgs
-    farm_updates?: boolean | UserCountOutputTypeCountFarm_updatesArgs
-    escrow_entries?: boolean | UserCountOutputTypeCountEscrow_entriesArgs
-    disputes?: boolean | UserCountOutputTypeCountDisputesArgs
-    wallet_transactions?: boolean | UserCountOutputTypeCountWallet_transactionsArgs
-    reviews?: boolean | UserCountOutputTypeCountReviewsArgs
-    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
-    messages?: boolean | UserCountOutputTypeCountMessagesArgs
+    contracts_as_farmer?: boolean | UserCountOutputTypeCountContracts_as_farmerArgs
     conversations_as_one?: boolean | UserCountOutputTypeCountConversations_as_oneArgs
     conversations_as_two?: boolean | UserCountOutputTypeCountConversations_as_twoArgs
-    audit_logs?: boolean | UserCountOutputTypeCountAudit_logsArgs
+    disputes?: boolean | UserCountOutputTypeCountDisputesArgs
+    escrow_entries?: boolean | UserCountOutputTypeCountEscrow_entriesArgs
+    farm_listings?: boolean | UserCountOutputTypeCountFarm_listingsArgs
+    farm_updates?: boolean | UserCountOutputTypeCountFarm_updatesArgs
+    messages?: boolean | UserCountOutputTypeCountMessagesArgs
+    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    reviews?: boolean | UserCountOutputTypeCountReviewsArgs
+    wallet_transactions?: boolean | UserCountOutputTypeCountWallet_transactionsArgs
   }
 
   // Custom InputTypes
@@ -2153,15 +2153,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountFarm_listingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FarmListingWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountContracts_as_farmerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ContractWhereInput
+  export type UserCountOutputTypeCountAudit_logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuditLogWhereInput
   }
 
   /**
@@ -2174,50 +2167,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountFarm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FarmUpdateWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountEscrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: EscrowLedgerWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DisputeWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountWallet_transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WalletTransactionWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountReviewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ReviewWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: NotificationWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: MessageWhereInput
+  export type UserCountOutputTypeCountContracts_as_farmerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContractWhereInput
   }
 
   /**
@@ -2237,8 +2188,57 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountAudit_logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AuditLogWhereInput
+  export type UserCountOutputTypeCountDisputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DisputeWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEscrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EscrowLedgerWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFarm_listingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FarmListingWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFarm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FarmUpdateWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MessageWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReviewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReviewWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountWallet_transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WalletTransactionWhereInput
   }
 
 
@@ -2278,19 +2278,19 @@ export namespace Prisma {
    */
 
   export type ContractCountOutputType = {
-    farm_updates: number
-    escrow_entries: number
+    conversations: number
     deliveries: number
     disputes: number
-    conversations: number
+    escrow_entries: number
+    farm_updates: number
   }
 
   export type ContractCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    farm_updates?: boolean | ContractCountOutputTypeCountFarm_updatesArgs
-    escrow_entries?: boolean | ContractCountOutputTypeCountEscrow_entriesArgs
+    conversations?: boolean | ContractCountOutputTypeCountConversationsArgs
     deliveries?: boolean | ContractCountOutputTypeCountDeliveriesArgs
     disputes?: boolean | ContractCountOutputTypeCountDisputesArgs
-    conversations?: boolean | ContractCountOutputTypeCountConversationsArgs
+    escrow_entries?: boolean | ContractCountOutputTypeCountEscrow_entriesArgs
+    farm_updates?: boolean | ContractCountOutputTypeCountFarm_updatesArgs
   }
 
   // Custom InputTypes
@@ -2307,15 +2307,8 @@ export namespace Prisma {
   /**
    * ContractCountOutputType without action
    */
-  export type ContractCountOutputTypeCountFarm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FarmUpdateWhereInput
-  }
-
-  /**
-   * ContractCountOutputType without action
-   */
-  export type ContractCountOutputTypeCountEscrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: EscrowLedgerWhereInput
+  export type ContractCountOutputTypeCountConversationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ConversationWhereInput
   }
 
   /**
@@ -2335,8 +2328,15 @@ export namespace Prisma {
   /**
    * ContractCountOutputType without action
    */
-  export type ContractCountOutputTypeCountConversationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ConversationWhereInput
+  export type ContractCountOutputTypeCountEscrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EscrowLedgerWhereInput
+  }
+
+  /**
+   * ContractCountOutputType without action
+   */
+  export type ContractCountOutputTypeCountFarm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FarmUpdateWhereInput
   }
 
 
@@ -2429,11 +2429,11 @@ export namespace Prisma {
     years_of_experience: number | null
     land_records_url: string | null
     soil_type: string | null
-    investment_range: string | null
-    bank_name: string | null
     bank_account_number: string | null
     bank_ifsc: string | null
+    bank_name: string | null
     farm_name: string | null
+    investment_range: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2464,11 +2464,11 @@ export namespace Prisma {
     years_of_experience: number | null
     land_records_url: string | null
     soil_type: string | null
-    investment_range: string | null
-    bank_name: string | null
     bank_account_number: string | null
     bank_ifsc: string | null
+    bank_name: string | null
     farm_name: string | null
+    investment_range: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2501,13 +2501,13 @@ export namespace Prisma {
     years_of_experience: number
     land_records_url: number
     soil_type: number
-    investment_range: number
-    investment_goals: number
-    preferred_farm_types: number
-    bank_name: number
     bank_account_number: number
     bank_ifsc: number
+    bank_name: number
     farm_name: number
+    investment_goals: number
+    investment_range: number
+    preferred_farm_types: number
     _all: number
   }
 
@@ -2554,11 +2554,11 @@ export namespace Prisma {
     years_of_experience?: true
     land_records_url?: true
     soil_type?: true
-    investment_range?: true
-    bank_name?: true
     bank_account_number?: true
     bank_ifsc?: true
+    bank_name?: true
     farm_name?: true
+    investment_range?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2589,11 +2589,11 @@ export namespace Prisma {
     years_of_experience?: true
     land_records_url?: true
     soil_type?: true
-    investment_range?: true
-    bank_name?: true
     bank_account_number?: true
     bank_ifsc?: true
+    bank_name?: true
     farm_name?: true
+    investment_range?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2626,13 +2626,13 @@ export namespace Prisma {
     years_of_experience?: true
     land_records_url?: true
     soil_type?: true
-    investment_range?: true
-    investment_goals?: true
-    preferred_farm_types?: true
-    bank_name?: true
     bank_account_number?: true
     bank_ifsc?: true
+    bank_name?: true
     farm_name?: true
+    investment_goals?: true
+    investment_range?: true
+    preferred_farm_types?: true
     _all?: true
   }
 
@@ -2752,13 +2752,13 @@ export namespace Prisma {
     years_of_experience: number | null
     land_records_url: string | null
     soil_type: string | null
-    investment_range: string | null
-    investment_goals: string[]
-    preferred_farm_types: string[]
-    bank_name: string | null
     bank_account_number: string | null
     bank_ifsc: string | null
+    bank_name: string | null
     farm_name: string | null
+    investment_goals: string[]
+    investment_range: string | null
+    preferred_farm_types: string[]
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -2810,26 +2810,26 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
-    investment_range?: boolean
-    investment_goals?: boolean
-    preferred_farm_types?: boolean
-    bank_name?: boolean
     bank_account_number?: boolean
     bank_ifsc?: boolean
+    bank_name?: boolean
     farm_name?: boolean
-    farm_listings?: boolean | User$farm_listingsArgs<ExtArgs>
-    contracts_as_farmer?: boolean | User$contracts_as_farmerArgs<ExtArgs>
+    investment_goals?: boolean
+    investment_range?: boolean
+    preferred_farm_types?: boolean
+    audit_logs?: boolean | User$audit_logsArgs<ExtArgs>
     contracts_as_consumer?: boolean | User$contracts_as_consumerArgs<ExtArgs>
-    farm_updates?: boolean | User$farm_updatesArgs<ExtArgs>
-    escrow_entries?: boolean | User$escrow_entriesArgs<ExtArgs>
-    disputes?: boolean | User$disputesArgs<ExtArgs>
-    wallet_transactions?: boolean | User$wallet_transactionsArgs<ExtArgs>
-    reviews?: boolean | User$reviewsArgs<ExtArgs>
-    notifications?: boolean | User$notificationsArgs<ExtArgs>
-    messages?: boolean | User$messagesArgs<ExtArgs>
+    contracts_as_farmer?: boolean | User$contracts_as_farmerArgs<ExtArgs>
     conversations_as_one?: boolean | User$conversations_as_oneArgs<ExtArgs>
     conversations_as_two?: boolean | User$conversations_as_twoArgs<ExtArgs>
-    audit_logs?: boolean | User$audit_logsArgs<ExtArgs>
+    disputes?: boolean | User$disputesArgs<ExtArgs>
+    escrow_entries?: boolean | User$escrow_entriesArgs<ExtArgs>
+    farm_listings?: boolean | User$farm_listingsArgs<ExtArgs>
+    farm_updates?: boolean | User$farm_updatesArgs<ExtArgs>
+    messages?: boolean | User$messagesArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    reviews?: boolean | User$reviewsArgs<ExtArgs>
+    wallet_transactions?: boolean | User$wallet_transactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2863,13 +2863,13 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
-    investment_range?: boolean
-    investment_goals?: boolean
-    preferred_farm_types?: boolean
-    bank_name?: boolean
     bank_account_number?: boolean
     bank_ifsc?: boolean
+    bank_name?: boolean
     farm_name?: boolean
+    investment_goals?: boolean
+    investment_range?: boolean
+    preferred_farm_types?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2902,13 +2902,13 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
-    investment_range?: boolean
-    investment_goals?: boolean
-    preferred_farm_types?: boolean
-    bank_name?: boolean
     bank_account_number?: boolean
     bank_ifsc?: boolean
+    bank_name?: boolean
     farm_name?: boolean
+    investment_goals?: boolean
+    investment_range?: boolean
+    preferred_farm_types?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -2941,30 +2941,30 @@ export namespace Prisma {
     years_of_experience?: boolean
     land_records_url?: boolean
     soil_type?: boolean
-    investment_range?: boolean
-    investment_goals?: boolean
-    preferred_farm_types?: boolean
-    bank_name?: boolean
     bank_account_number?: boolean
     bank_ifsc?: boolean
+    bank_name?: boolean
     farm_name?: boolean
+    investment_goals?: boolean
+    investment_range?: boolean
+    preferred_farm_types?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "phone" | "name" | "email" | "avatar_url" | "role" | "kyc_status" | "kyc_documents" | "razorpay_customer_id" | "razorpay_fund_account_id" | "address" | "city" | "state" | "pincode" | "latitude" | "longitude" | "refresh_token" | "expo_push_token" | "otp" | "otp_expires_at" | "created_at" | "updated_at" | "farm_size_acres" | "farm_type" | "crops_grown" | "irrigation_type" | "years_of_experience" | "land_records_url" | "soil_type" | "investment_range" | "investment_goals" | "preferred_farm_types" | "bank_name" | "bank_account_number" | "bank_ifsc" | "farm_name", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "phone" | "name" | "email" | "avatar_url" | "role" | "kyc_status" | "kyc_documents" | "razorpay_customer_id" | "razorpay_fund_account_id" | "address" | "city" | "state" | "pincode" | "latitude" | "longitude" | "refresh_token" | "expo_push_token" | "otp" | "otp_expires_at" | "created_at" | "updated_at" | "farm_size_acres" | "farm_type" | "crops_grown" | "irrigation_type" | "years_of_experience" | "land_records_url" | "soil_type" | "bank_account_number" | "bank_ifsc" | "bank_name" | "farm_name" | "investment_goals" | "investment_range" | "preferred_farm_types", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    farm_listings?: boolean | User$farm_listingsArgs<ExtArgs>
-    contracts_as_farmer?: boolean | User$contracts_as_farmerArgs<ExtArgs>
+    audit_logs?: boolean | User$audit_logsArgs<ExtArgs>
     contracts_as_consumer?: boolean | User$contracts_as_consumerArgs<ExtArgs>
-    farm_updates?: boolean | User$farm_updatesArgs<ExtArgs>
-    escrow_entries?: boolean | User$escrow_entriesArgs<ExtArgs>
-    disputes?: boolean | User$disputesArgs<ExtArgs>
-    wallet_transactions?: boolean | User$wallet_transactionsArgs<ExtArgs>
-    reviews?: boolean | User$reviewsArgs<ExtArgs>
-    notifications?: boolean | User$notificationsArgs<ExtArgs>
-    messages?: boolean | User$messagesArgs<ExtArgs>
+    contracts_as_farmer?: boolean | User$contracts_as_farmerArgs<ExtArgs>
     conversations_as_one?: boolean | User$conversations_as_oneArgs<ExtArgs>
     conversations_as_two?: boolean | User$conversations_as_twoArgs<ExtArgs>
-    audit_logs?: boolean | User$audit_logsArgs<ExtArgs>
+    disputes?: boolean | User$disputesArgs<ExtArgs>
+    escrow_entries?: boolean | User$escrow_entriesArgs<ExtArgs>
+    farm_listings?: boolean | User$farm_listingsArgs<ExtArgs>
+    farm_updates?: boolean | User$farm_updatesArgs<ExtArgs>
+    messages?: boolean | User$messagesArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    reviews?: boolean | User$reviewsArgs<ExtArgs>
+    wallet_transactions?: boolean | User$wallet_transactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2973,19 +2973,19 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      farm_listings: Prisma.$FarmListingPayload<ExtArgs>[]
-      contracts_as_farmer: Prisma.$ContractPayload<ExtArgs>[]
+      audit_logs: Prisma.$AuditLogPayload<ExtArgs>[]
       contracts_as_consumer: Prisma.$ContractPayload<ExtArgs>[]
-      farm_updates: Prisma.$FarmUpdatePayload<ExtArgs>[]
-      escrow_entries: Prisma.$EscrowLedgerPayload<ExtArgs>[]
-      disputes: Prisma.$DisputePayload<ExtArgs>[]
-      wallet_transactions: Prisma.$WalletTransactionPayload<ExtArgs>[]
-      reviews: Prisma.$ReviewPayload<ExtArgs>[]
-      notifications: Prisma.$NotificationPayload<ExtArgs>[]
-      messages: Prisma.$MessagePayload<ExtArgs>[]
+      contracts_as_farmer: Prisma.$ContractPayload<ExtArgs>[]
       conversations_as_one: Prisma.$ConversationPayload<ExtArgs>[]
       conversations_as_two: Prisma.$ConversationPayload<ExtArgs>[]
-      audit_logs: Prisma.$AuditLogPayload<ExtArgs>[]
+      disputes: Prisma.$DisputePayload<ExtArgs>[]
+      escrow_entries: Prisma.$EscrowLedgerPayload<ExtArgs>[]
+      farm_listings: Prisma.$FarmListingPayload<ExtArgs>[]
+      farm_updates: Prisma.$FarmUpdatePayload<ExtArgs>[]
+      messages: Prisma.$MessagePayload<ExtArgs>[]
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      reviews: Prisma.$ReviewPayload<ExtArgs>[]
+      wallet_transactions: Prisma.$WalletTransactionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3017,13 +3017,13 @@ export namespace Prisma {
       years_of_experience: number | null
       land_records_url: string | null
       soil_type: string | null
-      investment_range: string | null
-      investment_goals: string[]
-      preferred_farm_types: string[]
-      bank_name: string | null
       bank_account_number: string | null
       bank_ifsc: string | null
+      bank_name: string | null
       farm_name: string | null
+      investment_goals: string[]
+      investment_range: string | null
+      preferred_farm_types: string[]
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -3418,19 +3418,19 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    farm_listings<T extends User$farm_listingsArgs<ExtArgs> = {}>(args?: Subset<T, User$farm_listingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FarmListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    contracts_as_farmer<T extends User$contracts_as_farmerArgs<ExtArgs> = {}>(args?: Subset<T, User$contracts_as_farmerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    audit_logs<T extends User$audit_logsArgs<ExtArgs> = {}>(args?: Subset<T, User$audit_logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     contracts_as_consumer<T extends User$contracts_as_consumerArgs<ExtArgs> = {}>(args?: Subset<T, User$contracts_as_consumerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    farm_updates<T extends User$farm_updatesArgs<ExtArgs> = {}>(args?: Subset<T, User$farm_updatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FarmUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    escrow_entries<T extends User$escrow_entriesArgs<ExtArgs> = {}>(args?: Subset<T, User$escrow_entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EscrowLedgerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    disputes<T extends User$disputesArgs<ExtArgs> = {}>(args?: Subset<T, User$disputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    wallet_transactions<T extends User$wallet_transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$wallet_transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    reviews<T extends User$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    messages<T extends User$messagesArgs<ExtArgs> = {}>(args?: Subset<T, User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    contracts_as_farmer<T extends User$contracts_as_farmerArgs<ExtArgs> = {}>(args?: Subset<T, User$contracts_as_farmerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     conversations_as_one<T extends User$conversations_as_oneArgs<ExtArgs> = {}>(args?: Subset<T, User$conversations_as_oneArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     conversations_as_two<T extends User$conversations_as_twoArgs<ExtArgs> = {}>(args?: Subset<T, User$conversations_as_twoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    audit_logs<T extends User$audit_logsArgs<ExtArgs> = {}>(args?: Subset<T, User$audit_logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    disputes<T extends User$disputesArgs<ExtArgs> = {}>(args?: Subset<T, User$disputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    escrow_entries<T extends User$escrow_entriesArgs<ExtArgs> = {}>(args?: Subset<T, User$escrow_entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EscrowLedgerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    farm_listings<T extends User$farm_listingsArgs<ExtArgs> = {}>(args?: Subset<T, User$farm_listingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FarmListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    farm_updates<T extends User$farm_updatesArgs<ExtArgs> = {}>(args?: Subset<T, User$farm_updatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FarmUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    messages<T extends User$messagesArgs<ExtArgs> = {}>(args?: Subset<T, User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reviews<T extends User$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    wallet_transactions<T extends User$wallet_transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$wallet_transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3489,13 +3489,13 @@ export namespace Prisma {
     readonly years_of_experience: FieldRef<"User", 'Int'>
     readonly land_records_url: FieldRef<"User", 'String'>
     readonly soil_type: FieldRef<"User", 'String'>
-    readonly investment_range: FieldRef<"User", 'String'>
-    readonly investment_goals: FieldRef<"User", 'String[]'>
-    readonly preferred_farm_types: FieldRef<"User", 'String[]'>
-    readonly bank_name: FieldRef<"User", 'String'>
     readonly bank_account_number: FieldRef<"User", 'String'>
     readonly bank_ifsc: FieldRef<"User", 'String'>
+    readonly bank_name: FieldRef<"User", 'String'>
     readonly farm_name: FieldRef<"User", 'String'>
+    readonly investment_goals: FieldRef<"User", 'String[]'>
+    readonly investment_range: FieldRef<"User", 'String'>
+    readonly preferred_farm_types: FieldRef<"User", 'String[]'>
   }
     
 
@@ -3884,51 +3884,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.farm_listings
+   * User.audit_logs
    */
-  export type User$farm_listingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$audit_logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the FarmListing
+     * Select specific fields to fetch from the AuditLog
      */
-    select?: FarmListingSelect<ExtArgs> | null
+    select?: AuditLogSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the FarmListing
+     * Omit specific fields from the AuditLog
      */
-    omit?: FarmListingOmit<ExtArgs> | null
+    omit?: AuditLogOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: FarmListingInclude<ExtArgs> | null
-    where?: FarmListingWhereInput
-    orderBy?: FarmListingOrderByWithRelationInput | FarmListingOrderByWithRelationInput[]
-    cursor?: FarmListingWhereUniqueInput
+    include?: AuditLogInclude<ExtArgs> | null
+    where?: AuditLogWhereInput
+    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
+    cursor?: AuditLogWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: FarmListingScalarFieldEnum | FarmListingScalarFieldEnum[]
-  }
-
-  /**
-   * User.contracts_as_farmer
-   */
-  export type User$contracts_as_farmerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Contract
-     */
-    select?: ContractSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Contract
-     */
-    omit?: ContractOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ContractInclude<ExtArgs> | null
-    where?: ContractWhereInput
-    orderBy?: ContractOrderByWithRelationInput | ContractOrderByWithRelationInput[]
-    cursor?: ContractWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ContractScalarFieldEnum | ContractScalarFieldEnum[]
+    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
   }
 
   /**
@@ -3956,171 +3932,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.farm_updates
+   * User.contracts_as_farmer
    */
-  export type User$farm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$contracts_as_farmerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the FarmUpdate
+     * Select specific fields to fetch from the Contract
      */
-    select?: FarmUpdateSelect<ExtArgs> | null
+    select?: ContractSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the FarmUpdate
+     * Omit specific fields from the Contract
      */
-    omit?: FarmUpdateOmit<ExtArgs> | null
+    omit?: ContractOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: FarmUpdateInclude<ExtArgs> | null
-    where?: FarmUpdateWhereInput
-    orderBy?: FarmUpdateOrderByWithRelationInput | FarmUpdateOrderByWithRelationInput[]
-    cursor?: FarmUpdateWhereUniqueInput
+    include?: ContractInclude<ExtArgs> | null
+    where?: ContractWhereInput
+    orderBy?: ContractOrderByWithRelationInput | ContractOrderByWithRelationInput[]
+    cursor?: ContractWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: FarmUpdateScalarFieldEnum | FarmUpdateScalarFieldEnum[]
-  }
-
-  /**
-   * User.escrow_entries
-   */
-  export type User$escrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the EscrowLedger
-     */
-    select?: EscrowLedgerSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the EscrowLedger
-     */
-    omit?: EscrowLedgerOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: EscrowLedgerInclude<ExtArgs> | null
-    where?: EscrowLedgerWhereInput
-    orderBy?: EscrowLedgerOrderByWithRelationInput | EscrowLedgerOrderByWithRelationInput[]
-    cursor?: EscrowLedgerWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: EscrowLedgerScalarFieldEnum | EscrowLedgerScalarFieldEnum[]
-  }
-
-  /**
-   * User.disputes
-   */
-  export type User$disputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Dispute
-     */
-    select?: DisputeSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Dispute
-     */
-    omit?: DisputeOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DisputeInclude<ExtArgs> | null
-    where?: DisputeWhereInput
-    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
-    cursor?: DisputeWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
-  }
-
-  /**
-   * User.wallet_transactions
-   */
-  export type User$wallet_transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WalletTransaction
-     */
-    select?: WalletTransactionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WalletTransaction
-     */
-    omit?: WalletTransactionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WalletTransactionInclude<ExtArgs> | null
-    where?: WalletTransactionWhereInput
-    orderBy?: WalletTransactionOrderByWithRelationInput | WalletTransactionOrderByWithRelationInput[]
-    cursor?: WalletTransactionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: WalletTransactionScalarFieldEnum | WalletTransactionScalarFieldEnum[]
-  }
-
-  /**
-   * User.reviews
-   */
-  export type User$reviewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Review
-     */
-    select?: ReviewSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Review
-     */
-    omit?: ReviewOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ReviewInclude<ExtArgs> | null
-    where?: ReviewWhereInput
-    orderBy?: ReviewOrderByWithRelationInput | ReviewOrderByWithRelationInput[]
-    cursor?: ReviewWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ReviewScalarFieldEnum | ReviewScalarFieldEnum[]
-  }
-
-  /**
-   * User.notifications
-   */
-  export type User$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Notification
-     */
-    select?: NotificationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Notification
-     */
-    omit?: NotificationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: NotificationInclude<ExtArgs> | null
-    where?: NotificationWhereInput
-    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
-    cursor?: NotificationWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
-  }
-
-  /**
-   * User.messages
-   */
-  export type User$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Message
-     */
-    select?: MessageSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Message
-     */
-    omit?: MessageOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageInclude<ExtArgs> | null
-    where?: MessageWhereInput
-    orderBy?: MessageOrderByWithRelationInput | MessageOrderByWithRelationInput[]
-    cursor?: MessageWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: MessageScalarFieldEnum | MessageScalarFieldEnum[]
+    distinct?: ContractScalarFieldEnum | ContractScalarFieldEnum[]
   }
 
   /**
@@ -4172,27 +4004,195 @@ export namespace Prisma {
   }
 
   /**
-   * User.audit_logs
+   * User.disputes
    */
-  export type User$audit_logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$disputesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AuditLog
+     * Select specific fields to fetch from the Dispute
      */
-    select?: AuditLogSelect<ExtArgs> | null
+    select?: DisputeSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the AuditLog
+     * Omit specific fields from the Dispute
      */
-    omit?: AuditLogOmit<ExtArgs> | null
+    omit?: DisputeOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: AuditLogInclude<ExtArgs> | null
-    where?: AuditLogWhereInput
-    orderBy?: AuditLogOrderByWithRelationInput | AuditLogOrderByWithRelationInput[]
-    cursor?: AuditLogWhereUniqueInput
+    include?: DisputeInclude<ExtArgs> | null
+    where?: DisputeWhereInput
+    orderBy?: DisputeOrderByWithRelationInput | DisputeOrderByWithRelationInput[]
+    cursor?: DisputeWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+    distinct?: DisputeScalarFieldEnum | DisputeScalarFieldEnum[]
+  }
+
+  /**
+   * User.escrow_entries
+   */
+  export type User$escrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EscrowLedger
+     */
+    select?: EscrowLedgerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EscrowLedger
+     */
+    omit?: EscrowLedgerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EscrowLedgerInclude<ExtArgs> | null
+    where?: EscrowLedgerWhereInput
+    orderBy?: EscrowLedgerOrderByWithRelationInput | EscrowLedgerOrderByWithRelationInput[]
+    cursor?: EscrowLedgerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EscrowLedgerScalarFieldEnum | EscrowLedgerScalarFieldEnum[]
+  }
+
+  /**
+   * User.farm_listings
+   */
+  export type User$farm_listingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FarmListing
+     */
+    select?: FarmListingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FarmListing
+     */
+    omit?: FarmListingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FarmListingInclude<ExtArgs> | null
+    where?: FarmListingWhereInput
+    orderBy?: FarmListingOrderByWithRelationInput | FarmListingOrderByWithRelationInput[]
+    cursor?: FarmListingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FarmListingScalarFieldEnum | FarmListingScalarFieldEnum[]
+  }
+
+  /**
+   * User.farm_updates
+   */
+  export type User$farm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FarmUpdate
+     */
+    select?: FarmUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FarmUpdate
+     */
+    omit?: FarmUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FarmUpdateInclude<ExtArgs> | null
+    where?: FarmUpdateWhereInput
+    orderBy?: FarmUpdateOrderByWithRelationInput | FarmUpdateOrderByWithRelationInput[]
+    cursor?: FarmUpdateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FarmUpdateScalarFieldEnum | FarmUpdateScalarFieldEnum[]
+  }
+
+  /**
+   * User.messages
+   */
+  export type User$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Message
+     */
+    select?: MessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Message
+     */
+    omit?: MessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageInclude<ExtArgs> | null
+    where?: MessageWhereInput
+    orderBy?: MessageOrderByWithRelationInput | MessageOrderByWithRelationInput[]
+    cursor?: MessageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MessageScalarFieldEnum | MessageScalarFieldEnum[]
+  }
+
+  /**
+   * User.notifications
+   */
+  export type User$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.reviews
+   */
+  export type User$reviewsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Review
+     */
+    select?: ReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Review
+     */
+    omit?: ReviewOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReviewInclude<ExtArgs> | null
+    where?: ReviewWhereInput
+    orderBy?: ReviewOrderByWithRelationInput | ReviewOrderByWithRelationInput[]
+    cursor?: ReviewWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ReviewScalarFieldEnum | ReviewScalarFieldEnum[]
+  }
+
+  /**
+   * User.wallet_transactions
+   */
+  export type User$wallet_transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WalletTransaction
+     */
+    omit?: WalletTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    where?: WalletTransactionWhereInput
+    orderBy?: WalletTransactionOrderByWithRelationInput | WalletTransactionOrderByWithRelationInput[]
+    cursor?: WalletTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WalletTransactionScalarFieldEnum | WalletTransactionScalarFieldEnum[]
   }
 
   /**
@@ -4552,8 +4552,8 @@ export namespace Prisma {
     views?: boolean
     created_at?: boolean
     updated_at?: boolean
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     contracts?: boolean | FarmListing$contractsArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | FarmListingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["farmListing"]>
 
@@ -4633,8 +4633,8 @@ export namespace Prisma {
 
   export type FarmListingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "farmer_id" | "name" | "description" | "area_acres" | "price_per_acre" | "crops" | "location_name" | "latitude" | "longitude" | "soil_type" | "irrigation_type" | "is_organic" | "organic_cert_url" | "expected_harvest_month" | "expected_yield_per_acre" | "images" | "status" | "views" | "created_at" | "updated_at", ExtArgs["result"]["farmListing"]>
   export type FarmListingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     contracts?: boolean | FarmListing$contractsArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | FarmListingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type FarmListingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4647,8 +4647,8 @@ export namespace Prisma {
   export type $FarmListingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "FarmListing"
     objects: {
-      farmer: Prisma.$UserPayload<ExtArgs>
       contracts: Prisma.$ContractPayload<ExtArgs>[]
+      farmer: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5066,8 +5066,8 @@ export namespace Prisma {
    */
   export interface Prisma__FarmListingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    farmer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     contracts<T extends FarmListing$contractsArgs<ExtArgs> = {}>(args?: Subset<T, FarmListing$contractsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    farmer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5572,6 +5572,7 @@ export namespace Prisma {
     acreage: number | null
     price_per_acre: number | null
     total_amount: number | null
+    total_cycles: number | null
     escrow_held: number | null
     farmer_paid: number | null
     escrow_frozen: number | null
@@ -5581,6 +5582,7 @@ export namespace Prisma {
     acreage: number | null
     price_per_acre: number | null
     total_amount: number | null
+    total_cycles: number | null
     escrow_held: number | null
     farmer_paid: number | null
     escrow_frozen: number | null
@@ -5595,6 +5597,7 @@ export namespace Prisma {
     acreage: number | null
     price_per_acre: number | null
     total_amount: number | null
+    total_cycles: number | null
     start_date: Date | null
     end_date: Date | null
     status: $Enums.ContractStatus | null
@@ -5614,6 +5617,7 @@ export namespace Prisma {
     acreage: number | null
     price_per_acre: number | null
     total_amount: number | null
+    total_cycles: number | null
     start_date: Date | null
     end_date: Date | null
     status: $Enums.ContractStatus | null
@@ -5633,6 +5637,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles: number
     start_date: number
     end_date: number
     status: number
@@ -5649,6 +5654,7 @@ export namespace Prisma {
     acreage?: true
     price_per_acre?: true
     total_amount?: true
+    total_cycles?: true
     escrow_held?: true
     farmer_paid?: true
     escrow_frozen?: true
@@ -5658,6 +5664,7 @@ export namespace Prisma {
     acreage?: true
     price_per_acre?: true
     total_amount?: true
+    total_cycles?: true
     escrow_held?: true
     farmer_paid?: true
     escrow_frozen?: true
@@ -5672,6 +5679,7 @@ export namespace Prisma {
     acreage?: true
     price_per_acre?: true
     total_amount?: true
+    total_cycles?: true
     start_date?: true
     end_date?: true
     status?: true
@@ -5691,6 +5699,7 @@ export namespace Prisma {
     acreage?: true
     price_per_acre?: true
     total_amount?: true
+    total_cycles?: true
     start_date?: true
     end_date?: true
     status?: true
@@ -5710,6 +5719,7 @@ export namespace Prisma {
     acreage?: true
     price_per_acre?: true
     total_amount?: true
+    total_cycles?: true
     start_date?: true
     end_date?: true
     status?: true
@@ -5816,6 +5826,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles: number
     start_date: Date
     end_date: Date
     status: $Enums.ContractStatus
@@ -5854,6 +5865,7 @@ export namespace Prisma {
     acreage?: boolean
     price_per_acre?: boolean
     total_amount?: boolean
+    total_cycles?: boolean
     start_date?: boolean
     end_date?: boolean
     status?: boolean
@@ -5862,14 +5874,14 @@ export namespace Prisma {
     escrow_frozen?: boolean
     created_at?: boolean
     updated_at?: boolean
-    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     consumer?: boolean | UserDefaultArgs<ExtArgs>
-    farm_updates?: boolean | Contract$farm_updatesArgs<ExtArgs>
-    escrow_entries?: boolean | Contract$escrow_entriesArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
+    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
+    conversations?: boolean | Contract$conversationsArgs<ExtArgs>
     deliveries?: boolean | Contract$deliveriesArgs<ExtArgs>
     disputes?: boolean | Contract$disputesArgs<ExtArgs>
-    conversations?: boolean | Contract$conversationsArgs<ExtArgs>
+    escrow_entries?: boolean | Contract$escrow_entriesArgs<ExtArgs>
+    farm_updates?: boolean | Contract$farm_updatesArgs<ExtArgs>
     _count?: boolean | ContractCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["contract"]>
 
@@ -5882,6 +5894,7 @@ export namespace Prisma {
     acreage?: boolean
     price_per_acre?: boolean
     total_amount?: boolean
+    total_cycles?: boolean
     start_date?: boolean
     end_date?: boolean
     status?: boolean
@@ -5890,9 +5903,9 @@ export namespace Prisma {
     escrow_frozen?: boolean
     created_at?: boolean
     updated_at?: boolean
-    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     consumer?: boolean | UserDefaultArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
+    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["contract"]>
 
   export type ContractSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5904,6 +5917,7 @@ export namespace Prisma {
     acreage?: boolean
     price_per_acre?: boolean
     total_amount?: boolean
+    total_cycles?: boolean
     start_date?: boolean
     end_date?: boolean
     status?: boolean
@@ -5912,9 +5926,9 @@ export namespace Prisma {
     escrow_frozen?: boolean
     created_at?: boolean
     updated_at?: boolean
-    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     consumer?: boolean | UserDefaultArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
+    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["contract"]>
 
   export type ContractSelectScalar = {
@@ -5926,6 +5940,7 @@ export namespace Prisma {
     acreage?: boolean
     price_per_acre?: boolean
     total_amount?: boolean
+    total_cycles?: boolean
     start_date?: boolean
     end_date?: boolean
     status?: boolean
@@ -5936,40 +5951,40 @@ export namespace Prisma {
     updated_at?: boolean
   }
 
-  export type ContractOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "listing_id" | "farmer_id" | "consumer_id" | "crop" | "acreage" | "price_per_acre" | "total_amount" | "start_date" | "end_date" | "status" | "escrow_held" | "farmer_paid" | "escrow_frozen" | "created_at" | "updated_at", ExtArgs["result"]["contract"]>
+  export type ContractOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "listing_id" | "farmer_id" | "consumer_id" | "crop" | "acreage" | "price_per_acre" | "total_amount" | "total_cycles" | "start_date" | "end_date" | "status" | "escrow_held" | "farmer_paid" | "escrow_frozen" | "created_at" | "updated_at", ExtArgs["result"]["contract"]>
   export type ContractInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     consumer?: boolean | UserDefaultArgs<ExtArgs>
-    farm_updates?: boolean | Contract$farm_updatesArgs<ExtArgs>
-    escrow_entries?: boolean | Contract$escrow_entriesArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
+    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
+    conversations?: boolean | Contract$conversationsArgs<ExtArgs>
     deliveries?: boolean | Contract$deliveriesArgs<ExtArgs>
     disputes?: boolean | Contract$disputesArgs<ExtArgs>
-    conversations?: boolean | Contract$conversationsArgs<ExtArgs>
+    escrow_entries?: boolean | Contract$escrow_entriesArgs<ExtArgs>
+    farm_updates?: boolean | Contract$farm_updatesArgs<ExtArgs>
     _count?: boolean | ContractCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ContractIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     consumer?: boolean | UserDefaultArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
+    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
   }
   export type ContractIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
-    farmer?: boolean | UserDefaultArgs<ExtArgs>
     consumer?: boolean | UserDefaultArgs<ExtArgs>
+    farmer?: boolean | UserDefaultArgs<ExtArgs>
+    listing?: boolean | FarmListingDefaultArgs<ExtArgs>
   }
 
   export type $ContractPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Contract"
     objects: {
-      listing: Prisma.$FarmListingPayload<ExtArgs>
-      farmer: Prisma.$UserPayload<ExtArgs>
       consumer: Prisma.$UserPayload<ExtArgs>
-      farm_updates: Prisma.$FarmUpdatePayload<ExtArgs>[]
-      escrow_entries: Prisma.$EscrowLedgerPayload<ExtArgs>[]
+      farmer: Prisma.$UserPayload<ExtArgs>
+      listing: Prisma.$FarmListingPayload<ExtArgs>
+      conversations: Prisma.$ConversationPayload<ExtArgs>[]
       deliveries: Prisma.$DeliveryPayload<ExtArgs>[]
       disputes: Prisma.$DisputePayload<ExtArgs>[]
-      conversations: Prisma.$ConversationPayload<ExtArgs>[]
+      escrow_entries: Prisma.$EscrowLedgerPayload<ExtArgs>[]
+      farm_updates: Prisma.$FarmUpdatePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5980,6 +5995,7 @@ export namespace Prisma {
       acreage: number
       price_per_acre: number
       total_amount: number
+      total_cycles: number
       start_date: Date
       end_date: Date
       status: $Enums.ContractStatus
@@ -6382,14 +6398,14 @@ export namespace Prisma {
    */
   export interface Prisma__ContractClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    listing<T extends FarmListingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FarmListingDefaultArgs<ExtArgs>>): Prisma__FarmListingClient<$Result.GetResult<Prisma.$FarmListingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    farmer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     consumer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    farm_updates<T extends Contract$farm_updatesArgs<ExtArgs> = {}>(args?: Subset<T, Contract$farm_updatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FarmUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    escrow_entries<T extends Contract$escrow_entriesArgs<ExtArgs> = {}>(args?: Subset<T, Contract$escrow_entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EscrowLedgerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    farmer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    listing<T extends FarmListingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FarmListingDefaultArgs<ExtArgs>>): Prisma__FarmListingClient<$Result.GetResult<Prisma.$FarmListingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    conversations<T extends Contract$conversationsArgs<ExtArgs> = {}>(args?: Subset<T, Contract$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     deliveries<T extends Contract$deliveriesArgs<ExtArgs> = {}>(args?: Subset<T, Contract$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     disputes<T extends Contract$disputesArgs<ExtArgs> = {}>(args?: Subset<T, Contract$disputesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DisputePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    conversations<T extends Contract$conversationsArgs<ExtArgs> = {}>(args?: Subset<T, Contract$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    escrow_entries<T extends Contract$escrow_entriesArgs<ExtArgs> = {}>(args?: Subset<T, Contract$escrow_entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EscrowLedgerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    farm_updates<T extends Contract$farm_updatesArgs<ExtArgs> = {}>(args?: Subset<T, Contract$farm_updatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FarmUpdatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6427,6 +6443,7 @@ export namespace Prisma {
     readonly acreage: FieldRef<"Contract", 'Float'>
     readonly price_per_acre: FieldRef<"Contract", 'Float'>
     readonly total_amount: FieldRef<"Contract", 'Float'>
+    readonly total_cycles: FieldRef<"Contract", 'Int'>
     readonly start_date: FieldRef<"Contract", 'DateTime'>
     readonly end_date: FieldRef<"Contract", 'DateTime'>
     readonly status: FieldRef<"Contract", 'ContractStatus'>
@@ -6831,51 +6848,27 @@ export namespace Prisma {
   }
 
   /**
-   * Contract.farm_updates
+   * Contract.conversations
    */
-  export type Contract$farm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Contract$conversationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the FarmUpdate
+     * Select specific fields to fetch from the Conversation
      */
-    select?: FarmUpdateSelect<ExtArgs> | null
+    select?: ConversationSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the FarmUpdate
+     * Omit specific fields from the Conversation
      */
-    omit?: FarmUpdateOmit<ExtArgs> | null
+    omit?: ConversationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: FarmUpdateInclude<ExtArgs> | null
-    where?: FarmUpdateWhereInput
-    orderBy?: FarmUpdateOrderByWithRelationInput | FarmUpdateOrderByWithRelationInput[]
-    cursor?: FarmUpdateWhereUniqueInput
+    include?: ConversationInclude<ExtArgs> | null
+    where?: ConversationWhereInput
+    orderBy?: ConversationOrderByWithRelationInput | ConversationOrderByWithRelationInput[]
+    cursor?: ConversationWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: FarmUpdateScalarFieldEnum | FarmUpdateScalarFieldEnum[]
-  }
-
-  /**
-   * Contract.escrow_entries
-   */
-  export type Contract$escrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the EscrowLedger
-     */
-    select?: EscrowLedgerSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the EscrowLedger
-     */
-    omit?: EscrowLedgerOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: EscrowLedgerInclude<ExtArgs> | null
-    where?: EscrowLedgerWhereInput
-    orderBy?: EscrowLedgerOrderByWithRelationInput | EscrowLedgerOrderByWithRelationInput[]
-    cursor?: EscrowLedgerWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: EscrowLedgerScalarFieldEnum | EscrowLedgerScalarFieldEnum[]
+    distinct?: ConversationScalarFieldEnum | ConversationScalarFieldEnum[]
   }
 
   /**
@@ -6927,27 +6920,51 @@ export namespace Prisma {
   }
 
   /**
-   * Contract.conversations
+   * Contract.escrow_entries
    */
-  export type Contract$conversationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Contract$escrow_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Conversation
+     * Select specific fields to fetch from the EscrowLedger
      */
-    select?: ConversationSelect<ExtArgs> | null
+    select?: EscrowLedgerSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Conversation
+     * Omit specific fields from the EscrowLedger
      */
-    omit?: ConversationOmit<ExtArgs> | null
+    omit?: EscrowLedgerOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ConversationInclude<ExtArgs> | null
-    where?: ConversationWhereInput
-    orderBy?: ConversationOrderByWithRelationInput | ConversationOrderByWithRelationInput[]
-    cursor?: ConversationWhereUniqueInput
+    include?: EscrowLedgerInclude<ExtArgs> | null
+    where?: EscrowLedgerWhereInput
+    orderBy?: EscrowLedgerOrderByWithRelationInput | EscrowLedgerOrderByWithRelationInput[]
+    cursor?: EscrowLedgerWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: ConversationScalarFieldEnum | ConversationScalarFieldEnum[]
+    distinct?: EscrowLedgerScalarFieldEnum | EscrowLedgerScalarFieldEnum[]
+  }
+
+  /**
+   * Contract.farm_updates
+   */
+  export type Contract$farm_updatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FarmUpdate
+     */
+    select?: FarmUpdateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FarmUpdate
+     */
+    omit?: FarmUpdateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FarmUpdateInclude<ExtArgs> | null
+    where?: FarmUpdateWhereInput
+    orderBy?: FarmUpdateOrderByWithRelationInput | FarmUpdateOrderByWithRelationInput[]
+    cursor?: FarmUpdateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FarmUpdateScalarFieldEnum | FarmUpdateScalarFieldEnum[]
   }
 
   /**
@@ -11677,36 +11694,36 @@ export namespace Prisma {
     id: string | null
     user_id: string | null
     type: $Enums.TransactionType | null
-    status: $Enums.WalletTransactionStatus | null
     amount: number | null
     description: string | null
     balance_after: number | null
     razorpay_payout_id: string | null
     created_at: Date | null
+    status: $Enums.WalletTransactionStatus | null
   }
 
   export type WalletTransactionMaxAggregateOutputType = {
     id: string | null
     user_id: string | null
     type: $Enums.TransactionType | null
-    status: $Enums.WalletTransactionStatus | null
     amount: number | null
     description: string | null
     balance_after: number | null
     razorpay_payout_id: string | null
     created_at: Date | null
+    status: $Enums.WalletTransactionStatus | null
   }
 
   export type WalletTransactionCountAggregateOutputType = {
     id: number
     user_id: number
     type: number
-    status: number
     amount: number
     description: number
     balance_after: number
     razorpay_payout_id: number
     created_at: number
+    status: number
     _all: number
   }
 
@@ -11725,36 +11742,36 @@ export namespace Prisma {
     id?: true
     user_id?: true
     type?: true
-    status?: true
     amount?: true
     description?: true
     balance_after?: true
     razorpay_payout_id?: true
     created_at?: true
+    status?: true
   }
 
   export type WalletTransactionMaxAggregateInputType = {
     id?: true
     user_id?: true
     type?: true
-    status?: true
     amount?: true
     description?: true
     balance_after?: true
     razorpay_payout_id?: true
     created_at?: true
+    status?: true
   }
 
   export type WalletTransactionCountAggregateInputType = {
     id?: true
     user_id?: true
     type?: true
-    status?: true
     amount?: true
     description?: true
     balance_after?: true
     razorpay_payout_id?: true
     created_at?: true
+    status?: true
     _all?: true
   }
 
@@ -11848,12 +11865,12 @@ export namespace Prisma {
     id: string
     user_id: string
     type: $Enums.TransactionType
-    status: $Enums.WalletTransactionStatus
     amount: number
     description: string | null
     balance_after: number
     razorpay_payout_id: string | null
     created_at: Date
+    status: $Enums.WalletTransactionStatus
     _count: WalletTransactionCountAggregateOutputType | null
     _avg: WalletTransactionAvgAggregateOutputType | null
     _sum: WalletTransactionSumAggregateOutputType | null
@@ -11879,12 +11896,12 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
-    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
     razorpay_payout_id?: boolean
     created_at?: boolean
+    status?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["walletTransaction"]>
 
@@ -11892,12 +11909,12 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
-    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
     razorpay_payout_id?: boolean
     created_at?: boolean
+    status?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["walletTransaction"]>
 
@@ -11905,12 +11922,12 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
-    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
     razorpay_payout_id?: boolean
     created_at?: boolean
+    status?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["walletTransaction"]>
 
@@ -11918,15 +11935,15 @@ export namespace Prisma {
     id?: boolean
     user_id?: boolean
     type?: boolean
-    status?: boolean
     amount?: boolean
     description?: boolean
     balance_after?: boolean
     razorpay_payout_id?: boolean
     created_at?: boolean
+    status?: boolean
   }
 
-  export type WalletTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "type" | "status" | "amount" | "description" | "balance_after" | "razorpay_payout_id" | "created_at", ExtArgs["result"]["walletTransaction"]>
+  export type WalletTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "type" | "amount" | "description" | "balance_after" | "razorpay_payout_id" | "created_at" | "status", ExtArgs["result"]["walletTransaction"]>
   export type WalletTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -11946,12 +11963,12 @@ export namespace Prisma {
       id: string
       user_id: string
       type: $Enums.TransactionType
-      status: $Enums.WalletTransactionStatus
       amount: number
       description: string | null
       balance_after: number
       razorpay_payout_id: string | null
       created_at: Date
+      status: $Enums.WalletTransactionStatus
     }, ExtArgs["result"]["walletTransaction"]>
     composites: {}
   }
@@ -12379,12 +12396,12 @@ export namespace Prisma {
     readonly id: FieldRef<"WalletTransaction", 'String'>
     readonly user_id: FieldRef<"WalletTransaction", 'String'>
     readonly type: FieldRef<"WalletTransaction", 'TransactionType'>
-    readonly status: FieldRef<"WalletTransaction", 'WalletTransactionStatus'>
     readonly amount: FieldRef<"WalletTransaction", 'Float'>
     readonly description: FieldRef<"WalletTransaction", 'String'>
     readonly balance_after: FieldRef<"WalletTransaction", 'Float'>
     readonly razorpay_payout_id: FieldRef<"WalletTransaction", 'String'>
     readonly created_at: FieldRef<"WalletTransaction", 'DateTime'>
+    readonly status: FieldRef<"WalletTransaction", 'WalletTransactionStatus'>
   }
     
 
@@ -16265,9 +16282,9 @@ export namespace Prisma {
     last_message_at?: boolean
     created_at?: boolean
     updated_at?: boolean
+    contract?: boolean | Conversation$contractArgs<ExtArgs>
     participant_one?: boolean | UserDefaultArgs<ExtArgs>
     participant_two?: boolean | UserDefaultArgs<ExtArgs>
-    contract?: boolean | Conversation$contractArgs<ExtArgs>
     messages?: boolean | Conversation$messagesArgs<ExtArgs>
     _count?: boolean | ConversationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["conversation"]>
@@ -16281,9 +16298,9 @@ export namespace Prisma {
     last_message_at?: boolean
     created_at?: boolean
     updated_at?: boolean
+    contract?: boolean | Conversation$contractArgs<ExtArgs>
     participant_one?: boolean | UserDefaultArgs<ExtArgs>
     participant_two?: boolean | UserDefaultArgs<ExtArgs>
-    contract?: boolean | Conversation$contractArgs<ExtArgs>
   }, ExtArgs["result"]["conversation"]>
 
   export type ConversationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -16295,9 +16312,9 @@ export namespace Prisma {
     last_message_at?: boolean
     created_at?: boolean
     updated_at?: boolean
+    contract?: boolean | Conversation$contractArgs<ExtArgs>
     participant_one?: boolean | UserDefaultArgs<ExtArgs>
     participant_two?: boolean | UserDefaultArgs<ExtArgs>
-    contract?: boolean | Conversation$contractArgs<ExtArgs>
   }, ExtArgs["result"]["conversation"]>
 
   export type ConversationSelectScalar = {
@@ -16313,29 +16330,29 @@ export namespace Prisma {
 
   export type ConversationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "participant_one_id" | "participant_two_id" | "contract_id" | "last_message" | "last_message_at" | "created_at" | "updated_at", ExtArgs["result"]["conversation"]>
   export type ConversationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    contract?: boolean | Conversation$contractArgs<ExtArgs>
     participant_one?: boolean | UserDefaultArgs<ExtArgs>
     participant_two?: boolean | UserDefaultArgs<ExtArgs>
-    contract?: boolean | Conversation$contractArgs<ExtArgs>
     messages?: boolean | Conversation$messagesArgs<ExtArgs>
     _count?: boolean | ConversationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ConversationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    contract?: boolean | Conversation$contractArgs<ExtArgs>
     participant_one?: boolean | UserDefaultArgs<ExtArgs>
     participant_two?: boolean | UserDefaultArgs<ExtArgs>
-    contract?: boolean | Conversation$contractArgs<ExtArgs>
   }
   export type ConversationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    contract?: boolean | Conversation$contractArgs<ExtArgs>
     participant_one?: boolean | UserDefaultArgs<ExtArgs>
     participant_two?: boolean | UserDefaultArgs<ExtArgs>
-    contract?: boolean | Conversation$contractArgs<ExtArgs>
   }
 
   export type $ConversationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Conversation"
     objects: {
+      contract: Prisma.$ContractPayload<ExtArgs> | null
       participant_one: Prisma.$UserPayload<ExtArgs>
       participant_two: Prisma.$UserPayload<ExtArgs>
-      contract: Prisma.$ContractPayload<ExtArgs> | null
       messages: Prisma.$MessagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -16741,9 +16758,9 @@ export namespace Prisma {
    */
   export interface Prisma__ConversationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    contract<T extends Conversation$contractArgs<ExtArgs> = {}>(args?: Subset<T, Conversation$contractArgs<ExtArgs>>): Prisma__ContractClient<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     participant_one<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     participant_two<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    contract<T extends Conversation$contractArgs<ExtArgs> = {}>(args?: Subset<T, Conversation$contractArgs<ExtArgs>>): Prisma__ContractClient<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     messages<T extends Conversation$messagesArgs<ExtArgs> = {}>(args?: Subset<T, Conversation$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -18375,13 +18392,13 @@ export namespace Prisma {
     years_of_experience: 'years_of_experience',
     land_records_url: 'land_records_url',
     soil_type: 'soil_type',
-    investment_range: 'investment_range',
-    investment_goals: 'investment_goals',
-    preferred_farm_types: 'preferred_farm_types',
-    bank_name: 'bank_name',
     bank_account_number: 'bank_account_number',
     bank_ifsc: 'bank_ifsc',
-    farm_name: 'farm_name'
+    bank_name: 'bank_name',
+    farm_name: 'farm_name',
+    investment_goals: 'investment_goals',
+    investment_range: 'investment_range',
+    preferred_farm_types: 'preferred_farm_types'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -18423,6 +18440,7 @@ export namespace Prisma {
     acreage: 'acreage',
     price_per_acre: 'price_per_acre',
     total_amount: 'total_amount',
+    total_cycles: 'total_cycles',
     start_date: 'start_date',
     end_date: 'end_date',
     status: 'status',
@@ -18506,12 +18524,12 @@ export namespace Prisma {
     id: 'id',
     user_id: 'user_id',
     type: 'type',
-    status: 'status',
     amount: 'amount',
     description: 'description',
     balance_after: 'balance_after',
     razorpay_payout_id: 'razorpay_payout_id',
-    created_at: 'created_at'
+    created_at: 'created_at',
+    status: 'status'
   };
 
   export type WalletTransactionScalarFieldEnum = (typeof WalletTransactionScalarFieldEnum)[keyof typeof WalletTransactionScalarFieldEnum]
@@ -18882,26 +18900,26 @@ export namespace Prisma {
     years_of_experience?: IntNullableFilter<"User"> | number | null
     land_records_url?: StringNullableFilter<"User"> | string | null
     soil_type?: StringNullableFilter<"User"> | string | null
-    investment_range?: StringNullableFilter<"User"> | string | null
-    investment_goals?: StringNullableListFilter<"User">
-    preferred_farm_types?: StringNullableListFilter<"User">
-    bank_name?: StringNullableFilter<"User"> | string | null
     bank_account_number?: StringNullableFilter<"User"> | string | null
     bank_ifsc?: StringNullableFilter<"User"> | string | null
+    bank_name?: StringNullableFilter<"User"> | string | null
     farm_name?: StringNullableFilter<"User"> | string | null
-    farm_listings?: FarmListingListRelationFilter
-    contracts_as_farmer?: ContractListRelationFilter
+    investment_goals?: StringNullableListFilter<"User">
+    investment_range?: StringNullableFilter<"User"> | string | null
+    preferred_farm_types?: StringNullableListFilter<"User">
+    audit_logs?: AuditLogListRelationFilter
     contracts_as_consumer?: ContractListRelationFilter
-    farm_updates?: FarmUpdateListRelationFilter
-    escrow_entries?: EscrowLedgerListRelationFilter
-    disputes?: DisputeListRelationFilter
-    wallet_transactions?: WalletTransactionListRelationFilter
-    reviews?: ReviewListRelationFilter
-    notifications?: NotificationListRelationFilter
-    messages?: MessageListRelationFilter
+    contracts_as_farmer?: ContractListRelationFilter
     conversations_as_one?: ConversationListRelationFilter
     conversations_as_two?: ConversationListRelationFilter
-    audit_logs?: AuditLogListRelationFilter
+    disputes?: DisputeListRelationFilter
+    escrow_entries?: EscrowLedgerListRelationFilter
+    farm_listings?: FarmListingListRelationFilter
+    farm_updates?: FarmUpdateListRelationFilter
+    messages?: MessageListRelationFilter
+    notifications?: NotificationListRelationFilter
+    reviews?: ReviewListRelationFilter
+    wallet_transactions?: WalletTransactionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -18934,26 +18952,26 @@ export namespace Prisma {
     years_of_experience?: SortOrderInput | SortOrder
     land_records_url?: SortOrderInput | SortOrder
     soil_type?: SortOrderInput | SortOrder
-    investment_range?: SortOrderInput | SortOrder
-    investment_goals?: SortOrder
-    preferred_farm_types?: SortOrder
-    bank_name?: SortOrderInput | SortOrder
     bank_account_number?: SortOrderInput | SortOrder
     bank_ifsc?: SortOrderInput | SortOrder
+    bank_name?: SortOrderInput | SortOrder
     farm_name?: SortOrderInput | SortOrder
-    farm_listings?: FarmListingOrderByRelationAggregateInput
-    contracts_as_farmer?: ContractOrderByRelationAggregateInput
+    investment_goals?: SortOrder
+    investment_range?: SortOrderInput | SortOrder
+    preferred_farm_types?: SortOrder
+    audit_logs?: AuditLogOrderByRelationAggregateInput
     contracts_as_consumer?: ContractOrderByRelationAggregateInput
-    farm_updates?: FarmUpdateOrderByRelationAggregateInput
-    escrow_entries?: EscrowLedgerOrderByRelationAggregateInput
-    disputes?: DisputeOrderByRelationAggregateInput
-    wallet_transactions?: WalletTransactionOrderByRelationAggregateInput
-    reviews?: ReviewOrderByRelationAggregateInput
-    notifications?: NotificationOrderByRelationAggregateInput
-    messages?: MessageOrderByRelationAggregateInput
+    contracts_as_farmer?: ContractOrderByRelationAggregateInput
     conversations_as_one?: ConversationOrderByRelationAggregateInput
     conversations_as_two?: ConversationOrderByRelationAggregateInput
-    audit_logs?: AuditLogOrderByRelationAggregateInput
+    disputes?: DisputeOrderByRelationAggregateInput
+    escrow_entries?: EscrowLedgerOrderByRelationAggregateInput
+    farm_listings?: FarmListingOrderByRelationAggregateInput
+    farm_updates?: FarmUpdateOrderByRelationAggregateInput
+    messages?: MessageOrderByRelationAggregateInput
+    notifications?: NotificationOrderByRelationAggregateInput
+    reviews?: ReviewOrderByRelationAggregateInput
+    wallet_transactions?: WalletTransactionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -18989,26 +19007,26 @@ export namespace Prisma {
     years_of_experience?: IntNullableFilter<"User"> | number | null
     land_records_url?: StringNullableFilter<"User"> | string | null
     soil_type?: StringNullableFilter<"User"> | string | null
-    investment_range?: StringNullableFilter<"User"> | string | null
-    investment_goals?: StringNullableListFilter<"User">
-    preferred_farm_types?: StringNullableListFilter<"User">
-    bank_name?: StringNullableFilter<"User"> | string | null
     bank_account_number?: StringNullableFilter<"User"> | string | null
     bank_ifsc?: StringNullableFilter<"User"> | string | null
+    bank_name?: StringNullableFilter<"User"> | string | null
     farm_name?: StringNullableFilter<"User"> | string | null
-    farm_listings?: FarmListingListRelationFilter
-    contracts_as_farmer?: ContractListRelationFilter
+    investment_goals?: StringNullableListFilter<"User">
+    investment_range?: StringNullableFilter<"User"> | string | null
+    preferred_farm_types?: StringNullableListFilter<"User">
+    audit_logs?: AuditLogListRelationFilter
     contracts_as_consumer?: ContractListRelationFilter
-    farm_updates?: FarmUpdateListRelationFilter
-    escrow_entries?: EscrowLedgerListRelationFilter
-    disputes?: DisputeListRelationFilter
-    wallet_transactions?: WalletTransactionListRelationFilter
-    reviews?: ReviewListRelationFilter
-    notifications?: NotificationListRelationFilter
-    messages?: MessageListRelationFilter
+    contracts_as_farmer?: ContractListRelationFilter
     conversations_as_one?: ConversationListRelationFilter
     conversations_as_two?: ConversationListRelationFilter
-    audit_logs?: AuditLogListRelationFilter
+    disputes?: DisputeListRelationFilter
+    escrow_entries?: EscrowLedgerListRelationFilter
+    farm_listings?: FarmListingListRelationFilter
+    farm_updates?: FarmUpdateListRelationFilter
+    messages?: MessageListRelationFilter
+    notifications?: NotificationListRelationFilter
+    reviews?: ReviewListRelationFilter
+    wallet_transactions?: WalletTransactionListRelationFilter
   }, "id" | "phone" | "email" | "razorpay_customer_id">
 
   export type UserOrderByWithAggregationInput = {
@@ -19041,13 +19059,13 @@ export namespace Prisma {
     years_of_experience?: SortOrderInput | SortOrder
     land_records_url?: SortOrderInput | SortOrder
     soil_type?: SortOrderInput | SortOrder
-    investment_range?: SortOrderInput | SortOrder
-    investment_goals?: SortOrder
-    preferred_farm_types?: SortOrder
-    bank_name?: SortOrderInput | SortOrder
     bank_account_number?: SortOrderInput | SortOrder
     bank_ifsc?: SortOrderInput | SortOrder
+    bank_name?: SortOrderInput | SortOrder
     farm_name?: SortOrderInput | SortOrder
+    investment_goals?: SortOrder
+    investment_range?: SortOrderInput | SortOrder
+    preferred_farm_types?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -19088,13 +19106,13 @@ export namespace Prisma {
     years_of_experience?: IntNullableWithAggregatesFilter<"User"> | number | null
     land_records_url?: StringNullableWithAggregatesFilter<"User"> | string | null
     soil_type?: StringNullableWithAggregatesFilter<"User"> | string | null
-    investment_range?: StringNullableWithAggregatesFilter<"User"> | string | null
-    investment_goals?: StringNullableListFilter<"User">
-    preferred_farm_types?: StringNullableListFilter<"User">
-    bank_name?: StringNullableWithAggregatesFilter<"User"> | string | null
     bank_account_number?: StringNullableWithAggregatesFilter<"User"> | string | null
     bank_ifsc?: StringNullableWithAggregatesFilter<"User"> | string | null
+    bank_name?: StringNullableWithAggregatesFilter<"User"> | string | null
     farm_name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    investment_goals?: StringNullableListFilter<"User">
+    investment_range?: StringNullableWithAggregatesFilter<"User"> | string | null
+    preferred_farm_types?: StringNullableListFilter<"User">
   }
 
   export type FarmListingWhereInput = {
@@ -19122,8 +19140,8 @@ export namespace Prisma {
     views?: IntFilter<"FarmListing"> | number
     created_at?: DateTimeFilter<"FarmListing"> | Date | string
     updated_at?: DateTimeFilter<"FarmListing"> | Date | string
-    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
     contracts?: ContractListRelationFilter
+    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type FarmListingOrderByWithRelationInput = {
@@ -19148,8 +19166,8 @@ export namespace Prisma {
     views?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
-    farmer?: UserOrderByWithRelationInput
     contracts?: ContractOrderByRelationAggregateInput
+    farmer?: UserOrderByWithRelationInput
   }
 
   export type FarmListingWhereUniqueInput = Prisma.AtLeast<{
@@ -19177,8 +19195,8 @@ export namespace Prisma {
     views?: IntFilter<"FarmListing"> | number
     created_at?: DateTimeFilter<"FarmListing"> | Date | string
     updated_at?: DateTimeFilter<"FarmListing"> | Date | string
-    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
     contracts?: ContractListRelationFilter
+    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type FarmListingOrderByWithAggregationInput = {
@@ -19249,6 +19267,7 @@ export namespace Prisma {
     acreage?: FloatFilter<"Contract"> | number
     price_per_acre?: FloatFilter<"Contract"> | number
     total_amount?: FloatFilter<"Contract"> | number
+    total_cycles?: IntFilter<"Contract"> | number
     start_date?: DateTimeFilter<"Contract"> | Date | string
     end_date?: DateTimeFilter<"Contract"> | Date | string
     status?: EnumContractStatusFilter<"Contract"> | $Enums.ContractStatus
@@ -19257,14 +19276,14 @@ export namespace Prisma {
     escrow_frozen?: FloatFilter<"Contract"> | number
     created_at?: DateTimeFilter<"Contract"> | Date | string
     updated_at?: DateTimeFilter<"Contract"> | Date | string
-    listing?: XOR<FarmListingScalarRelationFilter, FarmListingWhereInput>
-    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
     consumer?: XOR<UserScalarRelationFilter, UserWhereInput>
-    farm_updates?: FarmUpdateListRelationFilter
-    escrow_entries?: EscrowLedgerListRelationFilter
+    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
+    listing?: XOR<FarmListingScalarRelationFilter, FarmListingWhereInput>
+    conversations?: ConversationListRelationFilter
     deliveries?: DeliveryListRelationFilter
     disputes?: DisputeListRelationFilter
-    conversations?: ConversationListRelationFilter
+    escrow_entries?: EscrowLedgerListRelationFilter
+    farm_updates?: FarmUpdateListRelationFilter
   }
 
   export type ContractOrderByWithRelationInput = {
@@ -19276,6 +19295,7 @@ export namespace Prisma {
     acreage?: SortOrder
     price_per_acre?: SortOrder
     total_amount?: SortOrder
+    total_cycles?: SortOrder
     start_date?: SortOrder
     end_date?: SortOrder
     status?: SortOrder
@@ -19284,14 +19304,14 @@ export namespace Prisma {
     escrow_frozen?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
-    listing?: FarmListingOrderByWithRelationInput
-    farmer?: UserOrderByWithRelationInput
     consumer?: UserOrderByWithRelationInput
-    farm_updates?: FarmUpdateOrderByRelationAggregateInput
-    escrow_entries?: EscrowLedgerOrderByRelationAggregateInput
+    farmer?: UserOrderByWithRelationInput
+    listing?: FarmListingOrderByWithRelationInput
+    conversations?: ConversationOrderByRelationAggregateInput
     deliveries?: DeliveryOrderByRelationAggregateInput
     disputes?: DisputeOrderByRelationAggregateInput
-    conversations?: ConversationOrderByRelationAggregateInput
+    escrow_entries?: EscrowLedgerOrderByRelationAggregateInput
+    farm_updates?: FarmUpdateOrderByRelationAggregateInput
   }
 
   export type ContractWhereUniqueInput = Prisma.AtLeast<{
@@ -19306,6 +19326,7 @@ export namespace Prisma {
     acreage?: FloatFilter<"Contract"> | number
     price_per_acre?: FloatFilter<"Contract"> | number
     total_amount?: FloatFilter<"Contract"> | number
+    total_cycles?: IntFilter<"Contract"> | number
     start_date?: DateTimeFilter<"Contract"> | Date | string
     end_date?: DateTimeFilter<"Contract"> | Date | string
     status?: EnumContractStatusFilter<"Contract"> | $Enums.ContractStatus
@@ -19314,14 +19335,14 @@ export namespace Prisma {
     escrow_frozen?: FloatFilter<"Contract"> | number
     created_at?: DateTimeFilter<"Contract"> | Date | string
     updated_at?: DateTimeFilter<"Contract"> | Date | string
-    listing?: XOR<FarmListingScalarRelationFilter, FarmListingWhereInput>
-    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
     consumer?: XOR<UserScalarRelationFilter, UserWhereInput>
-    farm_updates?: FarmUpdateListRelationFilter
-    escrow_entries?: EscrowLedgerListRelationFilter
+    farmer?: XOR<UserScalarRelationFilter, UserWhereInput>
+    listing?: XOR<FarmListingScalarRelationFilter, FarmListingWhereInput>
+    conversations?: ConversationListRelationFilter
     deliveries?: DeliveryListRelationFilter
     disputes?: DisputeListRelationFilter
-    conversations?: ConversationListRelationFilter
+    escrow_entries?: EscrowLedgerListRelationFilter
+    farm_updates?: FarmUpdateListRelationFilter
   }, "id">
 
   export type ContractOrderByWithAggregationInput = {
@@ -19333,6 +19354,7 @@ export namespace Prisma {
     acreage?: SortOrder
     price_per_acre?: SortOrder
     total_amount?: SortOrder
+    total_cycles?: SortOrder
     start_date?: SortOrder
     end_date?: SortOrder
     status?: SortOrder
@@ -19360,6 +19382,7 @@ export namespace Prisma {
     acreage?: FloatWithAggregatesFilter<"Contract"> | number
     price_per_acre?: FloatWithAggregatesFilter<"Contract"> | number
     total_amount?: FloatWithAggregatesFilter<"Contract"> | number
+    total_cycles?: IntWithAggregatesFilter<"Contract"> | number
     start_date?: DateTimeWithAggregatesFilter<"Contract"> | Date | string
     end_date?: DateTimeWithAggregatesFilter<"Contract"> | Date | string
     status?: EnumContractStatusWithAggregatesFilter<"Contract"> | $Enums.ContractStatus
@@ -19724,12 +19747,12 @@ export namespace Prisma {
     id?: StringFilter<"WalletTransaction"> | string
     user_id?: StringFilter<"WalletTransaction"> | string
     type?: EnumTransactionTypeFilter<"WalletTransaction"> | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     amount?: FloatFilter<"WalletTransaction"> | number
     description?: StringNullableFilter<"WalletTransaction"> | string | null
     balance_after?: FloatFilter<"WalletTransaction"> | number
     razorpay_payout_id?: StringNullableFilter<"WalletTransaction"> | string | null
     created_at?: DateTimeFilter<"WalletTransaction"> | Date | string
+    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -19737,12 +19760,12 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
     balance_after?: SortOrder
     razorpay_payout_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
+    status?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -19753,12 +19776,12 @@ export namespace Prisma {
     NOT?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
     user_id?: StringFilter<"WalletTransaction"> | string
     type?: EnumTransactionTypeFilter<"WalletTransaction"> | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     amount?: FloatFilter<"WalletTransaction"> | number
     description?: StringNullableFilter<"WalletTransaction"> | string | null
     balance_after?: FloatFilter<"WalletTransaction"> | number
     razorpay_payout_id?: StringNullableFilter<"WalletTransaction"> | string | null
     created_at?: DateTimeFilter<"WalletTransaction"> | Date | string
+    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -19766,12 +19789,12 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
     balance_after?: SortOrder
     razorpay_payout_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
+    status?: SortOrder
     _count?: WalletTransactionCountOrderByAggregateInput
     _avg?: WalletTransactionAvgOrderByAggregateInput
     _max?: WalletTransactionMaxOrderByAggregateInput
@@ -19786,12 +19809,12 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"WalletTransaction"> | string
     user_id?: StringWithAggregatesFilter<"WalletTransaction"> | string
     type?: EnumTransactionTypeWithAggregatesFilter<"WalletTransaction"> | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusWithAggregatesFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
     amount?: FloatWithAggregatesFilter<"WalletTransaction"> | number
     description?: StringNullableWithAggregatesFilter<"WalletTransaction"> | string | null
     balance_after?: FloatWithAggregatesFilter<"WalletTransaction"> | number
     razorpay_payout_id?: StringNullableWithAggregatesFilter<"WalletTransaction"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"WalletTransaction"> | Date | string
+    status?: EnumWalletTransactionStatusWithAggregatesFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
   }
 
   export type ReviewWhereInput = {
@@ -20004,9 +20027,9 @@ export namespace Prisma {
     last_message_at?: DateTimeNullableFilter<"Conversation"> | Date | string | null
     created_at?: DateTimeFilter<"Conversation"> | Date | string
     updated_at?: DateTimeFilter<"Conversation"> | Date | string
+    contract?: XOR<ContractNullableScalarRelationFilter, ContractWhereInput> | null
     participant_one?: XOR<UserScalarRelationFilter, UserWhereInput>
     participant_two?: XOR<UserScalarRelationFilter, UserWhereInput>
-    contract?: XOR<ContractNullableScalarRelationFilter, ContractWhereInput> | null
     messages?: MessageListRelationFilter
   }
 
@@ -20019,9 +20042,9 @@ export namespace Prisma {
     last_message_at?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    contract?: ContractOrderByWithRelationInput
     participant_one?: UserOrderByWithRelationInput
     participant_two?: UserOrderByWithRelationInput
-    contract?: ContractOrderByWithRelationInput
     messages?: MessageOrderByRelationAggregateInput
   }
 
@@ -20038,9 +20061,9 @@ export namespace Prisma {
     last_message_at?: DateTimeNullableFilter<"Conversation"> | Date | string | null
     created_at?: DateTimeFilter<"Conversation"> | Date | string
     updated_at?: DateTimeFilter<"Conversation"> | Date | string
+    contract?: XOR<ContractNullableScalarRelationFilter, ContractWhereInput> | null
     participant_one?: XOR<UserScalarRelationFilter, UserWhereInput>
     participant_two?: XOR<UserScalarRelationFilter, UserWhereInput>
-    contract?: XOR<ContractNullableScalarRelationFilter, ContractWhereInput> | null
     messages?: MessageListRelationFilter
   }, "id" | "participant_one_id_participant_two_id">
 
@@ -20170,26 +20193,26 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -20222,26 +20245,26 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -20274,26 +20297,26 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -20326,26 +20349,26 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -20378,13 +20401,13 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
   }
 
   export type UserUpdateManyMutationInput = {
@@ -20417,13 +20440,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -20456,13 +20479,13 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
   }
 
   export type FarmListingCreateInput = {
@@ -20486,8 +20509,8 @@ export namespace Prisma {
     views?: number
     created_at?: Date | string
     updated_at?: Date | string
-    farmer: UserCreateNestedOneWithoutFarm_listingsInput
     contracts?: ContractCreateNestedManyWithoutListingInput
+    farmer: UserCreateNestedOneWithoutFarm_listingsInput
   }
 
   export type FarmListingUncheckedCreateInput = {
@@ -20536,8 +20559,8 @@ export namespace Prisma {
     views?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farmer?: UserUpdateOneRequiredWithoutFarm_listingsNestedInput
     contracts?: ContractUpdateManyWithoutListingNestedInput
+    farmer?: UserUpdateOneRequiredWithoutFarm_listingsNestedInput
   }
 
   export type FarmListingUncheckedUpdateInput = {
@@ -20642,6 +20665,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -20650,14 +20674,14 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
     consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
+    conversations?: ConversationCreateNestedManyWithoutContractInput
     deliveries?: DeliveryCreateNestedManyWithoutContractInput
     disputes?: DisputeCreateNestedManyWithoutContractInput
-    conversations?: ConversationCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
   }
 
   export type ContractUncheckedCreateInput = {
@@ -20669,6 +20693,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -20677,11 +20702,11 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
     deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
     disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
-    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
   }
 
   export type ContractUpdateInput = {
@@ -20690,6 +20715,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -20698,14 +20724,14 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
     consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
+    conversations?: ConversationUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUpdateManyWithoutContractNestedInput
     disputes?: DisputeUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
   }
 
   export type ContractUncheckedUpdateInput = {
@@ -20717,6 +20743,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -20725,11 +20752,11 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
     disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
   }
 
   export type ContractCreateManyInput = {
@@ -20741,6 +20768,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -20757,6 +20785,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -20776,6 +20805,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -21160,12 +21190,12 @@ export namespace Prisma {
   export type WalletTransactionCreateInput = {
     id?: string
     type: $Enums.TransactionType
-    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
     razorpay_payout_id?: string | null
     created_at?: Date | string
+    status?: $Enums.WalletTransactionStatus
     user: UserCreateNestedOneWithoutWallet_transactionsInput
   }
 
@@ -21173,23 +21203,23 @@ export namespace Prisma {
     id?: string
     user_id: string
     type: $Enums.TransactionType
-    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
     razorpay_payout_id?: string | null
     created_at?: Date | string
+    status?: $Enums.WalletTransactionStatus
   }
 
   export type WalletTransactionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
     razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     user?: UserUpdateOneRequiredWithoutWallet_transactionsNestedInput
   }
 
@@ -21197,47 +21227,47 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
     razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
   }
 
   export type WalletTransactionCreateManyInput = {
     id?: string
     user_id: string
     type: $Enums.TransactionType
-    status?: $Enums.WalletTransactionStatus
     amount: number
     description?: string | null
     balance_after: number
     razorpay_payout_id?: string | null
     created_at?: Date | string
+    status?: $Enums.WalletTransactionStatus
   }
 
   export type WalletTransactionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
     razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
   }
 
   export type WalletTransactionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     user_id?: StringFieldUpdateOperationsInput | string
     type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     balance_after?: FloatFieldUpdateOperationsInput | number
     razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
   }
 
   export type ReviewCreateInput = {
@@ -21453,9 +21483,9 @@ export namespace Prisma {
     last_message_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
+    contract?: ContractCreateNestedOneWithoutConversationsInput
     participant_one: UserCreateNestedOneWithoutConversations_as_oneInput
     participant_two: UserCreateNestedOneWithoutConversations_as_twoInput
-    contract?: ContractCreateNestedOneWithoutConversationsInput
     messages?: MessageCreateNestedManyWithoutConversationInput
   }
 
@@ -21477,9 +21507,9 @@ export namespace Prisma {
     last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contract?: ContractUpdateOneWithoutConversationsNestedInput
     participant_one?: UserUpdateOneRequiredWithoutConversations_as_oneNestedInput
     participant_two?: UserUpdateOneRequiredWithoutConversations_as_twoNestedInput
-    contract?: ContractUpdateOneWithoutConversationsNestedInput
     messages?: MessageUpdateManyWithoutConversationNestedInput
   }
 
@@ -21712,10 +21742,10 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type FarmListingListRelationFilter = {
-    every?: FarmListingWhereInput
-    some?: FarmListingWhereInput
-    none?: FarmListingWhereInput
+  export type AuditLogListRelationFilter = {
+    every?: AuditLogWhereInput
+    some?: AuditLogWhereInput
+    none?: AuditLogWhereInput
   }
 
   export type ContractListRelationFilter = {
@@ -21724,16 +21754,10 @@ export namespace Prisma {
     none?: ContractWhereInput
   }
 
-  export type FarmUpdateListRelationFilter = {
-    every?: FarmUpdateWhereInput
-    some?: FarmUpdateWhereInput
-    none?: FarmUpdateWhereInput
-  }
-
-  export type EscrowLedgerListRelationFilter = {
-    every?: EscrowLedgerWhereInput
-    some?: EscrowLedgerWhereInput
-    none?: EscrowLedgerWhereInput
+  export type ConversationListRelationFilter = {
+    every?: ConversationWhereInput
+    some?: ConversationWhereInput
+    none?: ConversationWhereInput
   }
 
   export type DisputeListRelationFilter = {
@@ -21742,22 +21766,22 @@ export namespace Prisma {
     none?: DisputeWhereInput
   }
 
-  export type WalletTransactionListRelationFilter = {
-    every?: WalletTransactionWhereInput
-    some?: WalletTransactionWhereInput
-    none?: WalletTransactionWhereInput
+  export type EscrowLedgerListRelationFilter = {
+    every?: EscrowLedgerWhereInput
+    some?: EscrowLedgerWhereInput
+    none?: EscrowLedgerWhereInput
   }
 
-  export type ReviewListRelationFilter = {
-    every?: ReviewWhereInput
-    some?: ReviewWhereInput
-    none?: ReviewWhereInput
+  export type FarmListingListRelationFilter = {
+    every?: FarmListingWhereInput
+    some?: FarmListingWhereInput
+    none?: FarmListingWhereInput
   }
 
-  export type NotificationListRelationFilter = {
-    every?: NotificationWhereInput
-    some?: NotificationWhereInput
-    none?: NotificationWhereInput
+  export type FarmUpdateListRelationFilter = {
+    every?: FarmUpdateWhereInput
+    some?: FarmUpdateWhereInput
+    none?: FarmUpdateWhereInput
   }
 
   export type MessageListRelationFilter = {
@@ -21766,16 +21790,22 @@ export namespace Prisma {
     none?: MessageWhereInput
   }
 
-  export type ConversationListRelationFilter = {
-    every?: ConversationWhereInput
-    some?: ConversationWhereInput
-    none?: ConversationWhereInput
+  export type NotificationListRelationFilter = {
+    every?: NotificationWhereInput
+    some?: NotificationWhereInput
+    none?: NotificationWhereInput
   }
 
-  export type AuditLogListRelationFilter = {
-    every?: AuditLogWhereInput
-    some?: AuditLogWhereInput
-    none?: AuditLogWhereInput
+  export type ReviewListRelationFilter = {
+    every?: ReviewWhereInput
+    some?: ReviewWhereInput
+    none?: ReviewWhereInput
+  }
+
+  export type WalletTransactionListRelationFilter = {
+    every?: WalletTransactionWhereInput
+    some?: WalletTransactionWhereInput
+    none?: WalletTransactionWhereInput
   }
 
   export type SortOrderInput = {
@@ -21783,7 +21813,7 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type FarmListingOrderByRelationAggregateInput = {
+  export type AuditLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21791,11 +21821,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type FarmUpdateOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type EscrowLedgerOrderByRelationAggregateInput = {
+  export type ConversationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21803,15 +21829,15 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type WalletTransactionOrderByRelationAggregateInput = {
+  export type EscrowLedgerOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type ReviewOrderByRelationAggregateInput = {
+  export type FarmListingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type NotificationOrderByRelationAggregateInput = {
+  export type FarmUpdateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21819,11 +21845,15 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ConversationOrderByRelationAggregateInput = {
+  export type NotificationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type AuditLogOrderByRelationAggregateInput = {
+  export type ReviewOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WalletTransactionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21857,13 +21887,13 @@ export namespace Prisma {
     years_of_experience?: SortOrder
     land_records_url?: SortOrder
     soil_type?: SortOrder
-    investment_range?: SortOrder
-    investment_goals?: SortOrder
-    preferred_farm_types?: SortOrder
-    bank_name?: SortOrder
     bank_account_number?: SortOrder
     bank_ifsc?: SortOrder
+    bank_name?: SortOrder
     farm_name?: SortOrder
+    investment_goals?: SortOrder
+    investment_range?: SortOrder
+    preferred_farm_types?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -21901,11 +21931,11 @@ export namespace Prisma {
     years_of_experience?: SortOrder
     land_records_url?: SortOrder
     soil_type?: SortOrder
-    investment_range?: SortOrder
-    bank_name?: SortOrder
     bank_account_number?: SortOrder
     bank_ifsc?: SortOrder
+    bank_name?: SortOrder
     farm_name?: SortOrder
+    investment_range?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -21936,11 +21966,11 @@ export namespace Prisma {
     years_of_experience?: SortOrder
     land_records_url?: SortOrder
     soil_type?: SortOrder
-    investment_range?: SortOrder
-    bank_name?: SortOrder
     bank_account_number?: SortOrder
     bank_ifsc?: SortOrder
+    bank_name?: SortOrder
     farm_name?: SortOrder
+    investment_range?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -22298,6 +22328,7 @@ export namespace Prisma {
     acreage?: SortOrder
     price_per_acre?: SortOrder
     total_amount?: SortOrder
+    total_cycles?: SortOrder
     start_date?: SortOrder
     end_date?: SortOrder
     status?: SortOrder
@@ -22312,6 +22343,7 @@ export namespace Prisma {
     acreage?: SortOrder
     price_per_acre?: SortOrder
     total_amount?: SortOrder
+    total_cycles?: SortOrder
     escrow_held?: SortOrder
     farmer_paid?: SortOrder
     escrow_frozen?: SortOrder
@@ -22326,6 +22358,7 @@ export namespace Prisma {
     acreage?: SortOrder
     price_per_acre?: SortOrder
     total_amount?: SortOrder
+    total_cycles?: SortOrder
     start_date?: SortOrder
     end_date?: SortOrder
     status?: SortOrder
@@ -22345,6 +22378,7 @@ export namespace Prisma {
     acreage?: SortOrder
     price_per_acre?: SortOrder
     total_amount?: SortOrder
+    total_cycles?: SortOrder
     start_date?: SortOrder
     end_date?: SortOrder
     status?: SortOrder
@@ -22359,6 +22393,7 @@ export namespace Prisma {
     acreage?: SortOrder
     price_per_acre?: SortOrder
     total_amount?: SortOrder
+    total_cycles?: SortOrder
     escrow_held?: SortOrder
     farmer_paid?: SortOrder
     escrow_frozen?: SortOrder
@@ -22654,12 +22689,12 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     description?: SortOrder
     balance_after?: SortOrder
     razorpay_payout_id?: SortOrder
     created_at?: SortOrder
+    status?: SortOrder
   }
 
   export type WalletTransactionAvgOrderByAggregateInput = {
@@ -22671,24 +22706,24 @@ export namespace Prisma {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     description?: SortOrder
     balance_after?: SortOrder
     razorpay_payout_id?: SortOrder
     created_at?: SortOrder
+    status?: SortOrder
   }
 
   export type WalletTransactionMinOrderByAggregateInput = {
     id?: SortOrder
     user_id?: SortOrder
     type?: SortOrder
-    status?: SortOrder
     amount?: SortOrder
     description?: SortOrder
     balance_after?: SortOrder
     razorpay_payout_id?: SortOrder
     created_at?: SortOrder
+    status?: SortOrder
   }
 
   export type WalletTransactionSumOrderByAggregateInput = {
@@ -22912,18 +22947,11 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type FarmListingCreateNestedManyWithoutFarmerInput = {
-    create?: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput> | FarmListingCreateWithoutFarmerInput[] | FarmListingUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: FarmListingCreateOrConnectWithoutFarmerInput | FarmListingCreateOrConnectWithoutFarmerInput[]
-    createMany?: FarmListingCreateManyFarmerInputEnvelope
-    connect?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
-  }
-
-  export type ContractCreateNestedManyWithoutFarmerInput = {
-    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
-    createMany?: ContractCreateManyFarmerInputEnvelope
-    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+  export type AuditLogCreateNestedManyWithoutAdminInput = {
+    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
+    createMany?: AuditLogCreateManyAdminInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
   export type ContractCreateNestedManyWithoutConsumerInput = {
@@ -22933,53 +22961,11 @@ export namespace Prisma {
     connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
   }
 
-  export type FarmUpdateCreateNestedManyWithoutFarmerInput = {
-    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
-    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
-    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-  }
-
-  export type EscrowLedgerCreateNestedManyWithoutUserInput = {
-    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
-    createMany?: EscrowLedgerCreateManyUserInputEnvelope
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-  }
-
-  export type DisputeCreateNestedManyWithoutReporterInput = {
-    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
-    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
-    createMany?: DisputeCreateManyReporterInputEnvelope
-    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-  }
-
-  export type WalletTransactionCreateNestedManyWithoutUserInput = {
-    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
-    createMany?: WalletTransactionCreateManyUserInputEnvelope
-    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-  }
-
-  export type ReviewCreateNestedManyWithoutReviewerInput = {
-    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
-    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
-    createMany?: ReviewCreateManyReviewerInputEnvelope
-    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-  }
-
-  export type NotificationCreateNestedManyWithoutUserInput = {
-    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
-    createMany?: NotificationCreateManyUserInputEnvelope
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-  }
-
-  export type MessageCreateNestedManyWithoutSenderInput = {
-    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
-    createMany?: MessageCreateManySenderInputEnvelope
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  export type ContractCreateNestedManyWithoutFarmerInput = {
+    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
+    createMany?: ContractCreateManyFarmerInputEnvelope
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
   }
 
   export type ConversationCreateNestedManyWithoutParticipant_oneInput = {
@@ -22996,25 +22982,67 @@ export namespace Prisma {
     connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
   }
 
-  export type AuditLogCreateNestedManyWithoutAdminInput = {
-    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
-    createMany?: AuditLogCreateManyAdminInputEnvelope
-    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  export type DisputeCreateNestedManyWithoutReporterInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
   }
 
-  export type FarmListingUncheckedCreateNestedManyWithoutFarmerInput = {
+  export type EscrowLedgerCreateNestedManyWithoutUserInput = {
+    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
+    createMany?: EscrowLedgerCreateManyUserInputEnvelope
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+  }
+
+  export type FarmListingCreateNestedManyWithoutFarmerInput = {
     create?: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput> | FarmListingCreateWithoutFarmerInput[] | FarmListingUncheckedCreateWithoutFarmerInput[]
     connectOrCreate?: FarmListingCreateOrConnectWithoutFarmerInput | FarmListingCreateOrConnectWithoutFarmerInput[]
     createMany?: FarmListingCreateManyFarmerInputEnvelope
     connect?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
   }
 
-  export type ContractUncheckedCreateNestedManyWithoutFarmerInput = {
-    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
-    createMany?: ContractCreateManyFarmerInputEnvelope
-    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+  export type FarmUpdateCreateNestedManyWithoutFarmerInput = {
+    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
+    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
+    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+  }
+
+  export type MessageCreateNestedManyWithoutSenderInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type NotificationCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type ReviewCreateNestedManyWithoutReviewerInput = {
+    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
+    createMany?: ReviewCreateManyReviewerInputEnvelope
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+  }
+
+  export type WalletTransactionCreateNestedManyWithoutUserInput = {
+    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: WalletTransactionCreateManyUserInputEnvelope
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+  }
+
+  export type AuditLogUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
+    createMany?: AuditLogCreateManyAdminInputEnvelope
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
   export type ContractUncheckedCreateNestedManyWithoutConsumerInput = {
@@ -23024,53 +23052,11 @@ export namespace Prisma {
     connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
   }
 
-  export type FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput = {
-    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
-    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
-    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-  }
-
-  export type EscrowLedgerUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
-    createMany?: EscrowLedgerCreateManyUserInputEnvelope
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-  }
-
-  export type DisputeUncheckedCreateNestedManyWithoutReporterInput = {
-    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
-    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
-    createMany?: DisputeCreateManyReporterInputEnvelope
-    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-  }
-
-  export type WalletTransactionUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
-    createMany?: WalletTransactionCreateManyUserInputEnvelope
-    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-  }
-
-  export type ReviewUncheckedCreateNestedManyWithoutReviewerInput = {
-    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
-    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
-    createMany?: ReviewCreateManyReviewerInputEnvelope
-    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-  }
-
-  export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
-    createMany?: NotificationCreateManyUserInputEnvelope
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-  }
-
-  export type MessageUncheckedCreateNestedManyWithoutSenderInput = {
-    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
-    createMany?: MessageCreateManySenderInputEnvelope
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  export type ContractUncheckedCreateNestedManyWithoutFarmerInput = {
+    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
+    createMany?: ContractCreateManyFarmerInputEnvelope
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
   }
 
   export type ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput = {
@@ -23087,11 +23073,60 @@ export namespace Prisma {
     connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
   }
 
-  export type AuditLogUncheckedCreateNestedManyWithoutAdminInput = {
-    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
-    createMany?: AuditLogCreateManyAdminInputEnvelope
-    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  export type DisputeUncheckedCreateNestedManyWithoutReporterInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+  }
+
+  export type EscrowLedgerUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
+    createMany?: EscrowLedgerCreateManyUserInputEnvelope
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+  }
+
+  export type FarmListingUncheckedCreateNestedManyWithoutFarmerInput = {
+    create?: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput> | FarmListingCreateWithoutFarmerInput[] | FarmListingUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: FarmListingCreateOrConnectWithoutFarmerInput | FarmListingCreateOrConnectWithoutFarmerInput[]
+    createMany?: FarmListingCreateManyFarmerInputEnvelope
+    connect?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
+  }
+
+  export type FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput = {
+    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
+    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
+    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+  }
+
+  export type MessageUncheckedCreateNestedManyWithoutSenderInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type ReviewUncheckedCreateNestedManyWithoutReviewerInput = {
+    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
+    createMany?: ReviewCreateManyReviewerInputEnvelope
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+  }
+
+  export type WalletTransactionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: WalletTransactionCreateManyUserInputEnvelope
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -23149,32 +23184,18 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type FarmListingUpdateManyWithoutFarmerNestedInput = {
-    create?: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput> | FarmListingCreateWithoutFarmerInput[] | FarmListingUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: FarmListingCreateOrConnectWithoutFarmerInput | FarmListingCreateOrConnectWithoutFarmerInput[]
-    upsert?: FarmListingUpsertWithWhereUniqueWithoutFarmerInput | FarmListingUpsertWithWhereUniqueWithoutFarmerInput[]
-    createMany?: FarmListingCreateManyFarmerInputEnvelope
-    set?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
-    disconnect?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
-    delete?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
-    connect?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
-    update?: FarmListingUpdateWithWhereUniqueWithoutFarmerInput | FarmListingUpdateWithWhereUniqueWithoutFarmerInput[]
-    updateMany?: FarmListingUpdateManyWithWhereWithoutFarmerInput | FarmListingUpdateManyWithWhereWithoutFarmerInput[]
-    deleteMany?: FarmListingScalarWhereInput | FarmListingScalarWhereInput[]
-  }
-
-  export type ContractUpdateManyWithoutFarmerNestedInput = {
-    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
-    upsert?: ContractUpsertWithWhereUniqueWithoutFarmerInput | ContractUpsertWithWhereUniqueWithoutFarmerInput[]
-    createMany?: ContractCreateManyFarmerInputEnvelope
-    set?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    disconnect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    delete?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    update?: ContractUpdateWithWhereUniqueWithoutFarmerInput | ContractUpdateWithWhereUniqueWithoutFarmerInput[]
-    updateMany?: ContractUpdateManyWithWhereWithoutFarmerInput | ContractUpdateManyWithWhereWithoutFarmerInput[]
-    deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
+  export type AuditLogUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutAdminInput | AuditLogUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: AuditLogCreateManyAdminInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutAdminInput | AuditLogUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutAdminInput | AuditLogUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
   export type ContractUpdateManyWithoutConsumerNestedInput = {
@@ -23191,102 +23212,18 @@ export namespace Prisma {
     deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
   }
 
-  export type FarmUpdateUpdateManyWithoutFarmerNestedInput = {
-    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
-    upsert?: FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput | FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput[]
-    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
-    set?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    disconnect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    delete?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    update?: FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput | FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput[]
-    updateMany?: FarmUpdateUpdateManyWithWhereWithoutFarmerInput | FarmUpdateUpdateManyWithWhereWithoutFarmerInput[]
-    deleteMany?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
-  }
-
-  export type EscrowLedgerUpdateManyWithoutUserNestedInput = {
-    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
-    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutUserInput | EscrowLedgerUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: EscrowLedgerCreateManyUserInputEnvelope
-    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    update?: EscrowLedgerUpdateWithWhereUniqueWithoutUserInput | EscrowLedgerUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutUserInput | EscrowLedgerUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
-  }
-
-  export type DisputeUpdateManyWithoutReporterNestedInput = {
-    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
-    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
-    upsert?: DisputeUpsertWithWhereUniqueWithoutReporterInput | DisputeUpsertWithWhereUniqueWithoutReporterInput[]
-    createMany?: DisputeCreateManyReporterInputEnvelope
-    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    update?: DisputeUpdateWithWhereUniqueWithoutReporterInput | DisputeUpdateWithWhereUniqueWithoutReporterInput[]
-    updateMany?: DisputeUpdateManyWithWhereWithoutReporterInput | DisputeUpdateManyWithWhereWithoutReporterInput[]
-    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
-  }
-
-  export type WalletTransactionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
-    upsert?: WalletTransactionUpsertWithWhereUniqueWithoutUserInput | WalletTransactionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: WalletTransactionCreateManyUserInputEnvelope
-    set?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    disconnect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    delete?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    update?: WalletTransactionUpdateWithWhereUniqueWithoutUserInput | WalletTransactionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: WalletTransactionUpdateManyWithWhereWithoutUserInput | WalletTransactionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
-  }
-
-  export type ReviewUpdateManyWithoutReviewerNestedInput = {
-    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
-    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
-    upsert?: ReviewUpsertWithWhereUniqueWithoutReviewerInput | ReviewUpsertWithWhereUniqueWithoutReviewerInput[]
-    createMany?: ReviewCreateManyReviewerInputEnvelope
-    set?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    disconnect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    delete?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    update?: ReviewUpdateWithWhereUniqueWithoutReviewerInput | ReviewUpdateWithWhereUniqueWithoutReviewerInput[]
-    updateMany?: ReviewUpdateManyWithWhereWithoutReviewerInput | ReviewUpdateManyWithWhereWithoutReviewerInput[]
-    deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
-  }
-
-  export type NotificationUpdateManyWithoutUserNestedInput = {
-    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
-    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: NotificationCreateManyUserInputEnvelope
-    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-  }
-
-  export type MessageUpdateManyWithoutSenderNestedInput = {
-    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
-    upsert?: MessageUpsertWithWhereUniqueWithoutSenderInput | MessageUpsertWithWhereUniqueWithoutSenderInput[]
-    createMany?: MessageCreateManySenderInputEnvelope
-    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    update?: MessageUpdateWithWhereUniqueWithoutSenderInput | MessageUpdateWithWhereUniqueWithoutSenderInput[]
-    updateMany?: MessageUpdateManyWithWhereWithoutSenderInput | MessageUpdateManyWithWhereWithoutSenderInput[]
-    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  export type ContractUpdateManyWithoutFarmerNestedInput = {
+    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
+    upsert?: ContractUpsertWithWhereUniqueWithoutFarmerInput | ContractUpsertWithWhereUniqueWithoutFarmerInput[]
+    createMany?: ContractCreateManyFarmerInputEnvelope
+    set?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    disconnect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    delete?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    update?: ContractUpdateWithWhereUniqueWithoutFarmerInput | ContractUpdateWithWhereUniqueWithoutFarmerInput[]
+    updateMany?: ContractUpdateManyWithWhereWithoutFarmerInput | ContractUpdateManyWithWhereWithoutFarmerInput[]
+    deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
   }
 
   export type ConversationUpdateManyWithoutParticipant_oneNestedInput = {
@@ -23317,21 +23254,35 @@ export namespace Prisma {
     deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
   }
 
-  export type AuditLogUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
-    upsert?: AuditLogUpsertWithWhereUniqueWithoutAdminInput | AuditLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: AuditLogCreateManyAdminInputEnvelope
-    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    update?: AuditLogUpdateWithWhereUniqueWithoutAdminInput | AuditLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: AuditLogUpdateManyWithWhereWithoutAdminInput | AuditLogUpdateManyWithWhereWithoutAdminInput[]
-    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  export type DisputeUpdateManyWithoutReporterNestedInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutReporterInput | DisputeUpsertWithWhereUniqueWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutReporterInput | DisputeUpdateWithWhereUniqueWithoutReporterInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutReporterInput | DisputeUpdateManyWithWhereWithoutReporterInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
   }
 
-  export type FarmListingUncheckedUpdateManyWithoutFarmerNestedInput = {
+  export type EscrowLedgerUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
+    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutUserInput | EscrowLedgerUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EscrowLedgerCreateManyUserInputEnvelope
+    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    update?: EscrowLedgerUpdateWithWhereUniqueWithoutUserInput | EscrowLedgerUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutUserInput | EscrowLedgerUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
+  }
+
+  export type FarmListingUpdateManyWithoutFarmerNestedInput = {
     create?: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput> | FarmListingCreateWithoutFarmerInput[] | FarmListingUncheckedCreateWithoutFarmerInput[]
     connectOrCreate?: FarmListingCreateOrConnectWithoutFarmerInput | FarmListingCreateOrConnectWithoutFarmerInput[]
     upsert?: FarmListingUpsertWithWhereUniqueWithoutFarmerInput | FarmListingUpsertWithWhereUniqueWithoutFarmerInput[]
@@ -23345,18 +23296,88 @@ export namespace Prisma {
     deleteMany?: FarmListingScalarWhereInput | FarmListingScalarWhereInput[]
   }
 
-  export type ContractUncheckedUpdateManyWithoutFarmerNestedInput = {
-    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
-    upsert?: ContractUpsertWithWhereUniqueWithoutFarmerInput | ContractUpsertWithWhereUniqueWithoutFarmerInput[]
-    createMany?: ContractCreateManyFarmerInputEnvelope
-    set?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    disconnect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    delete?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
-    update?: ContractUpdateWithWhereUniqueWithoutFarmerInput | ContractUpdateWithWhereUniqueWithoutFarmerInput[]
-    updateMany?: ContractUpdateManyWithWhereWithoutFarmerInput | ContractUpdateManyWithWhereWithoutFarmerInput[]
-    deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
+  export type FarmUpdateUpdateManyWithoutFarmerNestedInput = {
+    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
+    upsert?: FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput | FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput[]
+    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
+    set?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    disconnect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    delete?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    update?: FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput | FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput[]
+    updateMany?: FarmUpdateUpdateManyWithWhereWithoutFarmerInput | FarmUpdateUpdateManyWithWhereWithoutFarmerInput[]
+    deleteMany?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
+  }
+
+  export type MessageUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutSenderInput | MessageUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutSenderInput | MessageUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutSenderInput | MessageUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
+  export type NotificationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type ReviewUpdateManyWithoutReviewerNestedInput = {
+    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
+    upsert?: ReviewUpsertWithWhereUniqueWithoutReviewerInput | ReviewUpsertWithWhereUniqueWithoutReviewerInput[]
+    createMany?: ReviewCreateManyReviewerInputEnvelope
+    set?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    disconnect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    delete?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    update?: ReviewUpdateWithWhereUniqueWithoutReviewerInput | ReviewUpdateWithWhereUniqueWithoutReviewerInput[]
+    updateMany?: ReviewUpdateManyWithWhereWithoutReviewerInput | ReviewUpdateManyWithWhereWithoutReviewerInput[]
+    deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
+  }
+
+  export type WalletTransactionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: WalletTransactionUpsertWithWhereUniqueWithoutUserInput | WalletTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WalletTransactionCreateManyUserInputEnvelope
+    set?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    disconnect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    delete?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    update?: WalletTransactionUpdateWithWhereUniqueWithoutUserInput | WalletTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WalletTransactionUpdateManyWithWhereWithoutUserInput | WalletTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
+  }
+
+  export type AuditLogUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
+    upsert?: AuditLogUpsertWithWhereUniqueWithoutAdminInput | AuditLogUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: AuditLogCreateManyAdminInputEnvelope
+    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+    update?: AuditLogUpdateWithWhereUniqueWithoutAdminInput | AuditLogUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: AuditLogUpdateManyWithWhereWithoutAdminInput | AuditLogUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
   export type ContractUncheckedUpdateManyWithoutConsumerNestedInput = {
@@ -23373,102 +23394,18 @@ export namespace Prisma {
     deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
   }
 
-  export type FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput = {
-    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
-    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
-    upsert?: FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput | FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput[]
-    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
-    set?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    disconnect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    delete?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    update?: FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput | FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput[]
-    updateMany?: FarmUpdateUpdateManyWithWhereWithoutFarmerInput | FarmUpdateUpdateManyWithWhereWithoutFarmerInput[]
-    deleteMany?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
-  }
-
-  export type EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
-    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutUserInput | EscrowLedgerUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: EscrowLedgerCreateManyUserInputEnvelope
-    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    update?: EscrowLedgerUpdateWithWhereUniqueWithoutUserInput | EscrowLedgerUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutUserInput | EscrowLedgerUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
-  }
-
-  export type DisputeUncheckedUpdateManyWithoutReporterNestedInput = {
-    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
-    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
-    upsert?: DisputeUpsertWithWhereUniqueWithoutReporterInput | DisputeUpsertWithWhereUniqueWithoutReporterInput[]
-    createMany?: DisputeCreateManyReporterInputEnvelope
-    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
-    update?: DisputeUpdateWithWhereUniqueWithoutReporterInput | DisputeUpdateWithWhereUniqueWithoutReporterInput[]
-    updateMany?: DisputeUpdateManyWithWhereWithoutReporterInput | DisputeUpdateManyWithWhereWithoutReporterInput[]
-    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
-  }
-
-  export type WalletTransactionUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
-    upsert?: WalletTransactionUpsertWithWhereUniqueWithoutUserInput | WalletTransactionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: WalletTransactionCreateManyUserInputEnvelope
-    set?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    disconnect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    delete?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
-    update?: WalletTransactionUpdateWithWhereUniqueWithoutUserInput | WalletTransactionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: WalletTransactionUpdateManyWithWhereWithoutUserInput | WalletTransactionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
-  }
-
-  export type ReviewUncheckedUpdateManyWithoutReviewerNestedInput = {
-    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
-    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
-    upsert?: ReviewUpsertWithWhereUniqueWithoutReviewerInput | ReviewUpsertWithWhereUniqueWithoutReviewerInput[]
-    createMany?: ReviewCreateManyReviewerInputEnvelope
-    set?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    disconnect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    delete?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
-    update?: ReviewUpdateWithWhereUniqueWithoutReviewerInput | ReviewUpdateWithWhereUniqueWithoutReviewerInput[]
-    updateMany?: ReviewUpdateManyWithWhereWithoutReviewerInput | ReviewUpdateManyWithWhereWithoutReviewerInput[]
-    deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
-  }
-
-  export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
-    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: NotificationCreateManyUserInputEnvelope
-    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-  }
-
-  export type MessageUncheckedUpdateManyWithoutSenderNestedInput = {
-    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
-    upsert?: MessageUpsertWithWhereUniqueWithoutSenderInput | MessageUpsertWithWhereUniqueWithoutSenderInput[]
-    createMany?: MessageCreateManySenderInputEnvelope
-    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    update?: MessageUpdateWithWhereUniqueWithoutSenderInput | MessageUpdateWithWhereUniqueWithoutSenderInput[]
-    updateMany?: MessageUpdateManyWithWhereWithoutSenderInput | MessageUpdateManyWithWhereWithoutSenderInput[]
-    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  export type ContractUncheckedUpdateManyWithoutFarmerNestedInput = {
+    create?: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput> | ContractCreateWithoutFarmerInput[] | ContractUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutFarmerInput | ContractCreateOrConnectWithoutFarmerInput[]
+    upsert?: ContractUpsertWithWhereUniqueWithoutFarmerInput | ContractUpsertWithWhereUniqueWithoutFarmerInput[]
+    createMany?: ContractCreateManyFarmerInputEnvelope
+    set?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    disconnect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    delete?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    update?: ContractUpdateWithWhereUniqueWithoutFarmerInput | ContractUpdateWithWhereUniqueWithoutFarmerInput[]
+    updateMany?: ContractUpdateManyWithWhereWithoutFarmerInput | ContractUpdateManyWithWhereWithoutFarmerInput[]
+    deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
   }
 
   export type ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput = {
@@ -23499,18 +23436,116 @@ export namespace Prisma {
     deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
   }
 
-  export type AuditLogUncheckedUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput> | AuditLogCreateWithoutAdminInput[] | AuditLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: AuditLogCreateOrConnectWithoutAdminInput | AuditLogCreateOrConnectWithoutAdminInput[]
-    upsert?: AuditLogUpsertWithWhereUniqueWithoutAdminInput | AuditLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: AuditLogCreateManyAdminInputEnvelope
-    set?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    disconnect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    delete?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
-    update?: AuditLogUpdateWithWhereUniqueWithoutAdminInput | AuditLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: AuditLogUpdateManyWithWhereWithoutAdminInput | AuditLogUpdateManyWithWhereWithoutAdminInput[]
-    deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  export type DisputeUncheckedUpdateManyWithoutReporterNestedInput = {
+    create?: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput> | DisputeCreateWithoutReporterInput[] | DisputeUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: DisputeCreateOrConnectWithoutReporterInput | DisputeCreateOrConnectWithoutReporterInput[]
+    upsert?: DisputeUpsertWithWhereUniqueWithoutReporterInput | DisputeUpsertWithWhereUniqueWithoutReporterInput[]
+    createMany?: DisputeCreateManyReporterInputEnvelope
+    set?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    disconnect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    delete?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
+    update?: DisputeUpdateWithWhereUniqueWithoutReporterInput | DisputeUpdateWithWhereUniqueWithoutReporterInput[]
+    updateMany?: DisputeUpdateManyWithWhereWithoutReporterInput | DisputeUpdateManyWithWhereWithoutReporterInput[]
+    deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+  }
+
+  export type EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput> | EscrowLedgerCreateWithoutUserInput[] | EscrowLedgerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutUserInput | EscrowLedgerCreateOrConnectWithoutUserInput[]
+    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutUserInput | EscrowLedgerUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EscrowLedgerCreateManyUserInputEnvelope
+    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    update?: EscrowLedgerUpdateWithWhereUniqueWithoutUserInput | EscrowLedgerUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutUserInput | EscrowLedgerUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
+  }
+
+  export type FarmListingUncheckedUpdateManyWithoutFarmerNestedInput = {
+    create?: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput> | FarmListingCreateWithoutFarmerInput[] | FarmListingUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: FarmListingCreateOrConnectWithoutFarmerInput | FarmListingCreateOrConnectWithoutFarmerInput[]
+    upsert?: FarmListingUpsertWithWhereUniqueWithoutFarmerInput | FarmListingUpsertWithWhereUniqueWithoutFarmerInput[]
+    createMany?: FarmListingCreateManyFarmerInputEnvelope
+    set?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
+    disconnect?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
+    delete?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
+    connect?: FarmListingWhereUniqueInput | FarmListingWhereUniqueInput[]
+    update?: FarmListingUpdateWithWhereUniqueWithoutFarmerInput | FarmListingUpdateWithWhereUniqueWithoutFarmerInput[]
+    updateMany?: FarmListingUpdateManyWithWhereWithoutFarmerInput | FarmListingUpdateManyWithWhereWithoutFarmerInput[]
+    deleteMany?: FarmListingScalarWhereInput | FarmListingScalarWhereInput[]
+  }
+
+  export type FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput = {
+    create?: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput> | FarmUpdateCreateWithoutFarmerInput[] | FarmUpdateUncheckedCreateWithoutFarmerInput[]
+    connectOrCreate?: FarmUpdateCreateOrConnectWithoutFarmerInput | FarmUpdateCreateOrConnectWithoutFarmerInput[]
+    upsert?: FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput | FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput[]
+    createMany?: FarmUpdateCreateManyFarmerInputEnvelope
+    set?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    disconnect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    delete?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    update?: FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput | FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput[]
+    updateMany?: FarmUpdateUpdateManyWithWhereWithoutFarmerInput | FarmUpdateUpdateManyWithWhereWithoutFarmerInput[]
+    deleteMany?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
+  }
+
+  export type MessageUncheckedUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput> | MessageCreateWithoutSenderInput[] | MessageUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutSenderInput | MessageCreateOrConnectWithoutSenderInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutSenderInput | MessageUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: MessageCreateManySenderInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutSenderInput | MessageUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutSenderInput | MessageUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type ReviewUncheckedUpdateManyWithoutReviewerNestedInput = {
+    create?: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput> | ReviewCreateWithoutReviewerInput[] | ReviewUncheckedCreateWithoutReviewerInput[]
+    connectOrCreate?: ReviewCreateOrConnectWithoutReviewerInput | ReviewCreateOrConnectWithoutReviewerInput[]
+    upsert?: ReviewUpsertWithWhereUniqueWithoutReviewerInput | ReviewUpsertWithWhereUniqueWithoutReviewerInput[]
+    createMany?: ReviewCreateManyReviewerInputEnvelope
+    set?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    disconnect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    delete?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+    update?: ReviewUpdateWithWhereUniqueWithoutReviewerInput | ReviewUpdateWithWhereUniqueWithoutReviewerInput[]
+    updateMany?: ReviewUpdateManyWithWhereWithoutReviewerInput | ReviewUpdateManyWithWhereWithoutReviewerInput[]
+    deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
+  }
+
+  export type WalletTransactionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput> | WalletTransactionCreateWithoutUserInput[] | WalletTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutUserInput | WalletTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: WalletTransactionUpsertWithWhereUniqueWithoutUserInput | WalletTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: WalletTransactionCreateManyUserInputEnvelope
+    set?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    disconnect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    delete?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    update?: WalletTransactionUpdateWithWhereUniqueWithoutUserInput | WalletTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: WalletTransactionUpdateManyWithWhereWithoutUserInput | WalletTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
   }
 
   export type FarmListingCreatecropsInput = {
@@ -23521,17 +23556,17 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type UserCreateNestedOneWithoutFarm_listingsInput = {
-    create?: XOR<UserCreateWithoutFarm_listingsInput, UserUncheckedCreateWithoutFarm_listingsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFarm_listingsInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type ContractCreateNestedManyWithoutListingInput = {
     create?: XOR<ContractCreateWithoutListingInput, ContractUncheckedCreateWithoutListingInput> | ContractCreateWithoutListingInput[] | ContractUncheckedCreateWithoutListingInput[]
     connectOrCreate?: ContractCreateOrConnectWithoutListingInput | ContractCreateOrConnectWithoutListingInput[]
     createMany?: ContractCreateManyListingInputEnvelope
     connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+  }
+
+  export type UserCreateNestedOneWithoutFarm_listingsInput = {
+    create?: XOR<UserCreateWithoutFarm_listingsInput, UserUncheckedCreateWithoutFarm_listingsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFarm_listingsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type ContractUncheckedCreateNestedManyWithoutListingInput = {
@@ -23575,14 +23610,6 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneRequiredWithoutFarm_listingsNestedInput = {
-    create?: XOR<UserCreateWithoutFarm_listingsInput, UserUncheckedCreateWithoutFarm_listingsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFarm_listingsInput
-    upsert?: UserUpsertWithoutFarm_listingsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFarm_listingsInput, UserUpdateWithoutFarm_listingsInput>, UserUncheckedUpdateWithoutFarm_listingsInput>
-  }
-
   export type ContractUpdateManyWithoutListingNestedInput = {
     create?: XOR<ContractCreateWithoutListingInput, ContractUncheckedCreateWithoutListingInput> | ContractCreateWithoutListingInput[] | ContractUncheckedCreateWithoutListingInput[]
     connectOrCreate?: ContractCreateOrConnectWithoutListingInput | ContractCreateOrConnectWithoutListingInput[]
@@ -23595,6 +23622,14 @@ export namespace Prisma {
     update?: ContractUpdateWithWhereUniqueWithoutListingInput | ContractUpdateWithWhereUniqueWithoutListingInput[]
     updateMany?: ContractUpdateManyWithWhereWithoutListingInput | ContractUpdateManyWithWhereWithoutListingInput[]
     deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutFarm_listingsNestedInput = {
+    create?: XOR<UserCreateWithoutFarm_listingsInput, UserUncheckedCreateWithoutFarm_listingsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFarm_listingsInput
+    upsert?: UserUpsertWithoutFarm_listingsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFarm_listingsInput, UserUpdateWithoutFarm_listingsInput>, UserUncheckedUpdateWithoutFarm_listingsInput>
   }
 
   export type ContractUncheckedUpdateManyWithoutListingNestedInput = {
@@ -23611,10 +23646,10 @@ export namespace Prisma {
     deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
   }
 
-  export type FarmListingCreateNestedOneWithoutContractsInput = {
-    create?: XOR<FarmListingCreateWithoutContractsInput, FarmListingUncheckedCreateWithoutContractsInput>
-    connectOrCreate?: FarmListingCreateOrConnectWithoutContractsInput
-    connect?: FarmListingWhereUniqueInput
+  export type UserCreateNestedOneWithoutContracts_as_consumerInput = {
+    create?: XOR<UserCreateWithoutContracts_as_consumerInput, UserUncheckedCreateWithoutContracts_as_consumerInput>
+    connectOrCreate?: UserCreateOrConnectWithoutContracts_as_consumerInput
+    connect?: UserWhereUniqueInput
   }
 
   export type UserCreateNestedOneWithoutContracts_as_farmerInput = {
@@ -23623,24 +23658,17 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type UserCreateNestedOneWithoutContracts_as_consumerInput = {
-    create?: XOR<UserCreateWithoutContracts_as_consumerInput, UserUncheckedCreateWithoutContracts_as_consumerInput>
-    connectOrCreate?: UserCreateOrConnectWithoutContracts_as_consumerInput
-    connect?: UserWhereUniqueInput
+  export type FarmListingCreateNestedOneWithoutContractsInput = {
+    create?: XOR<FarmListingCreateWithoutContractsInput, FarmListingUncheckedCreateWithoutContractsInput>
+    connectOrCreate?: FarmListingCreateOrConnectWithoutContractsInput
+    connect?: FarmListingWhereUniqueInput
   }
 
-  export type FarmUpdateCreateNestedManyWithoutContractInput = {
-    create?: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput> | FarmUpdateCreateWithoutContractInput[] | FarmUpdateUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: FarmUpdateCreateOrConnectWithoutContractInput | FarmUpdateCreateOrConnectWithoutContractInput[]
-    createMany?: FarmUpdateCreateManyContractInputEnvelope
-    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-  }
-
-  export type EscrowLedgerCreateNestedManyWithoutContractInput = {
-    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
-    createMany?: EscrowLedgerCreateManyContractInputEnvelope
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+  export type ConversationCreateNestedManyWithoutContractInput = {
+    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
+    createMany?: ConversationCreateManyContractInputEnvelope
+    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
   }
 
   export type DeliveryCreateNestedManyWithoutContractInput = {
@@ -23657,25 +23685,25 @@ export namespace Prisma {
     connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
   }
 
-  export type ConversationCreateNestedManyWithoutContractInput = {
-    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
-    createMany?: ConversationCreateManyContractInputEnvelope
-    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+  export type EscrowLedgerCreateNestedManyWithoutContractInput = {
+    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
+    createMany?: EscrowLedgerCreateManyContractInputEnvelope
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
   }
 
-  export type FarmUpdateUncheckedCreateNestedManyWithoutContractInput = {
+  export type FarmUpdateCreateNestedManyWithoutContractInput = {
     create?: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput> | FarmUpdateCreateWithoutContractInput[] | FarmUpdateUncheckedCreateWithoutContractInput[]
     connectOrCreate?: FarmUpdateCreateOrConnectWithoutContractInput | FarmUpdateCreateOrConnectWithoutContractInput[]
     createMany?: FarmUpdateCreateManyContractInputEnvelope
     connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
   }
 
-  export type EscrowLedgerUncheckedCreateNestedManyWithoutContractInput = {
-    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
-    createMany?: EscrowLedgerCreateManyContractInputEnvelope
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+  export type ConversationUncheckedCreateNestedManyWithoutContractInput = {
+    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
+    createMany?: ConversationCreateManyContractInputEnvelope
+    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
   }
 
   export type DeliveryUncheckedCreateNestedManyWithoutContractInput = {
@@ -23692,31 +23720,22 @@ export namespace Prisma {
     connect?: DisputeWhereUniqueInput | DisputeWhereUniqueInput[]
   }
 
-  export type ConversationUncheckedCreateNestedManyWithoutContractInput = {
-    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
-    createMany?: ConversationCreateManyContractInputEnvelope
-    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+  export type EscrowLedgerUncheckedCreateNestedManyWithoutContractInput = {
+    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
+    createMany?: EscrowLedgerCreateManyContractInputEnvelope
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+  }
+
+  export type FarmUpdateUncheckedCreateNestedManyWithoutContractInput = {
+    create?: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput> | FarmUpdateCreateWithoutContractInput[] | FarmUpdateUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: FarmUpdateCreateOrConnectWithoutContractInput | FarmUpdateCreateOrConnectWithoutContractInput[]
+    createMany?: FarmUpdateCreateManyContractInputEnvelope
+    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
   }
 
   export type EnumContractStatusFieldUpdateOperationsInput = {
     set?: $Enums.ContractStatus
-  }
-
-  export type FarmListingUpdateOneRequiredWithoutContractsNestedInput = {
-    create?: XOR<FarmListingCreateWithoutContractsInput, FarmListingUncheckedCreateWithoutContractsInput>
-    connectOrCreate?: FarmListingCreateOrConnectWithoutContractsInput
-    upsert?: FarmListingUpsertWithoutContractsInput
-    connect?: FarmListingWhereUniqueInput
-    update?: XOR<XOR<FarmListingUpdateToOneWithWhereWithoutContractsInput, FarmListingUpdateWithoutContractsInput>, FarmListingUncheckedUpdateWithoutContractsInput>
-  }
-
-  export type UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput = {
-    create?: XOR<UserCreateWithoutContracts_as_farmerInput, UserUncheckedCreateWithoutContracts_as_farmerInput>
-    connectOrCreate?: UserCreateOrConnectWithoutContracts_as_farmerInput
-    upsert?: UserUpsertWithoutContracts_as_farmerInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutContracts_as_farmerInput, UserUpdateWithoutContracts_as_farmerInput>, UserUncheckedUpdateWithoutContracts_as_farmerInput>
   }
 
   export type UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput = {
@@ -23727,32 +23746,34 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutContracts_as_consumerInput, UserUpdateWithoutContracts_as_consumerInput>, UserUncheckedUpdateWithoutContracts_as_consumerInput>
   }
 
-  export type FarmUpdateUpdateManyWithoutContractNestedInput = {
-    create?: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput> | FarmUpdateCreateWithoutContractInput[] | FarmUpdateUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: FarmUpdateCreateOrConnectWithoutContractInput | FarmUpdateCreateOrConnectWithoutContractInput[]
-    upsert?: FarmUpdateUpsertWithWhereUniqueWithoutContractInput | FarmUpdateUpsertWithWhereUniqueWithoutContractInput[]
-    createMany?: FarmUpdateCreateManyContractInputEnvelope
-    set?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    disconnect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    delete?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
-    update?: FarmUpdateUpdateWithWhereUniqueWithoutContractInput | FarmUpdateUpdateWithWhereUniqueWithoutContractInput[]
-    updateMany?: FarmUpdateUpdateManyWithWhereWithoutContractInput | FarmUpdateUpdateManyWithWhereWithoutContractInput[]
-    deleteMany?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
+  export type UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput = {
+    create?: XOR<UserCreateWithoutContracts_as_farmerInput, UserUncheckedCreateWithoutContracts_as_farmerInput>
+    connectOrCreate?: UserCreateOrConnectWithoutContracts_as_farmerInput
+    upsert?: UserUpsertWithoutContracts_as_farmerInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutContracts_as_farmerInput, UserUpdateWithoutContracts_as_farmerInput>, UserUncheckedUpdateWithoutContracts_as_farmerInput>
   }
 
-  export type EscrowLedgerUpdateManyWithoutContractNestedInput = {
-    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
-    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutContractInput | EscrowLedgerUpsertWithWhereUniqueWithoutContractInput[]
-    createMany?: EscrowLedgerCreateManyContractInputEnvelope
-    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    update?: EscrowLedgerUpdateWithWhereUniqueWithoutContractInput | EscrowLedgerUpdateWithWhereUniqueWithoutContractInput[]
-    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutContractInput | EscrowLedgerUpdateManyWithWhereWithoutContractInput[]
-    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
+  export type FarmListingUpdateOneRequiredWithoutContractsNestedInput = {
+    create?: XOR<FarmListingCreateWithoutContractsInput, FarmListingUncheckedCreateWithoutContractsInput>
+    connectOrCreate?: FarmListingCreateOrConnectWithoutContractsInput
+    upsert?: FarmListingUpsertWithoutContractsInput
+    connect?: FarmListingWhereUniqueInput
+    update?: XOR<XOR<FarmListingUpdateToOneWithWhereWithoutContractsInput, FarmListingUpdateWithoutContractsInput>, FarmListingUncheckedUpdateWithoutContractsInput>
+  }
+
+  export type ConversationUpdateManyWithoutContractNestedInput = {
+    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
+    upsert?: ConversationUpsertWithWhereUniqueWithoutContractInput | ConversationUpsertWithWhereUniqueWithoutContractInput[]
+    createMany?: ConversationCreateManyContractInputEnvelope
+    set?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    disconnect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    delete?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    update?: ConversationUpdateWithWhereUniqueWithoutContractInput | ConversationUpdateWithWhereUniqueWithoutContractInput[]
+    updateMany?: ConversationUpdateManyWithWhereWithoutContractInput | ConversationUpdateManyWithWhereWithoutContractInput[]
+    deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
   }
 
   export type DeliveryUpdateManyWithoutContractNestedInput = {
@@ -23783,21 +23804,21 @@ export namespace Prisma {
     deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
   }
 
-  export type ConversationUpdateManyWithoutContractNestedInput = {
-    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
-    upsert?: ConversationUpsertWithWhereUniqueWithoutContractInput | ConversationUpsertWithWhereUniqueWithoutContractInput[]
-    createMany?: ConversationCreateManyContractInputEnvelope
-    set?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    disconnect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    delete?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    update?: ConversationUpdateWithWhereUniqueWithoutContractInput | ConversationUpdateWithWhereUniqueWithoutContractInput[]
-    updateMany?: ConversationUpdateManyWithWhereWithoutContractInput | ConversationUpdateManyWithWhereWithoutContractInput[]
-    deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
+  export type EscrowLedgerUpdateManyWithoutContractNestedInput = {
+    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
+    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutContractInput | EscrowLedgerUpsertWithWhereUniqueWithoutContractInput[]
+    createMany?: EscrowLedgerCreateManyContractInputEnvelope
+    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    update?: EscrowLedgerUpdateWithWhereUniqueWithoutContractInput | EscrowLedgerUpdateWithWhereUniqueWithoutContractInput[]
+    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutContractInput | EscrowLedgerUpdateManyWithWhereWithoutContractInput[]
+    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
   }
 
-  export type FarmUpdateUncheckedUpdateManyWithoutContractNestedInput = {
+  export type FarmUpdateUpdateManyWithoutContractNestedInput = {
     create?: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput> | FarmUpdateCreateWithoutContractInput[] | FarmUpdateUncheckedCreateWithoutContractInput[]
     connectOrCreate?: FarmUpdateCreateOrConnectWithoutContractInput | FarmUpdateCreateOrConnectWithoutContractInput[]
     upsert?: FarmUpdateUpsertWithWhereUniqueWithoutContractInput | FarmUpdateUpsertWithWhereUniqueWithoutContractInput[]
@@ -23811,18 +23832,18 @@ export namespace Prisma {
     deleteMany?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
   }
 
-  export type EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput = {
-    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
-    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutContractInput | EscrowLedgerUpsertWithWhereUniqueWithoutContractInput[]
-    createMany?: EscrowLedgerCreateManyContractInputEnvelope
-    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
-    update?: EscrowLedgerUpdateWithWhereUniqueWithoutContractInput | EscrowLedgerUpdateWithWhereUniqueWithoutContractInput[]
-    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutContractInput | EscrowLedgerUpdateManyWithWhereWithoutContractInput[]
-    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
+  export type ConversationUncheckedUpdateManyWithoutContractNestedInput = {
+    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
+    upsert?: ConversationUpsertWithWhereUniqueWithoutContractInput | ConversationUpsertWithWhereUniqueWithoutContractInput[]
+    createMany?: ConversationCreateManyContractInputEnvelope
+    set?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    disconnect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    delete?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+    update?: ConversationUpdateWithWhereUniqueWithoutContractInput | ConversationUpdateWithWhereUniqueWithoutContractInput[]
+    updateMany?: ConversationUpdateManyWithWhereWithoutContractInput | ConversationUpdateManyWithWhereWithoutContractInput[]
+    deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
   }
 
   export type DeliveryUncheckedUpdateManyWithoutContractNestedInput = {
@@ -23853,18 +23874,32 @@ export namespace Prisma {
     deleteMany?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
   }
 
-  export type ConversationUncheckedUpdateManyWithoutContractNestedInput = {
-    create?: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput> | ConversationCreateWithoutContractInput[] | ConversationUncheckedCreateWithoutContractInput[]
-    connectOrCreate?: ConversationCreateOrConnectWithoutContractInput | ConversationCreateOrConnectWithoutContractInput[]
-    upsert?: ConversationUpsertWithWhereUniqueWithoutContractInput | ConversationUpsertWithWhereUniqueWithoutContractInput[]
-    createMany?: ConversationCreateManyContractInputEnvelope
-    set?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    disconnect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    delete?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
-    update?: ConversationUpdateWithWhereUniqueWithoutContractInput | ConversationUpdateWithWhereUniqueWithoutContractInput[]
-    updateMany?: ConversationUpdateManyWithWhereWithoutContractInput | ConversationUpdateManyWithWhereWithoutContractInput[]
-    deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
+  export type EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput = {
+    create?: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput> | EscrowLedgerCreateWithoutContractInput[] | EscrowLedgerUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: EscrowLedgerCreateOrConnectWithoutContractInput | EscrowLedgerCreateOrConnectWithoutContractInput[]
+    upsert?: EscrowLedgerUpsertWithWhereUniqueWithoutContractInput | EscrowLedgerUpsertWithWhereUniqueWithoutContractInput[]
+    createMany?: EscrowLedgerCreateManyContractInputEnvelope
+    set?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    disconnect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    delete?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    connect?: EscrowLedgerWhereUniqueInput | EscrowLedgerWhereUniqueInput[]
+    update?: EscrowLedgerUpdateWithWhereUniqueWithoutContractInput | EscrowLedgerUpdateWithWhereUniqueWithoutContractInput[]
+    updateMany?: EscrowLedgerUpdateManyWithWhereWithoutContractInput | EscrowLedgerUpdateManyWithWhereWithoutContractInput[]
+    deleteMany?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
+  }
+
+  export type FarmUpdateUncheckedUpdateManyWithoutContractNestedInput = {
+    create?: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput> | FarmUpdateCreateWithoutContractInput[] | FarmUpdateUncheckedCreateWithoutContractInput[]
+    connectOrCreate?: FarmUpdateCreateOrConnectWithoutContractInput | FarmUpdateCreateOrConnectWithoutContractInput[]
+    upsert?: FarmUpdateUpsertWithWhereUniqueWithoutContractInput | FarmUpdateUpsertWithWhereUniqueWithoutContractInput[]
+    createMany?: FarmUpdateCreateManyContractInputEnvelope
+    set?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    disconnect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    delete?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    connect?: FarmUpdateWhereUniqueInput | FarmUpdateWhereUniqueInput[]
+    update?: FarmUpdateUpdateWithWhereUniqueWithoutContractInput | FarmUpdateUpdateWithWhereUniqueWithoutContractInput[]
+    updateMany?: FarmUpdateUpdateManyWithWhereWithoutContractInput | FarmUpdateUpdateManyWithWhereWithoutContractInput[]
+    deleteMany?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
   }
 
   export type ContractCreateNestedOneWithoutFarm_updatesInput = {
@@ -24054,6 +24089,12 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
+  export type ContractCreateNestedOneWithoutConversationsInput = {
+    create?: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
+    connectOrCreate?: ContractCreateOrConnectWithoutConversationsInput
+    connect?: ContractWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutConversations_as_oneInput = {
     create?: XOR<UserCreateWithoutConversations_as_oneInput, UserUncheckedCreateWithoutConversations_as_oneInput>
     connectOrCreate?: UserCreateOrConnectWithoutConversations_as_oneInput
@@ -24064,12 +24105,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutConversations_as_twoInput, UserUncheckedCreateWithoutConversations_as_twoInput>
     connectOrCreate?: UserCreateOrConnectWithoutConversations_as_twoInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type ContractCreateNestedOneWithoutConversationsInput = {
-    create?: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
-    connectOrCreate?: ContractCreateOrConnectWithoutConversationsInput
-    connect?: ContractWhereUniqueInput
   }
 
   export type MessageCreateNestedManyWithoutConversationInput = {
@@ -24086,6 +24121,16 @@ export namespace Prisma {
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
   }
 
+  export type ContractUpdateOneWithoutConversationsNestedInput = {
+    create?: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
+    connectOrCreate?: ContractCreateOrConnectWithoutConversationsInput
+    upsert?: ContractUpsertWithoutConversationsInput
+    disconnect?: ContractWhereInput | boolean
+    delete?: ContractWhereInput | boolean
+    connect?: ContractWhereUniqueInput
+    update?: XOR<XOR<ContractUpdateToOneWithWhereWithoutConversationsInput, ContractUpdateWithoutConversationsInput>, ContractUncheckedUpdateWithoutConversationsInput>
+  }
+
   export type UserUpdateOneRequiredWithoutConversations_as_oneNestedInput = {
     create?: XOR<UserCreateWithoutConversations_as_oneInput, UserUncheckedCreateWithoutConversations_as_oneInput>
     connectOrCreate?: UserCreateOrConnectWithoutConversations_as_oneInput
@@ -24100,16 +24145,6 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutConversations_as_twoInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutConversations_as_twoInput, UserUpdateWithoutConversations_as_twoInput>, UserUncheckedUpdateWithoutConversations_as_twoInput>
-  }
-
-  export type ContractUpdateOneWithoutConversationsNestedInput = {
-    create?: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
-    connectOrCreate?: ContractCreateOrConnectWithoutConversationsInput
-    upsert?: ContractUpsertWithoutConversationsInput
-    disconnect?: ContractWhereInput | boolean
-    delete?: ContractWhereInput | boolean
-    connect?: ContractWhereUniqueInput
-    update?: XOR<XOR<ContractUpdateToOneWithWhereWithoutConversationsInput, ContractUpdateWithoutConversationsInput>, ContractUncheckedUpdateWithoutConversationsInput>
   }
 
   export type MessageUpdateManyWithoutConversationNestedInput = {
@@ -24594,6 +24629,284 @@ export namespace Prisma {
     _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
   }
 
+  export type AuditLogCreateWithoutAdminInput = {
+    id?: string
+    action: string
+    entity_type: string
+    entity_id: string
+    details?: NullableJsonNullValueInput | InputJsonValue
+    created_at?: Date | string
+  }
+
+  export type AuditLogUncheckedCreateWithoutAdminInput = {
+    id?: string
+    action: string
+    entity_type: string
+    entity_id: string
+    details?: NullableJsonNullValueInput | InputJsonValue
+    created_at?: Date | string
+  }
+
+  export type AuditLogCreateOrConnectWithoutAdminInput = {
+    where: AuditLogWhereUniqueInput
+    create: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput>
+  }
+
+  export type AuditLogCreateManyAdminInputEnvelope = {
+    data: AuditLogCreateManyAdminInput | AuditLogCreateManyAdminInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ContractCreateWithoutConsumerInput = {
+    id?: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
+    conversations?: ConversationCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryCreateNestedManyWithoutContractInput
+    disputes?: DisputeCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractUncheckedCreateWithoutConsumerInput = {
+    id?: string
+    listing_id: string
+    farmer_id: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractCreateOrConnectWithoutConsumerInput = {
+    where: ContractWhereUniqueInput
+    create: XOR<ContractCreateWithoutConsumerInput, ContractUncheckedCreateWithoutConsumerInput>
+  }
+
+  export type ContractCreateManyConsumerInputEnvelope = {
+    data: ContractCreateManyConsumerInput | ContractCreateManyConsumerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ContractCreateWithoutFarmerInput = {
+    id?: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
+    conversations?: ConversationCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryCreateNestedManyWithoutContractInput
+    disputes?: DisputeCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractUncheckedCreateWithoutFarmerInput = {
+    id?: string
+    listing_id: string
+    consumer_id: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractCreateOrConnectWithoutFarmerInput = {
+    where: ContractWhereUniqueInput
+    create: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput>
+  }
+
+  export type ContractCreateManyFarmerInputEnvelope = {
+    data: ContractCreateManyFarmerInput | ContractCreateManyFarmerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ConversationCreateWithoutParticipant_oneInput = {
+    id?: string
+    last_message?: string | null
+    last_message_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    contract?: ContractCreateNestedOneWithoutConversationsInput
+    participant_two: UserCreateNestedOneWithoutConversations_as_twoInput
+    messages?: MessageCreateNestedManyWithoutConversationInput
+  }
+
+  export type ConversationUncheckedCreateWithoutParticipant_oneInput = {
+    id?: string
+    participant_two_id: string
+    contract_id?: string | null
+    last_message?: string | null
+    last_message_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
+  }
+
+  export type ConversationCreateOrConnectWithoutParticipant_oneInput = {
+    where: ConversationWhereUniqueInput
+    create: XOR<ConversationCreateWithoutParticipant_oneInput, ConversationUncheckedCreateWithoutParticipant_oneInput>
+  }
+
+  export type ConversationCreateManyParticipant_oneInputEnvelope = {
+    data: ConversationCreateManyParticipant_oneInput | ConversationCreateManyParticipant_oneInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ConversationCreateWithoutParticipant_twoInput = {
+    id?: string
+    last_message?: string | null
+    last_message_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    contract?: ContractCreateNestedOneWithoutConversationsInput
+    participant_one: UserCreateNestedOneWithoutConversations_as_oneInput
+    messages?: MessageCreateNestedManyWithoutConversationInput
+  }
+
+  export type ConversationUncheckedCreateWithoutParticipant_twoInput = {
+    id?: string
+    participant_one_id: string
+    contract_id?: string | null
+    last_message?: string | null
+    last_message_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
+  }
+
+  export type ConversationCreateOrConnectWithoutParticipant_twoInput = {
+    where: ConversationWhereUniqueInput
+    create: XOR<ConversationCreateWithoutParticipant_twoInput, ConversationUncheckedCreateWithoutParticipant_twoInput>
+  }
+
+  export type ConversationCreateManyParticipant_twoInputEnvelope = {
+    data: ConversationCreateManyParticipant_twoInput | ConversationCreateManyParticipant_twoInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DisputeCreateWithoutReporterInput = {
+    id?: string
+    reason: string
+    description?: string | null
+    evidence_urls?: DisputeCreateevidence_urlsInput | string[]
+    escrow_frozen?: number
+    status?: $Enums.DisputeStatus
+    resolution?: string | null
+    resolved_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    contract: ContractCreateNestedOneWithoutDisputesInput
+  }
+
+  export type DisputeUncheckedCreateWithoutReporterInput = {
+    id?: string
+    contract_id: string
+    reason: string
+    description?: string | null
+    evidence_urls?: DisputeCreateevidence_urlsInput | string[]
+    escrow_frozen?: number
+    status?: $Enums.DisputeStatus
+    resolution?: string | null
+    resolved_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type DisputeCreateOrConnectWithoutReporterInput = {
+    where: DisputeWhereUniqueInput
+    create: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput>
+  }
+
+  export type DisputeCreateManyReporterInputEnvelope = {
+    data: DisputeCreateManyReporterInput | DisputeCreateManyReporterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EscrowLedgerCreateWithoutUserInput = {
+    id?: string
+    event: $Enums.EscrowEvent
+    amount: number
+    transaction_type: $Enums.TransactionType
+    description?: string | null
+    razorpay_payment_id?: string | null
+    created_at?: Date | string
+    contract: ContractCreateNestedOneWithoutEscrow_entriesInput
+  }
+
+  export type EscrowLedgerUncheckedCreateWithoutUserInput = {
+    id?: string
+    contract_id: string
+    event: $Enums.EscrowEvent
+    amount: number
+    transaction_type: $Enums.TransactionType
+    description?: string | null
+    razorpay_payment_id?: string | null
+    created_at?: Date | string
+  }
+
+  export type EscrowLedgerCreateOrConnectWithoutUserInput = {
+    where: EscrowLedgerWhereUniqueInput
+    create: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput>
+  }
+
+  export type EscrowLedgerCreateManyUserInputEnvelope = {
+    data: EscrowLedgerCreateManyUserInput | EscrowLedgerCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type FarmListingCreateWithoutFarmerInput = {
     id?: string
     name: string
@@ -24652,118 +24965,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ContractCreateWithoutFarmerInput = {
-    id?: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryCreateNestedManyWithoutContractInput
-    disputes?: DisputeCreateNestedManyWithoutContractInput
-    conversations?: ConversationCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractUncheckedCreateWithoutFarmerInput = {
-    id?: string
-    listing_id: string
-    consumer_id: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
-    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractCreateOrConnectWithoutFarmerInput = {
-    where: ContractWhereUniqueInput
-    create: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput>
-  }
-
-  export type ContractCreateManyFarmerInputEnvelope = {
-    data: ContractCreateManyFarmerInput | ContractCreateManyFarmerInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ContractCreateWithoutConsumerInput = {
-    id?: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryCreateNestedManyWithoutContractInput
-    disputes?: DisputeCreateNestedManyWithoutContractInput
-    conversations?: ConversationCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractUncheckedCreateWithoutConsumerInput = {
-    id?: string
-    listing_id: string
-    farmer_id: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
-    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractCreateOrConnectWithoutConsumerInput = {
-    where: ContractWhereUniqueInput
-    create: XOR<ContractCreateWithoutConsumerInput, ContractUncheckedCreateWithoutConsumerInput>
-  }
-
-  export type ContractCreateManyConsumerInputEnvelope = {
-    data: ContractCreateManyConsumerInput | ContractCreateManyConsumerInput[]
-    skipDuplicates?: boolean
-  }
-
   export type FarmUpdateCreateWithoutFarmerInput = {
     id?: string
     media_url: string
@@ -24798,131 +24999,31 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type EscrowLedgerCreateWithoutUserInput = {
+  export type MessageCreateWithoutSenderInput = {
     id?: string
-    event: $Enums.EscrowEvent
-    amount: number
-    transaction_type: $Enums.TransactionType
-    description?: string | null
-    razorpay_payment_id?: string | null
+    text?: string | null
+    media_url?: string | null
+    read?: boolean
     created_at?: Date | string
-    contract: ContractCreateNestedOneWithoutEscrow_entriesInput
+    conversation: ConversationCreateNestedOneWithoutMessagesInput
   }
 
-  export type EscrowLedgerUncheckedCreateWithoutUserInput = {
+  export type MessageUncheckedCreateWithoutSenderInput = {
     id?: string
-    contract_id: string
-    event: $Enums.EscrowEvent
-    amount: number
-    transaction_type: $Enums.TransactionType
-    description?: string | null
-    razorpay_payment_id?: string | null
+    conversation_id: string
+    text?: string | null
+    media_url?: string | null
+    read?: boolean
     created_at?: Date | string
   }
 
-  export type EscrowLedgerCreateOrConnectWithoutUserInput = {
-    where: EscrowLedgerWhereUniqueInput
-    create: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput>
+  export type MessageCreateOrConnectWithoutSenderInput = {
+    where: MessageWhereUniqueInput
+    create: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput>
   }
 
-  export type EscrowLedgerCreateManyUserInputEnvelope = {
-    data: EscrowLedgerCreateManyUserInput | EscrowLedgerCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type DisputeCreateWithoutReporterInput = {
-    id?: string
-    reason: string
-    description?: string | null
-    evidence_urls?: DisputeCreateevidence_urlsInput | string[]
-    escrow_frozen?: number
-    status?: $Enums.DisputeStatus
-    resolution?: string | null
-    resolved_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    contract: ContractCreateNestedOneWithoutDisputesInput
-  }
-
-  export type DisputeUncheckedCreateWithoutReporterInput = {
-    id?: string
-    contract_id: string
-    reason: string
-    description?: string | null
-    evidence_urls?: DisputeCreateevidence_urlsInput | string[]
-    escrow_frozen?: number
-    status?: $Enums.DisputeStatus
-    resolution?: string | null
-    resolved_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
-  export type DisputeCreateOrConnectWithoutReporterInput = {
-    where: DisputeWhereUniqueInput
-    create: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput>
-  }
-
-  export type DisputeCreateManyReporterInputEnvelope = {
-    data: DisputeCreateManyReporterInput | DisputeCreateManyReporterInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type WalletTransactionCreateWithoutUserInput = {
-    id?: string
-    type: $Enums.TransactionType
-    status?: $Enums.WalletTransactionStatus
-    amount: number
-    description?: string | null
-    balance_after: number
-    razorpay_payout_id?: string | null
-    created_at?: Date | string
-  }
-
-  export type WalletTransactionUncheckedCreateWithoutUserInput = {
-    id?: string
-    type: $Enums.TransactionType
-    status?: $Enums.WalletTransactionStatus
-    amount: number
-    description?: string | null
-    balance_after: number
-    razorpay_payout_id?: string | null
-    created_at?: Date | string
-  }
-
-  export type WalletTransactionCreateOrConnectWithoutUserInput = {
-    where: WalletTransactionWhereUniqueInput
-    create: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput>
-  }
-
-  export type WalletTransactionCreateManyUserInputEnvelope = {
-    data: WalletTransactionCreateManyUserInput | WalletTransactionCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ReviewCreateWithoutReviewerInput = {
-    id?: string
-    contract_id: string
-    rating: number
-    comment?: string | null
-    created_at?: Date | string
-  }
-
-  export type ReviewUncheckedCreateWithoutReviewerInput = {
-    id?: string
-    contract_id: string
-    rating: number
-    comment?: string | null
-    created_at?: Date | string
-  }
-
-  export type ReviewCreateOrConnectWithoutReviewerInput = {
-    where: ReviewWhereUniqueInput
-    create: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput>
-  }
-
-  export type ReviewCreateManyReviewerInputEnvelope = {
-    data: ReviewCreateManyReviewerInput | ReviewCreateManyReviewerInput[]
+  export type MessageCreateManySenderInputEnvelope = {
+    data: MessageCreateManySenderInput | MessageCreateManySenderInput[]
     skipDuplicates?: boolean
   }
 
@@ -24956,205 +25057,91 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type MessageCreateWithoutSenderInput = {
+  export type ReviewCreateWithoutReviewerInput = {
     id?: string
-    text?: string | null
-    media_url?: string | null
-    read?: boolean
-    created_at?: Date | string
-    conversation: ConversationCreateNestedOneWithoutMessagesInput
-  }
-
-  export type MessageUncheckedCreateWithoutSenderInput = {
-    id?: string
-    conversation_id: string
-    text?: string | null
-    media_url?: string | null
-    read?: boolean
+    contract_id: string
+    rating: number
+    comment?: string | null
     created_at?: Date | string
   }
 
-  export type MessageCreateOrConnectWithoutSenderInput = {
-    where: MessageWhereUniqueInput
-    create: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput>
+  export type ReviewUncheckedCreateWithoutReviewerInput = {
+    id?: string
+    contract_id: string
+    rating: number
+    comment?: string | null
+    created_at?: Date | string
   }
 
-  export type MessageCreateManySenderInputEnvelope = {
-    data: MessageCreateManySenderInput | MessageCreateManySenderInput[]
+  export type ReviewCreateOrConnectWithoutReviewerInput = {
+    where: ReviewWhereUniqueInput
+    create: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput>
+  }
+
+  export type ReviewCreateManyReviewerInputEnvelope = {
+    data: ReviewCreateManyReviewerInput | ReviewCreateManyReviewerInput[]
     skipDuplicates?: boolean
   }
 
-  export type ConversationCreateWithoutParticipant_oneInput = {
+  export type WalletTransactionCreateWithoutUserInput = {
     id?: string
-    last_message?: string | null
-    last_message_at?: Date | string | null
+    type: $Enums.TransactionType
+    amount: number
+    description?: string | null
+    balance_after: number
+    razorpay_payout_id?: string | null
     created_at?: Date | string
-    updated_at?: Date | string
-    participant_two: UserCreateNestedOneWithoutConversations_as_twoInput
-    contract?: ContractCreateNestedOneWithoutConversationsInput
-    messages?: MessageCreateNestedManyWithoutConversationInput
+    status?: $Enums.WalletTransactionStatus
   }
 
-  export type ConversationUncheckedCreateWithoutParticipant_oneInput = {
+  export type WalletTransactionUncheckedCreateWithoutUserInput = {
     id?: string
-    participant_two_id: string
-    contract_id?: string | null
-    last_message?: string | null
-    last_message_at?: Date | string | null
+    type: $Enums.TransactionType
+    amount: number
+    description?: string | null
+    balance_after: number
+    razorpay_payout_id?: string | null
     created_at?: Date | string
-    updated_at?: Date | string
-    messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
+    status?: $Enums.WalletTransactionStatus
   }
 
-  export type ConversationCreateOrConnectWithoutParticipant_oneInput = {
-    where: ConversationWhereUniqueInput
-    create: XOR<ConversationCreateWithoutParticipant_oneInput, ConversationUncheckedCreateWithoutParticipant_oneInput>
+  export type WalletTransactionCreateOrConnectWithoutUserInput = {
+    where: WalletTransactionWhereUniqueInput
+    create: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput>
   }
 
-  export type ConversationCreateManyParticipant_oneInputEnvelope = {
-    data: ConversationCreateManyParticipant_oneInput | ConversationCreateManyParticipant_oneInput[]
+  export type WalletTransactionCreateManyUserInputEnvelope = {
+    data: WalletTransactionCreateManyUserInput | WalletTransactionCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
-  export type ConversationCreateWithoutParticipant_twoInput = {
-    id?: string
-    last_message?: string | null
-    last_message_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    participant_one: UserCreateNestedOneWithoutConversations_as_oneInput
-    contract?: ContractCreateNestedOneWithoutConversationsInput
-    messages?: MessageCreateNestedManyWithoutConversationInput
-  }
-
-  export type ConversationUncheckedCreateWithoutParticipant_twoInput = {
-    id?: string
-    participant_one_id: string
-    contract_id?: string | null
-    last_message?: string | null
-    last_message_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
-  }
-
-  export type ConversationCreateOrConnectWithoutParticipant_twoInput = {
-    where: ConversationWhereUniqueInput
-    create: XOR<ConversationCreateWithoutParticipant_twoInput, ConversationUncheckedCreateWithoutParticipant_twoInput>
-  }
-
-  export type ConversationCreateManyParticipant_twoInputEnvelope = {
-    data: ConversationCreateManyParticipant_twoInput | ConversationCreateManyParticipant_twoInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type AuditLogCreateWithoutAdminInput = {
-    id?: string
-    action: string
-    entity_type: string
-    entity_id: string
-    details?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-  }
-
-  export type AuditLogUncheckedCreateWithoutAdminInput = {
-    id?: string
-    action: string
-    entity_type: string
-    entity_id: string
-    details?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
-  }
-
-  export type AuditLogCreateOrConnectWithoutAdminInput = {
+  export type AuditLogUpsertWithWhereUniqueWithoutAdminInput = {
     where: AuditLogWhereUniqueInput
+    update: XOR<AuditLogUpdateWithoutAdminInput, AuditLogUncheckedUpdateWithoutAdminInput>
     create: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput>
   }
 
-  export type AuditLogCreateManyAdminInputEnvelope = {
-    data: AuditLogCreateManyAdminInput | AuditLogCreateManyAdminInput[]
-    skipDuplicates?: boolean
+  export type AuditLogUpdateWithWhereUniqueWithoutAdminInput = {
+    where: AuditLogWhereUniqueInput
+    data: XOR<AuditLogUpdateWithoutAdminInput, AuditLogUncheckedUpdateWithoutAdminInput>
   }
 
-  export type FarmListingUpsertWithWhereUniqueWithoutFarmerInput = {
-    where: FarmListingWhereUniqueInput
-    update: XOR<FarmListingUpdateWithoutFarmerInput, FarmListingUncheckedUpdateWithoutFarmerInput>
-    create: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput>
+  export type AuditLogUpdateManyWithWhereWithoutAdminInput = {
+    where: AuditLogScalarWhereInput
+    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyWithoutAdminInput>
   }
 
-  export type FarmListingUpdateWithWhereUniqueWithoutFarmerInput = {
-    where: FarmListingWhereUniqueInput
-    data: XOR<FarmListingUpdateWithoutFarmerInput, FarmListingUncheckedUpdateWithoutFarmerInput>
-  }
-
-  export type FarmListingUpdateManyWithWhereWithoutFarmerInput = {
-    where: FarmListingScalarWhereInput
-    data: XOR<FarmListingUpdateManyMutationInput, FarmListingUncheckedUpdateManyWithoutFarmerInput>
-  }
-
-  export type FarmListingScalarWhereInput = {
-    AND?: FarmListingScalarWhereInput | FarmListingScalarWhereInput[]
-    OR?: FarmListingScalarWhereInput[]
-    NOT?: FarmListingScalarWhereInput | FarmListingScalarWhereInput[]
-    id?: StringFilter<"FarmListing"> | string
-    farmer_id?: StringFilter<"FarmListing"> | string
-    name?: StringFilter<"FarmListing"> | string
-    description?: StringNullableFilter<"FarmListing"> | string | null
-    area_acres?: FloatFilter<"FarmListing"> | number
-    price_per_acre?: FloatFilter<"FarmListing"> | number
-    crops?: StringNullableListFilter<"FarmListing">
-    location_name?: StringFilter<"FarmListing"> | string
-    latitude?: FloatFilter<"FarmListing"> | number
-    longitude?: FloatFilter<"FarmListing"> | number
-    soil_type?: StringNullableFilter<"FarmListing"> | string | null
-    irrigation_type?: StringNullableFilter<"FarmListing"> | string | null
-    is_organic?: BoolFilter<"FarmListing"> | boolean
-    organic_cert_url?: StringNullableFilter<"FarmListing"> | string | null
-    expected_harvest_month?: StringNullableFilter<"FarmListing"> | string | null
-    expected_yield_per_acre?: FloatNullableFilter<"FarmListing"> | number | null
-    images?: StringNullableListFilter<"FarmListing">
-    status?: EnumListingStatusFilter<"FarmListing"> | $Enums.ListingStatus
-    views?: IntFilter<"FarmListing"> | number
-    created_at?: DateTimeFilter<"FarmListing"> | Date | string
-    updated_at?: DateTimeFilter<"FarmListing"> | Date | string
-  }
-
-  export type ContractUpsertWithWhereUniqueWithoutFarmerInput = {
-    where: ContractWhereUniqueInput
-    update: XOR<ContractUpdateWithoutFarmerInput, ContractUncheckedUpdateWithoutFarmerInput>
-    create: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput>
-  }
-
-  export type ContractUpdateWithWhereUniqueWithoutFarmerInput = {
-    where: ContractWhereUniqueInput
-    data: XOR<ContractUpdateWithoutFarmerInput, ContractUncheckedUpdateWithoutFarmerInput>
-  }
-
-  export type ContractUpdateManyWithWhereWithoutFarmerInput = {
-    where: ContractScalarWhereInput
-    data: XOR<ContractUpdateManyMutationInput, ContractUncheckedUpdateManyWithoutFarmerInput>
-  }
-
-  export type ContractScalarWhereInput = {
-    AND?: ContractScalarWhereInput | ContractScalarWhereInput[]
-    OR?: ContractScalarWhereInput[]
-    NOT?: ContractScalarWhereInput | ContractScalarWhereInput[]
-    id?: StringFilter<"Contract"> | string
-    listing_id?: StringFilter<"Contract"> | string
-    farmer_id?: StringFilter<"Contract"> | string
-    consumer_id?: StringFilter<"Contract"> | string
-    crop?: StringFilter<"Contract"> | string
-    acreage?: FloatFilter<"Contract"> | number
-    price_per_acre?: FloatFilter<"Contract"> | number
-    total_amount?: FloatFilter<"Contract"> | number
-    start_date?: DateTimeFilter<"Contract"> | Date | string
-    end_date?: DateTimeFilter<"Contract"> | Date | string
-    status?: EnumContractStatusFilter<"Contract"> | $Enums.ContractStatus
-    escrow_held?: FloatFilter<"Contract"> | number
-    farmer_paid?: FloatFilter<"Contract"> | number
-    escrow_frozen?: FloatFilter<"Contract"> | number
-    created_at?: DateTimeFilter<"Contract"> | Date | string
-    updated_at?: DateTimeFilter<"Contract"> | Date | string
+  export type AuditLogScalarWhereInput = {
+    AND?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+    OR?: AuditLogScalarWhereInput[]
+    NOT?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+    id?: StringFilter<"AuditLog"> | string
+    admin_id?: StringFilter<"AuditLog"> | string
+    action?: StringFilter<"AuditLog"> | string
+    entity_type?: StringFilter<"AuditLog"> | string
+    entity_id?: StringFilter<"AuditLog"> | string
+    details?: JsonNullableFilter<"AuditLog">
+    created_at?: DateTimeFilter<"AuditLog"> | Date | string
   }
 
   export type ContractUpsertWithWhereUniqueWithoutConsumerInput = {
@@ -25173,219 +25160,43 @@ export namespace Prisma {
     data: XOR<ContractUpdateManyMutationInput, ContractUncheckedUpdateManyWithoutConsumerInput>
   }
 
-  export type FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput = {
-    where: FarmUpdateWhereUniqueInput
-    update: XOR<FarmUpdateUpdateWithoutFarmerInput, FarmUpdateUncheckedUpdateWithoutFarmerInput>
-    create: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput>
+  export type ContractScalarWhereInput = {
+    AND?: ContractScalarWhereInput | ContractScalarWhereInput[]
+    OR?: ContractScalarWhereInput[]
+    NOT?: ContractScalarWhereInput | ContractScalarWhereInput[]
+    id?: StringFilter<"Contract"> | string
+    listing_id?: StringFilter<"Contract"> | string
+    farmer_id?: StringFilter<"Contract"> | string
+    consumer_id?: StringFilter<"Contract"> | string
+    crop?: StringFilter<"Contract"> | string
+    acreage?: FloatFilter<"Contract"> | number
+    price_per_acre?: FloatFilter<"Contract"> | number
+    total_amount?: FloatFilter<"Contract"> | number
+    total_cycles?: IntFilter<"Contract"> | number
+    start_date?: DateTimeFilter<"Contract"> | Date | string
+    end_date?: DateTimeFilter<"Contract"> | Date | string
+    status?: EnumContractStatusFilter<"Contract"> | $Enums.ContractStatus
+    escrow_held?: FloatFilter<"Contract"> | number
+    farmer_paid?: FloatFilter<"Contract"> | number
+    escrow_frozen?: FloatFilter<"Contract"> | number
+    created_at?: DateTimeFilter<"Contract"> | Date | string
+    updated_at?: DateTimeFilter<"Contract"> | Date | string
   }
 
-  export type FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput = {
-    where: FarmUpdateWhereUniqueInput
-    data: XOR<FarmUpdateUpdateWithoutFarmerInput, FarmUpdateUncheckedUpdateWithoutFarmerInput>
+  export type ContractUpsertWithWhereUniqueWithoutFarmerInput = {
+    where: ContractWhereUniqueInput
+    update: XOR<ContractUpdateWithoutFarmerInput, ContractUncheckedUpdateWithoutFarmerInput>
+    create: XOR<ContractCreateWithoutFarmerInput, ContractUncheckedCreateWithoutFarmerInput>
   }
 
-  export type FarmUpdateUpdateManyWithWhereWithoutFarmerInput = {
-    where: FarmUpdateScalarWhereInput
-    data: XOR<FarmUpdateUpdateManyMutationInput, FarmUpdateUncheckedUpdateManyWithoutFarmerInput>
+  export type ContractUpdateWithWhereUniqueWithoutFarmerInput = {
+    where: ContractWhereUniqueInput
+    data: XOR<ContractUpdateWithoutFarmerInput, ContractUncheckedUpdateWithoutFarmerInput>
   }
 
-  export type FarmUpdateScalarWhereInput = {
-    AND?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
-    OR?: FarmUpdateScalarWhereInput[]
-    NOT?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
-    id?: StringFilter<"FarmUpdate"> | string
-    contract_id?: StringFilter<"FarmUpdate"> | string
-    farmer_id?: StringFilter<"FarmUpdate"> | string
-    media_url?: StringFilter<"FarmUpdate"> | string
-    media_type?: StringFilter<"FarmUpdate"> | string
-    caption?: StringNullableFilter<"FarmUpdate"> | string | null
-    wage_released?: FloatFilter<"FarmUpdate"> | number
-    latitude?: FloatNullableFilter<"FarmUpdate"> | number | null
-    longitude?: FloatNullableFilter<"FarmUpdate"> | number | null
-    created_at?: DateTimeFilter<"FarmUpdate"> | Date | string
-  }
-
-  export type EscrowLedgerUpsertWithWhereUniqueWithoutUserInput = {
-    where: EscrowLedgerWhereUniqueInput
-    update: XOR<EscrowLedgerUpdateWithoutUserInput, EscrowLedgerUncheckedUpdateWithoutUserInput>
-    create: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput>
-  }
-
-  export type EscrowLedgerUpdateWithWhereUniqueWithoutUserInput = {
-    where: EscrowLedgerWhereUniqueInput
-    data: XOR<EscrowLedgerUpdateWithoutUserInput, EscrowLedgerUncheckedUpdateWithoutUserInput>
-  }
-
-  export type EscrowLedgerUpdateManyWithWhereWithoutUserInput = {
-    where: EscrowLedgerScalarWhereInput
-    data: XOR<EscrowLedgerUpdateManyMutationInput, EscrowLedgerUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type EscrowLedgerScalarWhereInput = {
-    AND?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
-    OR?: EscrowLedgerScalarWhereInput[]
-    NOT?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
-    id?: StringFilter<"EscrowLedger"> | string
-    contract_id?: StringFilter<"EscrowLedger"> | string
-    user_id?: StringFilter<"EscrowLedger"> | string
-    event?: EnumEscrowEventFilter<"EscrowLedger"> | $Enums.EscrowEvent
-    amount?: FloatFilter<"EscrowLedger"> | number
-    transaction_type?: EnumTransactionTypeFilter<"EscrowLedger"> | $Enums.TransactionType
-    description?: StringNullableFilter<"EscrowLedger"> | string | null
-    razorpay_payment_id?: StringNullableFilter<"EscrowLedger"> | string | null
-    created_at?: DateTimeFilter<"EscrowLedger"> | Date | string
-  }
-
-  export type DisputeUpsertWithWhereUniqueWithoutReporterInput = {
-    where: DisputeWhereUniqueInput
-    update: XOR<DisputeUpdateWithoutReporterInput, DisputeUncheckedUpdateWithoutReporterInput>
-    create: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput>
-  }
-
-  export type DisputeUpdateWithWhereUniqueWithoutReporterInput = {
-    where: DisputeWhereUniqueInput
-    data: XOR<DisputeUpdateWithoutReporterInput, DisputeUncheckedUpdateWithoutReporterInput>
-  }
-
-  export type DisputeUpdateManyWithWhereWithoutReporterInput = {
-    where: DisputeScalarWhereInput
-    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutReporterInput>
-  }
-
-  export type DisputeScalarWhereInput = {
-    AND?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
-    OR?: DisputeScalarWhereInput[]
-    NOT?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
-    id?: StringFilter<"Dispute"> | string
-    contract_id?: StringFilter<"Dispute"> | string
-    reporter_id?: StringFilter<"Dispute"> | string
-    reason?: StringFilter<"Dispute"> | string
-    description?: StringNullableFilter<"Dispute"> | string | null
-    evidence_urls?: StringNullableListFilter<"Dispute">
-    escrow_frozen?: FloatFilter<"Dispute"> | number
-    status?: EnumDisputeStatusFilter<"Dispute"> | $Enums.DisputeStatus
-    resolution?: StringNullableFilter<"Dispute"> | string | null
-    resolved_at?: DateTimeNullableFilter<"Dispute"> | Date | string | null
-    created_at?: DateTimeFilter<"Dispute"> | Date | string
-    updated_at?: DateTimeFilter<"Dispute"> | Date | string
-  }
-
-  export type WalletTransactionUpsertWithWhereUniqueWithoutUserInput = {
-    where: WalletTransactionWhereUniqueInput
-    update: XOR<WalletTransactionUpdateWithoutUserInput, WalletTransactionUncheckedUpdateWithoutUserInput>
-    create: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput>
-  }
-
-  export type WalletTransactionUpdateWithWhereUniqueWithoutUserInput = {
-    where: WalletTransactionWhereUniqueInput
-    data: XOR<WalletTransactionUpdateWithoutUserInput, WalletTransactionUncheckedUpdateWithoutUserInput>
-  }
-
-  export type WalletTransactionUpdateManyWithWhereWithoutUserInput = {
-    where: WalletTransactionScalarWhereInput
-    data: XOR<WalletTransactionUpdateManyMutationInput, WalletTransactionUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type WalletTransactionScalarWhereInput = {
-    AND?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
-    OR?: WalletTransactionScalarWhereInput[]
-    NOT?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
-    id?: StringFilter<"WalletTransaction"> | string
-    user_id?: StringFilter<"WalletTransaction"> | string
-    type?: EnumTransactionTypeFilter<"WalletTransaction"> | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
-    amount?: FloatFilter<"WalletTransaction"> | number
-    description?: StringNullableFilter<"WalletTransaction"> | string | null
-    balance_after?: FloatFilter<"WalletTransaction"> | number
-    razorpay_payout_id?: StringNullableFilter<"WalletTransaction"> | string | null
-    created_at?: DateTimeFilter<"WalletTransaction"> | Date | string
-  }
-
-  export type ReviewUpsertWithWhereUniqueWithoutReviewerInput = {
-    where: ReviewWhereUniqueInput
-    update: XOR<ReviewUpdateWithoutReviewerInput, ReviewUncheckedUpdateWithoutReviewerInput>
-    create: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput>
-  }
-
-  export type ReviewUpdateWithWhereUniqueWithoutReviewerInput = {
-    where: ReviewWhereUniqueInput
-    data: XOR<ReviewUpdateWithoutReviewerInput, ReviewUncheckedUpdateWithoutReviewerInput>
-  }
-
-  export type ReviewUpdateManyWithWhereWithoutReviewerInput = {
-    where: ReviewScalarWhereInput
-    data: XOR<ReviewUpdateManyMutationInput, ReviewUncheckedUpdateManyWithoutReviewerInput>
-  }
-
-  export type ReviewScalarWhereInput = {
-    AND?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
-    OR?: ReviewScalarWhereInput[]
-    NOT?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
-    id?: StringFilter<"Review"> | string
-    contract_id?: StringFilter<"Review"> | string
-    reviewer_id?: StringFilter<"Review"> | string
-    rating?: IntFilter<"Review"> | number
-    comment?: StringNullableFilter<"Review"> | string | null
-    created_at?: DateTimeFilter<"Review"> | Date | string
-  }
-
-  export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
-    where: NotificationWhereUniqueInput
-    update: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
-    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
-  }
-
-  export type NotificationUpdateWithWhereUniqueWithoutUserInput = {
-    where: NotificationWhereUniqueInput
-    data: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
-  }
-
-  export type NotificationUpdateManyWithWhereWithoutUserInput = {
-    where: NotificationScalarWhereInput
-    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type NotificationScalarWhereInput = {
-    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-    OR?: NotificationScalarWhereInput[]
-    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-    id?: StringFilter<"Notification"> | string
-    user_id?: StringFilter<"Notification"> | string
-    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
-    title?: StringFilter<"Notification"> | string
-    message?: StringFilter<"Notification"> | string
-    read?: BoolFilter<"Notification"> | boolean
-    data?: JsonNullableFilter<"Notification">
-    created_at?: DateTimeFilter<"Notification"> | Date | string
-  }
-
-  export type MessageUpsertWithWhereUniqueWithoutSenderInput = {
-    where: MessageWhereUniqueInput
-    update: XOR<MessageUpdateWithoutSenderInput, MessageUncheckedUpdateWithoutSenderInput>
-    create: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput>
-  }
-
-  export type MessageUpdateWithWhereUniqueWithoutSenderInput = {
-    where: MessageWhereUniqueInput
-    data: XOR<MessageUpdateWithoutSenderInput, MessageUncheckedUpdateWithoutSenderInput>
-  }
-
-  export type MessageUpdateManyWithWhereWithoutSenderInput = {
-    where: MessageScalarWhereInput
-    data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutSenderInput>
-  }
-
-  export type MessageScalarWhereInput = {
-    AND?: MessageScalarWhereInput | MessageScalarWhereInput[]
-    OR?: MessageScalarWhereInput[]
-    NOT?: MessageScalarWhereInput | MessageScalarWhereInput[]
-    id?: StringFilter<"Message"> | string
-    conversation_id?: StringFilter<"Message"> | string
-    sender_id?: StringFilter<"Message"> | string
-    text?: StringNullableFilter<"Message"> | string | null
-    media_url?: StringNullableFilter<"Message"> | string | null
-    read?: BoolFilter<"Message"> | boolean
-    created_at?: DateTimeFilter<"Message"> | Date | string
+  export type ContractUpdateManyWithWhereWithoutFarmerInput = {
+    where: ContractScalarWhereInput
+    data: XOR<ContractUpdateManyMutationInput, ContractUncheckedUpdateManyWithoutFarmerInput>
   }
 
   export type ConversationUpsertWithWhereUniqueWithoutParticipant_oneInput = {
@@ -25434,33 +25245,320 @@ export namespace Prisma {
     data: XOR<ConversationUpdateManyMutationInput, ConversationUncheckedUpdateManyWithoutParticipant_twoInput>
   }
 
-  export type AuditLogUpsertWithWhereUniqueWithoutAdminInput = {
-    where: AuditLogWhereUniqueInput
-    update: XOR<AuditLogUpdateWithoutAdminInput, AuditLogUncheckedUpdateWithoutAdminInput>
-    create: XOR<AuditLogCreateWithoutAdminInput, AuditLogUncheckedCreateWithoutAdminInput>
+  export type DisputeUpsertWithWhereUniqueWithoutReporterInput = {
+    where: DisputeWhereUniqueInput
+    update: XOR<DisputeUpdateWithoutReporterInput, DisputeUncheckedUpdateWithoutReporterInput>
+    create: XOR<DisputeCreateWithoutReporterInput, DisputeUncheckedCreateWithoutReporterInput>
   }
 
-  export type AuditLogUpdateWithWhereUniqueWithoutAdminInput = {
-    where: AuditLogWhereUniqueInput
-    data: XOR<AuditLogUpdateWithoutAdminInput, AuditLogUncheckedUpdateWithoutAdminInput>
+  export type DisputeUpdateWithWhereUniqueWithoutReporterInput = {
+    where: DisputeWhereUniqueInput
+    data: XOR<DisputeUpdateWithoutReporterInput, DisputeUncheckedUpdateWithoutReporterInput>
   }
 
-  export type AuditLogUpdateManyWithWhereWithoutAdminInput = {
-    where: AuditLogScalarWhereInput
-    data: XOR<AuditLogUpdateManyMutationInput, AuditLogUncheckedUpdateManyWithoutAdminInput>
+  export type DisputeUpdateManyWithWhereWithoutReporterInput = {
+    where: DisputeScalarWhereInput
+    data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutReporterInput>
   }
 
-  export type AuditLogScalarWhereInput = {
-    AND?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
-    OR?: AuditLogScalarWhereInput[]
-    NOT?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
-    id?: StringFilter<"AuditLog"> | string
-    admin_id?: StringFilter<"AuditLog"> | string
-    action?: StringFilter<"AuditLog"> | string
-    entity_type?: StringFilter<"AuditLog"> | string
-    entity_id?: StringFilter<"AuditLog"> | string
-    details?: JsonNullableFilter<"AuditLog">
-    created_at?: DateTimeFilter<"AuditLog"> | Date | string
+  export type DisputeScalarWhereInput = {
+    AND?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+    OR?: DisputeScalarWhereInput[]
+    NOT?: DisputeScalarWhereInput | DisputeScalarWhereInput[]
+    id?: StringFilter<"Dispute"> | string
+    contract_id?: StringFilter<"Dispute"> | string
+    reporter_id?: StringFilter<"Dispute"> | string
+    reason?: StringFilter<"Dispute"> | string
+    description?: StringNullableFilter<"Dispute"> | string | null
+    evidence_urls?: StringNullableListFilter<"Dispute">
+    escrow_frozen?: FloatFilter<"Dispute"> | number
+    status?: EnumDisputeStatusFilter<"Dispute"> | $Enums.DisputeStatus
+    resolution?: StringNullableFilter<"Dispute"> | string | null
+    resolved_at?: DateTimeNullableFilter<"Dispute"> | Date | string | null
+    created_at?: DateTimeFilter<"Dispute"> | Date | string
+    updated_at?: DateTimeFilter<"Dispute"> | Date | string
+  }
+
+  export type EscrowLedgerUpsertWithWhereUniqueWithoutUserInput = {
+    where: EscrowLedgerWhereUniqueInput
+    update: XOR<EscrowLedgerUpdateWithoutUserInput, EscrowLedgerUncheckedUpdateWithoutUserInput>
+    create: XOR<EscrowLedgerCreateWithoutUserInput, EscrowLedgerUncheckedCreateWithoutUserInput>
+  }
+
+  export type EscrowLedgerUpdateWithWhereUniqueWithoutUserInput = {
+    where: EscrowLedgerWhereUniqueInput
+    data: XOR<EscrowLedgerUpdateWithoutUserInput, EscrowLedgerUncheckedUpdateWithoutUserInput>
+  }
+
+  export type EscrowLedgerUpdateManyWithWhereWithoutUserInput = {
+    where: EscrowLedgerScalarWhereInput
+    data: XOR<EscrowLedgerUpdateManyMutationInput, EscrowLedgerUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type EscrowLedgerScalarWhereInput = {
+    AND?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
+    OR?: EscrowLedgerScalarWhereInput[]
+    NOT?: EscrowLedgerScalarWhereInput | EscrowLedgerScalarWhereInput[]
+    id?: StringFilter<"EscrowLedger"> | string
+    contract_id?: StringFilter<"EscrowLedger"> | string
+    user_id?: StringFilter<"EscrowLedger"> | string
+    event?: EnumEscrowEventFilter<"EscrowLedger"> | $Enums.EscrowEvent
+    amount?: FloatFilter<"EscrowLedger"> | number
+    transaction_type?: EnumTransactionTypeFilter<"EscrowLedger"> | $Enums.TransactionType
+    description?: StringNullableFilter<"EscrowLedger"> | string | null
+    razorpay_payment_id?: StringNullableFilter<"EscrowLedger"> | string | null
+    created_at?: DateTimeFilter<"EscrowLedger"> | Date | string
+  }
+
+  export type FarmListingUpsertWithWhereUniqueWithoutFarmerInput = {
+    where: FarmListingWhereUniqueInput
+    update: XOR<FarmListingUpdateWithoutFarmerInput, FarmListingUncheckedUpdateWithoutFarmerInput>
+    create: XOR<FarmListingCreateWithoutFarmerInput, FarmListingUncheckedCreateWithoutFarmerInput>
+  }
+
+  export type FarmListingUpdateWithWhereUniqueWithoutFarmerInput = {
+    where: FarmListingWhereUniqueInput
+    data: XOR<FarmListingUpdateWithoutFarmerInput, FarmListingUncheckedUpdateWithoutFarmerInput>
+  }
+
+  export type FarmListingUpdateManyWithWhereWithoutFarmerInput = {
+    where: FarmListingScalarWhereInput
+    data: XOR<FarmListingUpdateManyMutationInput, FarmListingUncheckedUpdateManyWithoutFarmerInput>
+  }
+
+  export type FarmListingScalarWhereInput = {
+    AND?: FarmListingScalarWhereInput | FarmListingScalarWhereInput[]
+    OR?: FarmListingScalarWhereInput[]
+    NOT?: FarmListingScalarWhereInput | FarmListingScalarWhereInput[]
+    id?: StringFilter<"FarmListing"> | string
+    farmer_id?: StringFilter<"FarmListing"> | string
+    name?: StringFilter<"FarmListing"> | string
+    description?: StringNullableFilter<"FarmListing"> | string | null
+    area_acres?: FloatFilter<"FarmListing"> | number
+    price_per_acre?: FloatFilter<"FarmListing"> | number
+    crops?: StringNullableListFilter<"FarmListing">
+    location_name?: StringFilter<"FarmListing"> | string
+    latitude?: FloatFilter<"FarmListing"> | number
+    longitude?: FloatFilter<"FarmListing"> | number
+    soil_type?: StringNullableFilter<"FarmListing"> | string | null
+    irrigation_type?: StringNullableFilter<"FarmListing"> | string | null
+    is_organic?: BoolFilter<"FarmListing"> | boolean
+    organic_cert_url?: StringNullableFilter<"FarmListing"> | string | null
+    expected_harvest_month?: StringNullableFilter<"FarmListing"> | string | null
+    expected_yield_per_acre?: FloatNullableFilter<"FarmListing"> | number | null
+    images?: StringNullableListFilter<"FarmListing">
+    status?: EnumListingStatusFilter<"FarmListing"> | $Enums.ListingStatus
+    views?: IntFilter<"FarmListing"> | number
+    created_at?: DateTimeFilter<"FarmListing"> | Date | string
+    updated_at?: DateTimeFilter<"FarmListing"> | Date | string
+  }
+
+  export type FarmUpdateUpsertWithWhereUniqueWithoutFarmerInput = {
+    where: FarmUpdateWhereUniqueInput
+    update: XOR<FarmUpdateUpdateWithoutFarmerInput, FarmUpdateUncheckedUpdateWithoutFarmerInput>
+    create: XOR<FarmUpdateCreateWithoutFarmerInput, FarmUpdateUncheckedCreateWithoutFarmerInput>
+  }
+
+  export type FarmUpdateUpdateWithWhereUniqueWithoutFarmerInput = {
+    where: FarmUpdateWhereUniqueInput
+    data: XOR<FarmUpdateUpdateWithoutFarmerInput, FarmUpdateUncheckedUpdateWithoutFarmerInput>
+  }
+
+  export type FarmUpdateUpdateManyWithWhereWithoutFarmerInput = {
+    where: FarmUpdateScalarWhereInput
+    data: XOR<FarmUpdateUpdateManyMutationInput, FarmUpdateUncheckedUpdateManyWithoutFarmerInput>
+  }
+
+  export type FarmUpdateScalarWhereInput = {
+    AND?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
+    OR?: FarmUpdateScalarWhereInput[]
+    NOT?: FarmUpdateScalarWhereInput | FarmUpdateScalarWhereInput[]
+    id?: StringFilter<"FarmUpdate"> | string
+    contract_id?: StringFilter<"FarmUpdate"> | string
+    farmer_id?: StringFilter<"FarmUpdate"> | string
+    media_url?: StringFilter<"FarmUpdate"> | string
+    media_type?: StringFilter<"FarmUpdate"> | string
+    caption?: StringNullableFilter<"FarmUpdate"> | string | null
+    wage_released?: FloatFilter<"FarmUpdate"> | number
+    latitude?: FloatNullableFilter<"FarmUpdate"> | number | null
+    longitude?: FloatNullableFilter<"FarmUpdate"> | number | null
+    created_at?: DateTimeFilter<"FarmUpdate"> | Date | string
+  }
+
+  export type MessageUpsertWithWhereUniqueWithoutSenderInput = {
+    where: MessageWhereUniqueInput
+    update: XOR<MessageUpdateWithoutSenderInput, MessageUncheckedUpdateWithoutSenderInput>
+    create: XOR<MessageCreateWithoutSenderInput, MessageUncheckedCreateWithoutSenderInput>
+  }
+
+  export type MessageUpdateWithWhereUniqueWithoutSenderInput = {
+    where: MessageWhereUniqueInput
+    data: XOR<MessageUpdateWithoutSenderInput, MessageUncheckedUpdateWithoutSenderInput>
+  }
+
+  export type MessageUpdateManyWithWhereWithoutSenderInput = {
+    where: MessageScalarWhereInput
+    data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutSenderInput>
+  }
+
+  export type MessageScalarWhereInput = {
+    AND?: MessageScalarWhereInput | MessageScalarWhereInput[]
+    OR?: MessageScalarWhereInput[]
+    NOT?: MessageScalarWhereInput | MessageScalarWhereInput[]
+    id?: StringFilter<"Message"> | string
+    conversation_id?: StringFilter<"Message"> | string
+    sender_id?: StringFilter<"Message"> | string
+    text?: StringNullableFilter<"Message"> | string | null
+    media_url?: StringNullableFilter<"Message"> | string | null
+    read?: BoolFilter<"Message"> | boolean
+    created_at?: DateTimeFilter<"Message"> | Date | string
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutUserInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type NotificationScalarWhereInput = {
+    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    OR?: NotificationScalarWhereInput[]
+    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    user_id?: StringFilter<"Notification"> | string
+    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    read?: BoolFilter<"Notification"> | boolean
+    data?: JsonNullableFilter<"Notification">
+    created_at?: DateTimeFilter<"Notification"> | Date | string
+  }
+
+  export type ReviewUpsertWithWhereUniqueWithoutReviewerInput = {
+    where: ReviewWhereUniqueInput
+    update: XOR<ReviewUpdateWithoutReviewerInput, ReviewUncheckedUpdateWithoutReviewerInput>
+    create: XOR<ReviewCreateWithoutReviewerInput, ReviewUncheckedCreateWithoutReviewerInput>
+  }
+
+  export type ReviewUpdateWithWhereUniqueWithoutReviewerInput = {
+    where: ReviewWhereUniqueInput
+    data: XOR<ReviewUpdateWithoutReviewerInput, ReviewUncheckedUpdateWithoutReviewerInput>
+  }
+
+  export type ReviewUpdateManyWithWhereWithoutReviewerInput = {
+    where: ReviewScalarWhereInput
+    data: XOR<ReviewUpdateManyMutationInput, ReviewUncheckedUpdateManyWithoutReviewerInput>
+  }
+
+  export type ReviewScalarWhereInput = {
+    AND?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
+    OR?: ReviewScalarWhereInput[]
+    NOT?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
+    id?: StringFilter<"Review"> | string
+    contract_id?: StringFilter<"Review"> | string
+    reviewer_id?: StringFilter<"Review"> | string
+    rating?: IntFilter<"Review"> | number
+    comment?: StringNullableFilter<"Review"> | string | null
+    created_at?: DateTimeFilter<"Review"> | Date | string
+  }
+
+  export type WalletTransactionUpsertWithWhereUniqueWithoutUserInput = {
+    where: WalletTransactionWhereUniqueInput
+    update: XOR<WalletTransactionUpdateWithoutUserInput, WalletTransactionUncheckedUpdateWithoutUserInput>
+    create: XOR<WalletTransactionCreateWithoutUserInput, WalletTransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type WalletTransactionUpdateWithWhereUniqueWithoutUserInput = {
+    where: WalletTransactionWhereUniqueInput
+    data: XOR<WalletTransactionUpdateWithoutUserInput, WalletTransactionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type WalletTransactionUpdateManyWithWhereWithoutUserInput = {
+    where: WalletTransactionScalarWhereInput
+    data: XOR<WalletTransactionUpdateManyMutationInput, WalletTransactionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type WalletTransactionScalarWhereInput = {
+    AND?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
+    OR?: WalletTransactionScalarWhereInput[]
+    NOT?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
+    id?: StringFilter<"WalletTransaction"> | string
+    user_id?: StringFilter<"WalletTransaction"> | string
+    type?: EnumTransactionTypeFilter<"WalletTransaction"> | $Enums.TransactionType
+    amount?: FloatFilter<"WalletTransaction"> | number
+    description?: StringNullableFilter<"WalletTransaction"> | string | null
+    balance_after?: FloatFilter<"WalletTransaction"> | number
+    razorpay_payout_id?: StringNullableFilter<"WalletTransaction"> | string | null
+    created_at?: DateTimeFilter<"WalletTransaction"> | Date | string
+    status?: EnumWalletTransactionStatusFilter<"WalletTransaction"> | $Enums.WalletTransactionStatus
+  }
+
+  export type ContractCreateWithoutListingInput = {
+    id?: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    conversations?: ConversationCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryCreateNestedManyWithoutContractInput
+    disputes?: DisputeCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractUncheckedCreateWithoutListingInput = {
+    id?: string
+    farmer_id: string
+    consumer_id: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractCreateOrConnectWithoutListingInput = {
+    where: ContractWhereUniqueInput
+    create: XOR<ContractCreateWithoutListingInput, ContractUncheckedCreateWithoutListingInput>
+  }
+
+  export type ContractCreateManyListingInputEnvelope = {
+    data: ContractCreateManyListingInput | ContractCreateManyListingInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserCreateWithoutFarm_listingsInput = {
@@ -25493,25 +25591,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFarm_listingsInput = {
@@ -25544,25 +25642,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFarm_listingsInput = {
@@ -25570,60 +25668,20 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutFarm_listingsInput, UserUncheckedCreateWithoutFarm_listingsInput>
   }
 
-  export type ContractCreateWithoutListingInput = {
-    id?: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
-    consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryCreateNestedManyWithoutContractInput
-    disputes?: DisputeCreateNestedManyWithoutContractInput
-    conversations?: ConversationCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractUncheckedCreateWithoutListingInput = {
-    id?: string
-    farmer_id: string
-    consumer_id: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
-    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractCreateOrConnectWithoutListingInput = {
+  export type ContractUpsertWithWhereUniqueWithoutListingInput = {
     where: ContractWhereUniqueInput
+    update: XOR<ContractUpdateWithoutListingInput, ContractUncheckedUpdateWithoutListingInput>
     create: XOR<ContractCreateWithoutListingInput, ContractUncheckedCreateWithoutListingInput>
   }
 
-  export type ContractCreateManyListingInputEnvelope = {
-    data: ContractCreateManyListingInput | ContractCreateManyListingInput[]
-    skipDuplicates?: boolean
+  export type ContractUpdateWithWhereUniqueWithoutListingInput = {
+    where: ContractWhereUniqueInput
+    data: XOR<ContractUpdateWithoutListingInput, ContractUncheckedUpdateWithoutListingInput>
+  }
+
+  export type ContractUpdateManyWithWhereWithoutListingInput = {
+    where: ContractScalarWhereInput
+    data: XOR<ContractUpdateManyMutationInput, ContractUncheckedUpdateManyWithoutListingInput>
   }
 
   export type UserUpsertWithoutFarm_listingsInput = {
@@ -25667,25 +25725,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFarm_listingsInput = {
@@ -25718,41 +25776,239 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type ContractUpsertWithWhereUniqueWithoutListingInput = {
-    where: ContractWhereUniqueInput
-    update: XOR<ContractUpdateWithoutListingInput, ContractUncheckedUpdateWithoutListingInput>
-    create: XOR<ContractCreateWithoutListingInput, ContractUncheckedCreateWithoutListingInput>
+  export type UserCreateWithoutContracts_as_consumerInput = {
+    id?: string
+    phone: string
+    name?: string | null
+    email?: string | null
+    avatar_url?: string | null
+    role?: $Enums.UserRole
+    kyc_status?: $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: string | null
+    razorpay_fund_account_id?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    pincode?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    refresh_token?: string | null
+    expo_push_token?: string | null
+    otp?: string | null
+    otp_expires_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    farm_size_acres?: number | null
+    farm_type?: string | null
+    crops_grown?: UserCreatecrops_grownInput | string[]
+    irrigation_type?: string | null
+    years_of_experience?: number | null
+    land_records_url?: string | null
+    soil_type?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    bank_name?: string | null
+    farm_name?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
+    conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
-  export type ContractUpdateWithWhereUniqueWithoutListingInput = {
-    where: ContractWhereUniqueInput
-    data: XOR<ContractUpdateWithoutListingInput, ContractUncheckedUpdateWithoutListingInput>
+  export type UserUncheckedCreateWithoutContracts_as_consumerInput = {
+    id?: string
+    phone: string
+    name?: string | null
+    email?: string | null
+    avatar_url?: string | null
+    role?: $Enums.UserRole
+    kyc_status?: $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: string | null
+    razorpay_fund_account_id?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    pincode?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    refresh_token?: string | null
+    expo_push_token?: string | null
+    otp?: string | null
+    otp_expires_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    farm_size_acres?: number | null
+    farm_type?: string | null
+    crops_grown?: UserCreatecrops_grownInput | string[]
+    irrigation_type?: string | null
+    years_of_experience?: number | null
+    land_records_url?: string | null
+    soil_type?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    bank_name?: string | null
+    farm_name?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
+    conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type ContractUpdateManyWithWhereWithoutListingInput = {
-    where: ContractScalarWhereInput
-    data: XOR<ContractUpdateManyMutationInput, ContractUncheckedUpdateManyWithoutListingInput>
+  export type UserCreateOrConnectWithoutContracts_as_consumerInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutContracts_as_consumerInput, UserUncheckedCreateWithoutContracts_as_consumerInput>
+  }
+
+  export type UserCreateWithoutContracts_as_farmerInput = {
+    id?: string
+    phone: string
+    name?: string | null
+    email?: string | null
+    avatar_url?: string | null
+    role?: $Enums.UserRole
+    kyc_status?: $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: string | null
+    razorpay_fund_account_id?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    pincode?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    refresh_token?: string | null
+    expo_push_token?: string | null
+    otp?: string | null
+    otp_expires_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    farm_size_acres?: number | null
+    farm_type?: string | null
+    crops_grown?: UserCreatecrops_grownInput | string[]
+    irrigation_type?: string | null
+    years_of_experience?: number | null
+    land_records_url?: string | null
+    soil_type?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    bank_name?: string | null
+    farm_name?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
+    conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
+    conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutContracts_as_farmerInput = {
+    id?: string
+    phone: string
+    name?: string | null
+    email?: string | null
+    avatar_url?: string | null
+    role?: $Enums.UserRole
+    kyc_status?: $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: string | null
+    razorpay_fund_account_id?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    pincode?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    refresh_token?: string | null
+    expo_push_token?: string | null
+    otp?: string | null
+    otp_expires_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    farm_size_acres?: number | null
+    farm_type?: string | null
+    crops_grown?: UserCreatecrops_grownInput | string[]
+    irrigation_type?: string | null
+    years_of_experience?: number | null
+    land_records_url?: string | null
+    soil_type?: string | null
+    bank_account_number?: string | null
+    bank_ifsc?: string | null
+    bank_name?: string | null
+    farm_name?: string | null
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
+    conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
+    conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutContracts_as_farmerInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutContracts_as_farmerInput, UserUncheckedCreateWithoutContracts_as_farmerInput>
   }
 
   export type FarmListingCreateWithoutContractsInput = {
@@ -25808,283 +26064,35 @@ export namespace Prisma {
     create: XOR<FarmListingCreateWithoutContractsInput, FarmListingUncheckedCreateWithoutContractsInput>
   }
 
-  export type UserCreateWithoutContracts_as_farmerInput = {
+  export type ConversationCreateWithoutContractInput = {
     id?: string
-    phone: string
-    name?: string | null
-    email?: string | null
-    avatar_url?: string | null
-    role?: $Enums.UserRole
-    kyc_status?: $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: string | null
-    razorpay_fund_account_id?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    pincode?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    refresh_token?: string | null
-    expo_push_token?: string | null
-    otp?: string | null
-    otp_expires_at?: Date | string | null
+    last_message?: string | null
+    last_message_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
-    farm_size_acres?: number | null
-    farm_type?: string | null
-    crops_grown?: UserCreatecrops_grownInput | string[]
-    irrigation_type?: string | null
-    years_of_experience?: number | null
-    land_records_url?: string | null
-    soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
-    bank_account_number?: string | null
-    bank_ifsc?: string | null
-    farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
-    conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
-    conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    participant_one: UserCreateNestedOneWithoutConversations_as_oneInput
+    participant_two: UserCreateNestedOneWithoutConversations_as_twoInput
+    messages?: MessageCreateNestedManyWithoutConversationInput
   }
 
-  export type UserUncheckedCreateWithoutContracts_as_farmerInput = {
+  export type ConversationUncheckedCreateWithoutContractInput = {
     id?: string
-    phone: string
-    name?: string | null
-    email?: string | null
-    avatar_url?: string | null
-    role?: $Enums.UserRole
-    kyc_status?: $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: string | null
-    razorpay_fund_account_id?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    pincode?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    refresh_token?: string | null
-    expo_push_token?: string | null
-    otp?: string | null
-    otp_expires_at?: Date | string | null
+    participant_one_id: string
+    participant_two_id: string
+    last_message?: string | null
+    last_message_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
-    farm_size_acres?: number | null
-    farm_type?: string | null
-    crops_grown?: UserCreatecrops_grownInput | string[]
-    irrigation_type?: string | null
-    years_of_experience?: number | null
-    land_records_url?: string | null
-    soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
-    bank_account_number?: string | null
-    bank_ifsc?: string | null
-    farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
-    conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
-    conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
   }
 
-  export type UserCreateOrConnectWithoutContracts_as_farmerInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutContracts_as_farmerInput, UserUncheckedCreateWithoutContracts_as_farmerInput>
+  export type ConversationCreateOrConnectWithoutContractInput = {
+    where: ConversationWhereUniqueInput
+    create: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput>
   }
 
-  export type UserCreateWithoutContracts_as_consumerInput = {
-    id?: string
-    phone: string
-    name?: string | null
-    email?: string | null
-    avatar_url?: string | null
-    role?: $Enums.UserRole
-    kyc_status?: $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: string | null
-    razorpay_fund_account_id?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    pincode?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    refresh_token?: string | null
-    expo_push_token?: string | null
-    otp?: string | null
-    otp_expires_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    farm_size_acres?: number | null
-    farm_type?: string | null
-    crops_grown?: UserCreatecrops_grownInput | string[]
-    irrigation_type?: string | null
-    years_of_experience?: number | null
-    land_records_url?: string | null
-    soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
-    bank_account_number?: string | null
-    bank_ifsc?: string | null
-    farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
-    conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
-    conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserUncheckedCreateWithoutContracts_as_consumerInput = {
-    id?: string
-    phone: string
-    name?: string | null
-    email?: string | null
-    avatar_url?: string | null
-    role?: $Enums.UserRole
-    kyc_status?: $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: string | null
-    razorpay_fund_account_id?: string | null
-    address?: string | null
-    city?: string | null
-    state?: string | null
-    pincode?: string | null
-    latitude?: number | null
-    longitude?: number | null
-    refresh_token?: string | null
-    expo_push_token?: string | null
-    otp?: string | null
-    otp_expires_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    farm_size_acres?: number | null
-    farm_type?: string | null
-    crops_grown?: UserCreatecrops_grownInput | string[]
-    irrigation_type?: string | null
-    years_of_experience?: number | null
-    land_records_url?: string | null
-    soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
-    bank_account_number?: string | null
-    bank_ifsc?: string | null
-    farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
-    conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
-    conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserCreateOrConnectWithoutContracts_as_consumerInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutContracts_as_consumerInput, UserUncheckedCreateWithoutContracts_as_consumerInput>
-  }
-
-  export type FarmUpdateCreateWithoutContractInput = {
-    id?: string
-    media_url: string
-    media_type: string
-    caption?: string | null
-    wage_released?: number
-    latitude?: number | null
-    longitude?: number | null
-    created_at?: Date | string
-    farmer: UserCreateNestedOneWithoutFarm_updatesInput
-  }
-
-  export type FarmUpdateUncheckedCreateWithoutContractInput = {
-    id?: string
-    farmer_id: string
-    media_url: string
-    media_type: string
-    caption?: string | null
-    wage_released?: number
-    latitude?: number | null
-    longitude?: number | null
-    created_at?: Date | string
-  }
-
-  export type FarmUpdateCreateOrConnectWithoutContractInput = {
-    where: FarmUpdateWhereUniqueInput
-    create: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput>
-  }
-
-  export type FarmUpdateCreateManyContractInputEnvelope = {
-    data: FarmUpdateCreateManyContractInput | FarmUpdateCreateManyContractInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type EscrowLedgerCreateWithoutContractInput = {
-    id?: string
-    event: $Enums.EscrowEvent
-    amount: number
-    transaction_type: $Enums.TransactionType
-    description?: string | null
-    razorpay_payment_id?: string | null
-    created_at?: Date | string
-    user: UserCreateNestedOneWithoutEscrow_entriesInput
-  }
-
-  export type EscrowLedgerUncheckedCreateWithoutContractInput = {
-    id?: string
-    user_id: string
-    event: $Enums.EscrowEvent
-    amount: number
-    transaction_type: $Enums.TransactionType
-    description?: string | null
-    razorpay_payment_id?: string | null
-    created_at?: Date | string
-  }
-
-  export type EscrowLedgerCreateOrConnectWithoutContractInput = {
-    where: EscrowLedgerWhereUniqueInput
-    create: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput>
-  }
-
-  export type EscrowLedgerCreateManyContractInputEnvelope = {
-    data: EscrowLedgerCreateManyContractInput | EscrowLedgerCreateManyContractInput[]
+  export type ConversationCreateManyContractInputEnvelope = {
+    data: ConversationCreateManyContractInput | ConversationCreateManyContractInput[]
     skipDuplicates?: boolean
   }
 
@@ -26162,36 +26170,296 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ConversationCreateWithoutContractInput = {
+  export type EscrowLedgerCreateWithoutContractInput = {
     id?: string
-    last_message?: string | null
-    last_message_at?: Date | string | null
+    event: $Enums.EscrowEvent
+    amount: number
+    transaction_type: $Enums.TransactionType
+    description?: string | null
+    razorpay_payment_id?: string | null
     created_at?: Date | string
-    updated_at?: Date | string
-    participant_one: UserCreateNestedOneWithoutConversations_as_oneInput
-    participant_two: UserCreateNestedOneWithoutConversations_as_twoInput
-    messages?: MessageCreateNestedManyWithoutConversationInput
+    user: UserCreateNestedOneWithoutEscrow_entriesInput
   }
 
-  export type ConversationUncheckedCreateWithoutContractInput = {
+  export type EscrowLedgerUncheckedCreateWithoutContractInput = {
     id?: string
-    participant_one_id: string
-    participant_two_id: string
-    last_message?: string | null
-    last_message_at?: Date | string | null
+    user_id: string
+    event: $Enums.EscrowEvent
+    amount: number
+    transaction_type: $Enums.TransactionType
+    description?: string | null
+    razorpay_payment_id?: string | null
     created_at?: Date | string
-    updated_at?: Date | string
-    messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
   }
 
-  export type ConversationCreateOrConnectWithoutContractInput = {
-    where: ConversationWhereUniqueInput
-    create: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput>
+  export type EscrowLedgerCreateOrConnectWithoutContractInput = {
+    where: EscrowLedgerWhereUniqueInput
+    create: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput>
   }
 
-  export type ConversationCreateManyContractInputEnvelope = {
-    data: ConversationCreateManyContractInput | ConversationCreateManyContractInput[]
+  export type EscrowLedgerCreateManyContractInputEnvelope = {
+    data: EscrowLedgerCreateManyContractInput | EscrowLedgerCreateManyContractInput[]
     skipDuplicates?: boolean
+  }
+
+  export type FarmUpdateCreateWithoutContractInput = {
+    id?: string
+    media_url: string
+    media_type: string
+    caption?: string | null
+    wage_released?: number
+    latitude?: number | null
+    longitude?: number | null
+    created_at?: Date | string
+    farmer: UserCreateNestedOneWithoutFarm_updatesInput
+  }
+
+  export type FarmUpdateUncheckedCreateWithoutContractInput = {
+    id?: string
+    farmer_id: string
+    media_url: string
+    media_type: string
+    caption?: string | null
+    wage_released?: number
+    latitude?: number | null
+    longitude?: number | null
+    created_at?: Date | string
+  }
+
+  export type FarmUpdateCreateOrConnectWithoutContractInput = {
+    where: FarmUpdateWhereUniqueInput
+    create: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput>
+  }
+
+  export type FarmUpdateCreateManyContractInputEnvelope = {
+    data: FarmUpdateCreateManyContractInput | FarmUpdateCreateManyContractInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutContracts_as_consumerInput = {
+    update: XOR<UserUpdateWithoutContracts_as_consumerInput, UserUncheckedUpdateWithoutContracts_as_consumerInput>
+    create: XOR<UserCreateWithoutContracts_as_consumerInput, UserUncheckedCreateWithoutContracts_as_consumerInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutContracts_as_consumerInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutContracts_as_consumerInput, UserUncheckedUpdateWithoutContracts_as_consumerInput>
+  }
+
+  export type UserUpdateWithoutContracts_as_consumerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
+    otp?: NullableStringFieldUpdateOperationsInput | string | null
+    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
+    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
+    crops_grown?: UserUpdatecrops_grownInput | string[]
+    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
+    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
+    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
+    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
+    conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutContracts_as_consumerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
+    otp?: NullableStringFieldUpdateOperationsInput | string | null
+    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
+    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
+    crops_grown?: UserUpdatecrops_grownInput | string[]
+    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
+    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
+    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
+    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
+    conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUpsertWithoutContracts_as_farmerInput = {
+    update: XOR<UserUpdateWithoutContracts_as_farmerInput, UserUncheckedUpdateWithoutContracts_as_farmerInput>
+    create: XOR<UserCreateWithoutContracts_as_farmerInput, UserUncheckedCreateWithoutContracts_as_farmerInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutContracts_as_farmerInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutContracts_as_farmerInput, UserUncheckedUpdateWithoutContracts_as_farmerInput>
+  }
+
+  export type UserUpdateWithoutContracts_as_farmerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
+    otp?: NullableStringFieldUpdateOperationsInput | string | null
+    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
+    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
+    crops_grown?: UserUpdatecrops_grownInput | string[]
+    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
+    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
+    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
+    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
+    conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
+    conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutContracts_as_farmerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
+    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
+    otp?: NullableStringFieldUpdateOperationsInput | string | null
+    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
+    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
+    crops_grown?: UserUpdatecrops_grownInput | string[]
+    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
+    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
+    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
+    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
+    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
+    conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
+    conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type FarmListingUpsertWithoutContractsInput = {
@@ -26253,262 +26521,20 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserUpsertWithoutContracts_as_farmerInput = {
-    update: XOR<UserUpdateWithoutContracts_as_farmerInput, UserUncheckedUpdateWithoutContracts_as_farmerInput>
-    create: XOR<UserCreateWithoutContracts_as_farmerInput, UserUncheckedCreateWithoutContracts_as_farmerInput>
-    where?: UserWhereInput
+  export type ConversationUpsertWithWhereUniqueWithoutContractInput = {
+    where: ConversationWhereUniqueInput
+    update: XOR<ConversationUpdateWithoutContractInput, ConversationUncheckedUpdateWithoutContractInput>
+    create: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput>
   }
 
-  export type UserUpdateToOneWithWhereWithoutContracts_as_farmerInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutContracts_as_farmerInput, UserUncheckedUpdateWithoutContracts_as_farmerInput>
+  export type ConversationUpdateWithWhereUniqueWithoutContractInput = {
+    where: ConversationWhereUniqueInput
+    data: XOR<ConversationUpdateWithoutContractInput, ConversationUncheckedUpdateWithoutContractInput>
   }
 
-  export type UserUpdateWithoutContracts_as_farmerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    pincode?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
-    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
-    otp?: NullableStringFieldUpdateOperationsInput | string | null
-    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
-    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
-    crops_grown?: UserUpdatecrops_grownInput | string[]
-    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
-    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
-    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
-    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
-    conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
-    conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutContracts_as_farmerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    pincode?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
-    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
-    otp?: NullableStringFieldUpdateOperationsInput | string | null
-    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
-    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
-    crops_grown?: UserUpdatecrops_grownInput | string[]
-    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
-    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
-    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
-    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
-    conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
-    conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type UserUpsertWithoutContracts_as_consumerInput = {
-    update: XOR<UserUpdateWithoutContracts_as_consumerInput, UserUncheckedUpdateWithoutContracts_as_consumerInput>
-    create: XOR<UserCreateWithoutContracts_as_consumerInput, UserUncheckedCreateWithoutContracts_as_consumerInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutContracts_as_consumerInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutContracts_as_consumerInput, UserUncheckedUpdateWithoutContracts_as_consumerInput>
-  }
-
-  export type UserUpdateWithoutContracts_as_consumerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    pincode?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
-    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
-    otp?: NullableStringFieldUpdateOperationsInput | string | null
-    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
-    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
-    crops_grown?: UserUpdatecrops_grownInput | string[]
-    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
-    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
-    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
-    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
-    conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
-    conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutContracts_as_consumerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    phone?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar_url?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    kyc_status?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
-    kyc_documents?: NullableJsonNullValueInput | InputJsonValue
-    razorpay_customer_id?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_fund_account_id?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: NullableStringFieldUpdateOperationsInput | string | null
-    city?: NullableStringFieldUpdateOperationsInput | string | null
-    state?: NullableStringFieldUpdateOperationsInput | string | null
-    pincode?: NullableStringFieldUpdateOperationsInput | string | null
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
-    expo_push_token?: NullableStringFieldUpdateOperationsInput | string | null
-    otp?: NullableStringFieldUpdateOperationsInput | string | null
-    otp_expires_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_size_acres?: NullableFloatFieldUpdateOperationsInput | number | null
-    farm_type?: NullableStringFieldUpdateOperationsInput | string | null
-    crops_grown?: UserUpdatecrops_grownInput | string[]
-    irrigation_type?: NullableStringFieldUpdateOperationsInput | string | null
-    years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
-    land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
-    soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
-    bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
-    conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
-    conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type FarmUpdateUpsertWithWhereUniqueWithoutContractInput = {
-    where: FarmUpdateWhereUniqueInput
-    update: XOR<FarmUpdateUpdateWithoutContractInput, FarmUpdateUncheckedUpdateWithoutContractInput>
-    create: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput>
-  }
-
-  export type FarmUpdateUpdateWithWhereUniqueWithoutContractInput = {
-    where: FarmUpdateWhereUniqueInput
-    data: XOR<FarmUpdateUpdateWithoutContractInput, FarmUpdateUncheckedUpdateWithoutContractInput>
-  }
-
-  export type FarmUpdateUpdateManyWithWhereWithoutContractInput = {
-    where: FarmUpdateScalarWhereInput
-    data: XOR<FarmUpdateUpdateManyMutationInput, FarmUpdateUncheckedUpdateManyWithoutContractInput>
-  }
-
-  export type EscrowLedgerUpsertWithWhereUniqueWithoutContractInput = {
-    where: EscrowLedgerWhereUniqueInput
-    update: XOR<EscrowLedgerUpdateWithoutContractInput, EscrowLedgerUncheckedUpdateWithoutContractInput>
-    create: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput>
-  }
-
-  export type EscrowLedgerUpdateWithWhereUniqueWithoutContractInput = {
-    where: EscrowLedgerWhereUniqueInput
-    data: XOR<EscrowLedgerUpdateWithoutContractInput, EscrowLedgerUncheckedUpdateWithoutContractInput>
-  }
-
-  export type EscrowLedgerUpdateManyWithWhereWithoutContractInput = {
-    where: EscrowLedgerScalarWhereInput
-    data: XOR<EscrowLedgerUpdateManyMutationInput, EscrowLedgerUncheckedUpdateManyWithoutContractInput>
+  export type ConversationUpdateManyWithWhereWithoutContractInput = {
+    where: ConversationScalarWhereInput
+    data: XOR<ConversationUpdateManyMutationInput, ConversationUncheckedUpdateManyWithoutContractInput>
   }
 
   export type DeliveryUpsertWithWhereUniqueWithoutContractInput = {
@@ -26560,20 +26586,36 @@ export namespace Prisma {
     data: XOR<DisputeUpdateManyMutationInput, DisputeUncheckedUpdateManyWithoutContractInput>
   }
 
-  export type ConversationUpsertWithWhereUniqueWithoutContractInput = {
-    where: ConversationWhereUniqueInput
-    update: XOR<ConversationUpdateWithoutContractInput, ConversationUncheckedUpdateWithoutContractInput>
-    create: XOR<ConversationCreateWithoutContractInput, ConversationUncheckedCreateWithoutContractInput>
+  export type EscrowLedgerUpsertWithWhereUniqueWithoutContractInput = {
+    where: EscrowLedgerWhereUniqueInput
+    update: XOR<EscrowLedgerUpdateWithoutContractInput, EscrowLedgerUncheckedUpdateWithoutContractInput>
+    create: XOR<EscrowLedgerCreateWithoutContractInput, EscrowLedgerUncheckedCreateWithoutContractInput>
   }
 
-  export type ConversationUpdateWithWhereUniqueWithoutContractInput = {
-    where: ConversationWhereUniqueInput
-    data: XOR<ConversationUpdateWithoutContractInput, ConversationUncheckedUpdateWithoutContractInput>
+  export type EscrowLedgerUpdateWithWhereUniqueWithoutContractInput = {
+    where: EscrowLedgerWhereUniqueInput
+    data: XOR<EscrowLedgerUpdateWithoutContractInput, EscrowLedgerUncheckedUpdateWithoutContractInput>
   }
 
-  export type ConversationUpdateManyWithWhereWithoutContractInput = {
-    where: ConversationScalarWhereInput
-    data: XOR<ConversationUpdateManyMutationInput, ConversationUncheckedUpdateManyWithoutContractInput>
+  export type EscrowLedgerUpdateManyWithWhereWithoutContractInput = {
+    where: EscrowLedgerScalarWhereInput
+    data: XOR<EscrowLedgerUpdateManyMutationInput, EscrowLedgerUncheckedUpdateManyWithoutContractInput>
+  }
+
+  export type FarmUpdateUpsertWithWhereUniqueWithoutContractInput = {
+    where: FarmUpdateWhereUniqueInput
+    update: XOR<FarmUpdateUpdateWithoutContractInput, FarmUpdateUncheckedUpdateWithoutContractInput>
+    create: XOR<FarmUpdateCreateWithoutContractInput, FarmUpdateUncheckedCreateWithoutContractInput>
+  }
+
+  export type FarmUpdateUpdateWithWhereUniqueWithoutContractInput = {
+    where: FarmUpdateWhereUniqueInput
+    data: XOR<FarmUpdateUpdateWithoutContractInput, FarmUpdateUncheckedUpdateWithoutContractInput>
+  }
+
+  export type FarmUpdateUpdateManyWithWhereWithoutContractInput = {
+    where: FarmUpdateScalarWhereInput
+    data: XOR<FarmUpdateUpdateManyMutationInput, FarmUpdateUncheckedUpdateManyWithoutContractInput>
   }
 
   export type ContractCreateWithoutFarm_updatesInput = {
@@ -26582,6 +26624,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -26590,13 +26633,13 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
     consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
+    conversations?: ConversationCreateNestedManyWithoutContractInput
     deliveries?: DeliveryCreateNestedManyWithoutContractInput
     disputes?: DisputeCreateNestedManyWithoutContractInput
-    conversations?: ConversationCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
   }
 
   export type ContractUncheckedCreateWithoutFarm_updatesInput = {
@@ -26608,6 +26651,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -26616,10 +26660,10 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
     deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
     disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
-    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
   }
 
   export type ContractCreateOrConnectWithoutFarm_updatesInput = {
@@ -26657,25 +26701,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFarm_updatesInput = {
@@ -26708,25 +26752,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFarm_updatesInput = {
@@ -26751,6 +26795,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -26759,13 +26804,13 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
     consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
+    conversations?: ConversationUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUpdateManyWithoutContractNestedInput
     disputes?: DisputeUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
   }
 
   export type ContractUncheckedUpdateWithoutFarm_updatesInput = {
@@ -26777,6 +26822,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -26785,10 +26831,10 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
     disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
   }
 
   export type UserUpsertWithoutFarm_updatesInput = {
@@ -26832,25 +26878,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFarm_updatesInput = {
@@ -26883,25 +26929,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ContractCreateWithoutEscrow_entriesInput = {
@@ -26910,6 +26956,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -26918,13 +26965,13 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
     consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
+    conversations?: ConversationCreateNestedManyWithoutContractInput
     deliveries?: DeliveryCreateNestedManyWithoutContractInput
     disputes?: DisputeCreateNestedManyWithoutContractInput
-    conversations?: ConversationCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
   }
 
   export type ContractUncheckedCreateWithoutEscrow_entriesInput = {
@@ -26936,6 +26983,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -26944,10 +26992,10 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
     deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
     disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
-    conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
   }
 
   export type ContractCreateOrConnectWithoutEscrow_entriesInput = {
@@ -26985,25 +27033,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutEscrow_entriesInput = {
@@ -27036,25 +27084,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutEscrow_entriesInput = {
@@ -27079,6 +27127,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -27087,13 +27136,13 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
     consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
+    conversations?: ConversationUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUpdateManyWithoutContractNestedInput
     disputes?: DisputeUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
   }
 
   export type ContractUncheckedUpdateWithoutEscrow_entriesInput = {
@@ -27105,6 +27154,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -27113,10 +27163,10 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
     disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
   }
 
   export type UserUpsertWithoutEscrow_entriesInput = {
@@ -27160,25 +27210,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEscrow_entriesInput = {
@@ -27211,25 +27261,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ContractCreateWithoutDeliveriesInput = {
@@ -27238,6 +27288,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -27246,13 +27297,13 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
     consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
-    disputes?: DisputeCreateNestedManyWithoutContractInput
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
     conversations?: ConversationCreateNestedManyWithoutContractInput
+    disputes?: DisputeCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
   }
 
   export type ContractUncheckedCreateWithoutDeliveriesInput = {
@@ -27264,6 +27315,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -27272,10 +27324,10 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
   }
 
   export type ContractCreateOrConnectWithoutDeliveriesInput = {
@@ -27300,6 +27352,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -27308,13 +27361,13 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
     consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUpdateManyWithoutContractNestedInput
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
     conversations?: ConversationUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
   }
 
   export type ContractUncheckedUpdateWithoutDeliveriesInput = {
@@ -27326,6 +27379,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -27334,10 +27388,10 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
   }
 
   export type ContractCreateWithoutDisputesInput = {
@@ -27346,6 +27400,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -27354,13 +27409,13 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
     consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryCreateNestedManyWithoutContractInput
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
     conversations?: ConversationCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
   }
 
   export type ContractUncheckedCreateWithoutDisputesInput = {
@@ -27372,6 +27427,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -27380,10 +27436,10 @@ export namespace Prisma {
     escrow_frozen?: number
     created_at?: Date | string
     updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutContractInput
+    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
   }
 
   export type ContractCreateOrConnectWithoutDisputesInput = {
@@ -27421,25 +27477,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDisputesInput = {
@@ -27472,25 +27528,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDisputesInput = {
@@ -27515,6 +27571,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -27523,13 +27580,13 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
     consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
     conversations?: ConversationUpdateManyWithoutContractNestedInput
+    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
   }
 
   export type ContractUncheckedUpdateWithoutDisputesInput = {
@@ -27541,6 +27598,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -27549,10 +27607,10 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
   }
 
   export type UserUpsertWithoutDisputesInput = {
@@ -27596,25 +27654,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDisputesInput = {
@@ -27647,25 +27705,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutWallet_transactionsInput = {
@@ -27698,25 +27756,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
   }
 
   export type UserUncheckedCreateWithoutWallet_transactionsInput = {
@@ -27749,25 +27807,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
   }
 
   export type UserCreateOrConnectWithoutWallet_transactionsInput = {
@@ -27816,25 +27874,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWallet_transactionsInput = {
@@ -27867,25 +27925,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
   }
 
   export type UserCreateWithoutReviewsInput = {
@@ -27918,25 +27976,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
@@ -27969,25 +28027,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -28036,25 +28094,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -28087,25 +28145,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAudit_logsInput = {
@@ -28138,25 +28196,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAudit_logsInput = {
@@ -28189,25 +28247,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAudit_logsInput = {
@@ -28256,25 +28314,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAudit_logsInput = {
@@ -28307,25 +28365,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -28358,25 +28416,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -28409,25 +28467,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -28476,25 +28534,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -28527,25 +28585,78 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ContractCreateWithoutConversationsInput = {
+    id?: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
+    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
+    listing: FarmListingCreateNestedOneWithoutContractsInput
+    deliveries?: DeliveryCreateNestedManyWithoutContractInput
+    disputes?: DisputeCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractUncheckedCreateWithoutConversationsInput = {
+    id?: string
+    listing_id: string
+    farmer_id: string
+    consumer_id: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractCreateOrConnectWithoutConversationsInput = {
+    where: ContractWhereUniqueInput
+    create: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
   }
 
   export type UserCreateWithoutConversations_as_oneInput = {
@@ -28578,25 +28689,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
-    contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
-    conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutConversations_as_oneInput = {
@@ -28629,25 +28740,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
-    conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutConversations_as_oneInput = {
@@ -28685,25 +28796,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
-    contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutSenderInput
-    conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    messages?: MessageCreateNestedManyWithoutSenderInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutConversations_as_twoInput = {
@@ -28736,81 +28847,30 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
-    conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutConversations_as_twoInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutConversations_as_twoInput, UserUncheckedCreateWithoutConversations_as_twoInput>
-  }
-
-  export type ContractCreateWithoutConversationsInput = {
-    id?: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    listing: FarmListingCreateNestedOneWithoutContractsInput
-    farmer: UserCreateNestedOneWithoutContracts_as_farmerInput
-    consumer: UserCreateNestedOneWithoutContracts_as_consumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryCreateNestedManyWithoutContractInput
-    disputes?: DisputeCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractUncheckedCreateWithoutConversationsInput = {
-    id?: string
-    listing_id: string
-    farmer_id: string
-    consumer_id: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutContractInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutContractInput
-    deliveries?: DeliveryUncheckedCreateNestedManyWithoutContractInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutContractInput
-  }
-
-  export type ContractCreateOrConnectWithoutConversationsInput = {
-    where: ContractWhereUniqueInput
-    create: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
   }
 
   export type MessageCreateWithoutConversationInput = {
@@ -28839,6 +28899,65 @@ export namespace Prisma {
   export type MessageCreateManyConversationInputEnvelope = {
     data: MessageCreateManyConversationInput | MessageCreateManyConversationInput[]
     skipDuplicates?: boolean
+  }
+
+  export type ContractUpsertWithoutConversationsInput = {
+    update: XOR<ContractUpdateWithoutConversationsInput, ContractUncheckedUpdateWithoutConversationsInput>
+    create: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
+    where?: ContractWhereInput
+  }
+
+  export type ContractUpdateToOneWithWhereWithoutConversationsInput = {
+    where?: ContractWhereInput
+    data: XOR<ContractUpdateWithoutConversationsInput, ContractUncheckedUpdateWithoutConversationsInput>
+  }
+
+  export type ContractUpdateWithoutConversationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
+    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateWithoutConversationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    listing_id?: StringFieldUpdateOperationsInput | string
+    farmer_id?: StringFieldUpdateOperationsInput | string
+    consumer_id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
   }
 
   export type UserUpsertWithoutConversations_as_oneInput = {
@@ -28882,25 +29001,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
-    contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
-    conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConversations_as_oneInput = {
@@ -28933,25 +29052,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
-    conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutConversations_as_twoInput = {
@@ -28995,25 +29114,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
-    contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutSenderNestedInput
-    conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConversations_as_twoInput = {
@@ -29046,82 +29165,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
-    conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
     audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type ContractUpsertWithoutConversationsInput = {
-    update: XOR<ContractUpdateWithoutConversationsInput, ContractUncheckedUpdateWithoutConversationsInput>
-    create: XOR<ContractCreateWithoutConversationsInput, ContractUncheckedCreateWithoutConversationsInput>
-    where?: ContractWhereInput
-  }
-
-  export type ContractUpdateToOneWithWhereWithoutConversationsInput = {
-    where?: ContractWhereInput
-    data: XOR<ContractUpdateWithoutConversationsInput, ContractUncheckedUpdateWithoutConversationsInput>
-  }
-
-  export type ContractUpdateWithoutConversationsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
-    consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUpdateManyWithoutContractNestedInput
-  }
-
-  export type ContractUncheckedUpdateWithoutConversationsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    listing_id?: StringFieldUpdateOperationsInput | string
-    farmer_id?: StringFieldUpdateOperationsInput | string
-    consumer_id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
+    contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MessageUpsertWithWhereUniqueWithoutConversationInput = {
@@ -29146,9 +29208,9 @@ export namespace Prisma {
     last_message_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
+    contract?: ContractCreateNestedOneWithoutConversationsInput
     participant_one: UserCreateNestedOneWithoutConversations_as_oneInput
     participant_two: UserCreateNestedOneWithoutConversations_as_twoInput
-    contract?: ContractCreateNestedOneWithoutConversationsInput
   }
 
   export type ConversationUncheckedCreateWithoutMessagesInput = {
@@ -29197,25 +29259,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
-    disputes?: DisputeCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
+    contracts_as_farmer?: ContractCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogCreateNestedManyWithoutAdminInput
+    disputes?: DisputeCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateCreateNestedManyWithoutFarmerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMessagesInput = {
@@ -29248,25 +29310,25 @@ export namespace Prisma {
     years_of_experience?: number | null
     land_records_url?: string | null
     soil_type?: string | null
-    investment_range?: string | null
-    investment_goals?: UserCreateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
-    bank_name?: string | null
     bank_account_number?: string | null
     bank_ifsc?: string | null
+    bank_name?: string | null
     farm_name?: string | null
-    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
-    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
+    investment_goals?: UserCreateinvestment_goalsInput | string[]
+    investment_range?: string | null
+    preferred_farm_types?: UserCreatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
     contracts_as_consumer?: ContractUncheckedCreateNestedManyWithoutConsumerInput
-    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
-    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
-    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
-    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    contracts_as_farmer?: ContractUncheckedCreateNestedManyWithoutFarmerInput
     conversations_as_one?: ConversationUncheckedCreateNestedManyWithoutParticipant_oneInput
     conversations_as_two?: ConversationUncheckedCreateNestedManyWithoutParticipant_twoInput
-    audit_logs?: AuditLogUncheckedCreateNestedManyWithoutAdminInput
+    disputes?: DisputeUncheckedCreateNestedManyWithoutReporterInput
+    escrow_entries?: EscrowLedgerUncheckedCreateNestedManyWithoutUserInput
+    farm_listings?: FarmListingUncheckedCreateNestedManyWithoutFarmerInput
+    farm_updates?: FarmUpdateUncheckedCreateNestedManyWithoutFarmerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    wallet_transactions?: WalletTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMessagesInput = {
@@ -29291,9 +29353,9 @@ export namespace Prisma {
     last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contract?: ContractUpdateOneWithoutConversationsNestedInput
     participant_one?: UserUpdateOneRequiredWithoutConversations_as_oneNestedInput
     participant_two?: UserUpdateOneRequiredWithoutConversations_as_twoNestedInput
-    contract?: ContractUpdateOneWithoutConversationsNestedInput
   }
 
   export type ConversationUncheckedUpdateWithoutMessagesInput = {
@@ -29348,25 +29410,25 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    contracts_as_farmer?: ContractUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutFarmerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -29399,25 +29461,117 @@ export namespace Prisma {
     years_of_experience?: NullableIntFieldUpdateOperationsInput | number | null
     land_records_url?: NullableStringFieldUpdateOperationsInput | string | null
     soil_type?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
-    investment_goals?: UserUpdateinvestment_goalsInput | string[]
-    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
-    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     bank_account_number?: NullableStringFieldUpdateOperationsInput | string | null
     bank_ifsc?: NullableStringFieldUpdateOperationsInput | string | null
+    bank_name?: NullableStringFieldUpdateOperationsInput | string | null
     farm_name?: NullableStringFieldUpdateOperationsInput | string | null
-    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
-    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
+    investment_goals?: UserUpdateinvestment_goalsInput | string[]
+    investment_range?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_farm_types?: UserUpdatepreferred_farm_typesInput | string[]
+    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
     contracts_as_consumer?: ContractUncheckedUpdateManyWithoutConsumerNestedInput
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
-    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    contracts_as_farmer?: ContractUncheckedUpdateManyWithoutFarmerNestedInput
     conversations_as_one?: ConversationUncheckedUpdateManyWithoutParticipant_oneNestedInput
     conversations_as_two?: ConversationUncheckedUpdateManyWithoutParticipant_twoNestedInput
-    audit_logs?: AuditLogUncheckedUpdateManyWithoutAdminNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutReporterNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutUserNestedInput
+    farm_listings?: FarmListingUncheckedUpdateManyWithoutFarmerNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutFarmerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    wallet_transactions?: WalletTransactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type AuditLogCreateManyAdminInput = {
+    id?: string
+    action: string
+    entity_type: string
+    entity_id: string
+    details?: NullableJsonNullValueInput | InputJsonValue
+    created_at?: Date | string
+  }
+
+  export type ContractCreateManyConsumerInput = {
+    id?: string
+    listing_id: string
+    farmer_id: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type ContractCreateManyFarmerInput = {
+    id?: string
+    listing_id: string
+    consumer_id: string
+    crop: string
+    acreage: number
+    price_per_acre: number
+    total_amount: number
+    total_cycles?: number
+    start_date: Date | string
+    end_date: Date | string
+    status?: $Enums.ContractStatus
+    escrow_held?: number
+    farmer_paid?: number
+    escrow_frozen?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type ConversationCreateManyParticipant_oneInput = {
+    id?: string
+    participant_two_id: string
+    contract_id?: string | null
+    last_message?: string | null
+    last_message_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type ConversationCreateManyParticipant_twoInput = {
+    id?: string
+    participant_one_id: string
+    contract_id?: string | null
+    last_message?: string | null
+    last_message_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type DisputeCreateManyReporterInput = {
+    id?: string
+    contract_id: string
+    reason: string
+    description?: string | null
+    evidence_urls?: DisputeCreateevidence_urlsInput | string[]
+    escrow_frozen?: number
+    status?: $Enums.DisputeStatus
+    resolution?: string | null
+    resolved_at?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type EscrowLedgerCreateManyUserInput = {
+    id?: string
+    contract_id: string
+    event: $Enums.EscrowEvent
+    amount: number
+    transaction_type: $Enums.TransactionType
+    description?: string | null
+    razorpay_payment_id?: string | null
+    created_at?: Date | string
   }
 
   export type FarmListingCreateManyFarmerInput = {
@@ -29443,42 +29597,6 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
-  export type ContractCreateManyFarmerInput = {
-    id?: string
-    listing_id: string
-    consumer_id: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
-  export type ContractCreateManyConsumerInput = {
-    id?: string
-    listing_id: string
-    farmer_id: string
-    crop: string
-    acreage: number
-    price_per_acre: number
-    total_amount: number
-    start_date: Date | string
-    end_date: Date | string
-    status?: $Enums.ContractStatus
-    escrow_held?: number
-    farmer_paid?: number
-    escrow_frozen?: number
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
   export type FarmUpdateCreateManyFarmerInput = {
     id?: string
     contract_id: string
@@ -29491,47 +29609,12 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
-  export type EscrowLedgerCreateManyUserInput = {
+  export type MessageCreateManySenderInput = {
     id?: string
-    contract_id: string
-    event: $Enums.EscrowEvent
-    amount: number
-    transaction_type: $Enums.TransactionType
-    description?: string | null
-    razorpay_payment_id?: string | null
-    created_at?: Date | string
-  }
-
-  export type DisputeCreateManyReporterInput = {
-    id?: string
-    contract_id: string
-    reason: string
-    description?: string | null
-    evidence_urls?: DisputeCreateevidence_urlsInput | string[]
-    escrow_frozen?: number
-    status?: $Enums.DisputeStatus
-    resolution?: string | null
-    resolved_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
-  export type WalletTransactionCreateManyUserInput = {
-    id?: string
-    type: $Enums.TransactionType
-    status?: $Enums.WalletTransactionStatus
-    amount: number
-    description?: string | null
-    balance_after: number
-    razorpay_payout_id?: string | null
-    created_at?: Date | string
-  }
-
-  export type ReviewCreateManyReviewerInput = {
-    id?: string
-    contract_id: string
-    rating: number
-    comment?: string | null
+    conversation_id: string
+    text?: string | null
+    media_url?: string | null
+    read?: boolean
     created_at?: Date | string
   }
 
@@ -29545,42 +29628,323 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
-  export type MessageCreateManySenderInput = {
+  export type ReviewCreateManyReviewerInput = {
     id?: string
-    conversation_id: string
-    text?: string | null
-    media_url?: string | null
-    read?: boolean
+    contract_id: string
+    rating: number
+    comment?: string | null
     created_at?: Date | string
   }
 
-  export type ConversationCreateManyParticipant_oneInput = {
+  export type WalletTransactionCreateManyUserInput = {
     id?: string
-    participant_two_id: string
-    contract_id?: string | null
-    last_message?: string | null
-    last_message_at?: Date | string | null
+    type: $Enums.TransactionType
+    amount: number
+    description?: string | null
+    balance_after: number
+    razorpay_payout_id?: string | null
     created_at?: Date | string
-    updated_at?: Date | string
+    status?: $Enums.WalletTransactionStatus
   }
 
-  export type ConversationCreateManyParticipant_twoInput = {
-    id?: string
-    participant_one_id: string
-    contract_id?: string | null
-    last_message?: string | null
-    last_message_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
-  export type AuditLogCreateManyAdminInput = {
-    id?: string
-    action: string
-    entity_type: string
-    entity_id: string
+  export type AuditLogUpdateWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entity_type?: StringFieldUpdateOperationsInput | string
+    entity_id?: StringFieldUpdateOperationsInput | string
     details?: NullableJsonNullValueInput | InputJsonValue
-    created_at?: Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entity_type?: StringFieldUpdateOperationsInput | string
+    entity_id?: StringFieldUpdateOperationsInput | string
+    details?: NullableJsonNullValueInput | InputJsonValue
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AuditLogUncheckedUpdateManyWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    entity_type?: StringFieldUpdateOperationsInput | string
+    entity_id?: StringFieldUpdateOperationsInput | string
+    details?: NullableJsonNullValueInput | InputJsonValue
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContractUpdateWithoutConsumerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
+    conversations?: ConversationUpdateManyWithoutContractNestedInput
+    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateWithoutConsumerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    listing_id?: StringFieldUpdateOperationsInput | string
+    farmer_id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateManyWithoutConsumerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    listing_id?: StringFieldUpdateOperationsInput | string
+    farmer_id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContractUpdateWithoutFarmerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
+    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
+    conversations?: ConversationUpdateManyWithoutContractNestedInput
+    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateWithoutFarmerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    listing_id?: StringFieldUpdateOperationsInput | string
+    consumer_id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
+    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateManyWithoutFarmerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    listing_id?: StringFieldUpdateOperationsInput | string
+    consumer_id?: StringFieldUpdateOperationsInput | string
+    crop?: StringFieldUpdateOperationsInput | string
+    acreage?: FloatFieldUpdateOperationsInput | number
+    price_per_acre?: FloatFieldUpdateOperationsInput | number
+    total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    escrow_held?: FloatFieldUpdateOperationsInput | number
+    farmer_paid?: FloatFieldUpdateOperationsInput | number
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConversationUpdateWithoutParticipant_oneInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contract?: ContractUpdateOneWithoutConversationsNestedInput
+    participant_two?: UserUpdateOneRequiredWithoutConversations_as_twoNestedInput
+    messages?: MessageUpdateManyWithoutConversationNestedInput
+  }
+
+  export type ConversationUncheckedUpdateWithoutParticipant_oneInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    participant_two_id?: StringFieldUpdateOperationsInput | string
+    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
+  }
+
+  export type ConversationUncheckedUpdateManyWithoutParticipant_oneInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    participant_two_id?: StringFieldUpdateOperationsInput | string
+    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ConversationUpdateWithoutParticipant_twoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contract?: ContractUpdateOneWithoutConversationsNestedInput
+    participant_one?: UserUpdateOneRequiredWithoutConversations_as_oneNestedInput
+    messages?: MessageUpdateManyWithoutConversationNestedInput
+  }
+
+  export type ConversationUncheckedUpdateWithoutParticipant_twoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    participant_one_id?: StringFieldUpdateOperationsInput | string
+    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
+  }
+
+  export type ConversationUncheckedUpdateManyWithoutParticipant_twoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    participant_one_id?: StringFieldUpdateOperationsInput | string
+    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUpdateWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    evidence_urls?: DisputeUpdateevidence_urlsInput | string[]
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contract?: ContractUpdateOneRequiredWithoutDisputesNestedInput
+  }
+
+  export type DisputeUncheckedUpdateWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    contract_id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    evidence_urls?: DisputeUpdateevidence_urlsInput | string[]
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DisputeUncheckedUpdateManyWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    contract_id?: StringFieldUpdateOperationsInput | string
+    reason?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    evidence_urls?: DisputeUpdateevidence_urlsInput | string[]
+    escrow_frozen?: FloatFieldUpdateOperationsInput | number
+    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EscrowLedgerUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
+    amount?: FloatFieldUpdateOperationsInput | number
+    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contract?: ContractUpdateOneRequiredWithoutEscrow_entriesNestedInput
+  }
+
+  export type EscrowLedgerUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    contract_id?: StringFieldUpdateOperationsInput | string
+    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
+    amount?: FloatFieldUpdateOperationsInput | number
+    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EscrowLedgerUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    contract_id?: StringFieldUpdateOperationsInput | string
+    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
+    amount?: FloatFieldUpdateOperationsInput | number
+    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FarmListingUpdateWithoutFarmerInput = {
@@ -29654,134 +30018,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ContractUpdateWithoutFarmerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUpdateManyWithoutContractNestedInput
-  }
-
-  export type ContractUncheckedUpdateWithoutFarmerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    listing_id?: StringFieldUpdateOperationsInput | string
-    consumer_id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
-  }
-
-  export type ContractUncheckedUpdateManyWithoutFarmerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    listing_id?: StringFieldUpdateOperationsInput | string
-    consumer_id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ContractUpdateWithoutConsumerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    listing?: FarmListingUpdateOneRequiredWithoutContractsNestedInput
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUpdateManyWithoutContractNestedInput
-  }
-
-  export type ContractUncheckedUpdateWithoutConsumerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    listing_id?: StringFieldUpdateOperationsInput | string
-    farmer_id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
-    deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
-    disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
-  }
-
-  export type ContractUncheckedUpdateManyWithoutConsumerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    listing_id?: StringFieldUpdateOperationsInput | string
-    farmer_id?: StringFieldUpdateOperationsInput | string
-    crop?: StringFieldUpdateOperationsInput | string
-    acreage?: FloatFieldUpdateOperationsInput | number
-    price_per_acre?: FloatFieldUpdateOperationsInput | number
-    total_amount?: FloatFieldUpdateOperationsInput | number
-    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    end_date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
-    escrow_held?: FloatFieldUpdateOperationsInput | number
-    farmer_paid?: FloatFieldUpdateOperationsInput | number
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type FarmUpdateUpdateWithoutFarmerInput = {
     id?: StringFieldUpdateOperationsInput | string
     media_url?: StringFieldUpdateOperationsInput | string
@@ -29818,135 +30054,30 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type EscrowLedgerUpdateWithoutUserInput = {
+  export type MessageUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
-    amount?: FloatFieldUpdateOperationsInput | number
-    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    media_url?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    contract?: ContractUpdateOneRequiredWithoutEscrow_entriesNestedInput
+    conversation?: ConversationUpdateOneRequiredWithoutMessagesNestedInput
   }
 
-  export type EscrowLedgerUncheckedUpdateWithoutUserInput = {
+  export type MessageUncheckedUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    contract_id?: StringFieldUpdateOperationsInput | string
-    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
-    amount?: FloatFieldUpdateOperationsInput | number
-    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
+    conversation_id?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    media_url?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type EscrowLedgerUncheckedUpdateManyWithoutUserInput = {
+  export type MessageUncheckedUpdateManyWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    contract_id?: StringFieldUpdateOperationsInput | string
-    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
-    amount?: FloatFieldUpdateOperationsInput | number
-    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DisputeUpdateWithoutReporterInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    reason?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    evidence_urls?: DisputeUpdateevidence_urlsInput | string[]
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
-    resolution?: NullableStringFieldUpdateOperationsInput | string | null
-    resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    contract?: ContractUpdateOneRequiredWithoutDisputesNestedInput
-  }
-
-  export type DisputeUncheckedUpdateWithoutReporterInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    contract_id?: StringFieldUpdateOperationsInput | string
-    reason?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    evidence_urls?: DisputeUpdateevidence_urlsInput | string[]
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
-    resolution?: NullableStringFieldUpdateOperationsInput | string | null
-    resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DisputeUncheckedUpdateManyWithoutReporterInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    contract_id?: StringFieldUpdateOperationsInput | string
-    reason?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    evidence_urls?: DisputeUpdateevidence_urlsInput | string[]
-    escrow_frozen?: FloatFieldUpdateOperationsInput | number
-    status?: EnumDisputeStatusFieldUpdateOperationsInput | $Enums.DisputeStatus
-    resolution?: NullableStringFieldUpdateOperationsInput | string | null
-    resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WalletTransactionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
-    amount?: FloatFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    balance_after?: FloatFieldUpdateOperationsInput | number
-    razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WalletTransactionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
-    amount?: FloatFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    balance_after?: FloatFieldUpdateOperationsInput | number
-    razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WalletTransactionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
-    amount?: FloatFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    balance_after?: FloatFieldUpdateOperationsInput | number
-    razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ReviewUpdateWithoutReviewerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    contract_id?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comment?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ReviewUncheckedUpdateWithoutReviewerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    contract_id?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comment?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ReviewUncheckedUpdateManyWithoutReviewerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    contract_id?: StringFieldUpdateOperationsInput | string
-    rating?: IntFieldUpdateOperationsInput | number
-    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    conversation_id?: StringFieldUpdateOperationsInput | string
+    text?: NullableStringFieldUpdateOperationsInput | string | null
+    media_url?: NullableStringFieldUpdateOperationsInput | string | null
+    read?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -29980,122 +30111,61 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type MessageUpdateWithoutSenderInput = {
+  export type ReviewUpdateWithoutReviewerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
-    media_url?: NullableStringFieldUpdateOperationsInput | string | null
-    read?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    conversation?: ConversationUpdateOneRequiredWithoutMessagesNestedInput
-  }
-
-  export type MessageUncheckedUpdateWithoutSenderInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    conversation_id?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
-    media_url?: NullableStringFieldUpdateOperationsInput | string | null
-    read?: BoolFieldUpdateOperationsInput | boolean
+    contract_id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type MessageUncheckedUpdateManyWithoutSenderInput = {
+  export type ReviewUncheckedUpdateWithoutReviewerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    conversation_id?: StringFieldUpdateOperationsInput | string
-    text?: NullableStringFieldUpdateOperationsInput | string | null
-    media_url?: NullableStringFieldUpdateOperationsInput | string | null
-    read?: BoolFieldUpdateOperationsInput | boolean
+    contract_id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ConversationUpdateWithoutParticipant_oneInput = {
+  export type ReviewUncheckedUpdateManyWithoutReviewerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    participant_two?: UserUpdateOneRequiredWithoutConversations_as_twoNestedInput
-    contract?: ContractUpdateOneWithoutConversationsNestedInput
-    messages?: MessageUpdateManyWithoutConversationNestedInput
-  }
-
-  export type ConversationUncheckedUpdateWithoutParticipant_oneInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    participant_two_id?: StringFieldUpdateOperationsInput | string
-    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
-  }
-
-  export type ConversationUncheckedUpdateManyWithoutParticipant_oneInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    participant_two_id?: StringFieldUpdateOperationsInput | string
-    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ConversationUpdateWithoutParticipant_twoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    participant_one?: UserUpdateOneRequiredWithoutConversations_as_oneNestedInput
-    contract?: ContractUpdateOneWithoutConversationsNestedInput
-    messages?: MessageUpdateManyWithoutConversationNestedInput
-  }
-
-  export type ConversationUncheckedUpdateWithoutParticipant_twoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    participant_one_id?: StringFieldUpdateOperationsInput | string
-    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
-  }
-
-  export type ConversationUncheckedUpdateManyWithoutParticipant_twoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    participant_one_id?: StringFieldUpdateOperationsInput | string
-    contract_id?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AuditLogUpdateWithoutAdminInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
-    entity_type?: StringFieldUpdateOperationsInput | string
-    entity_id?: StringFieldUpdateOperationsInput | string
-    details?: NullableJsonNullValueInput | InputJsonValue
+    contract_id?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AuditLogUncheckedUpdateWithoutAdminInput = {
+  export type WalletTransactionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
-    entity_type?: StringFieldUpdateOperationsInput | string
-    entity_id?: StringFieldUpdateOperationsInput | string
-    details?: NullableJsonNullValueInput | InputJsonValue
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balance_after?: FloatFieldUpdateOperationsInput | number
+    razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
   }
 
-  export type AuditLogUncheckedUpdateManyWithoutAdminInput = {
+  export type WalletTransactionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
-    entity_type?: StringFieldUpdateOperationsInput | string
-    entity_id?: StringFieldUpdateOperationsInput | string
-    details?: NullableJsonNullValueInput | InputJsonValue
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balance_after?: FloatFieldUpdateOperationsInput | number
+    razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
+  }
+
+  export type WalletTransactionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balance_after?: FloatFieldUpdateOperationsInput | number
+    razorpay_payout_id?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumWalletTransactionStatusFieldUpdateOperationsInput | $Enums.WalletTransactionStatus
   }
 
   export type ContractCreateManyListingInput = {
@@ -30106,6 +30176,7 @@ export namespace Prisma {
     acreage: number
     price_per_acre: number
     total_amount: number
+    total_cycles?: number
     start_date: Date | string
     end_date: Date | string
     status?: $Enums.ContractStatus
@@ -30122,6 +30193,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -30130,13 +30202,13 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
     consumer?: UserUpdateOneRequiredWithoutContracts_as_consumerNestedInput
-    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farmer?: UserUpdateOneRequiredWithoutContracts_as_farmerNestedInput
+    conversations?: ConversationUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUpdateManyWithoutContractNestedInput
     disputes?: DisputeUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUpdateManyWithoutContractNestedInput
   }
 
   export type ContractUncheckedUpdateWithoutListingInput = {
@@ -30147,6 +30219,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -30155,11 +30228,11 @@ export namespace Prisma {
     escrow_frozen?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
-    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
     deliveries?: DeliveryUncheckedUpdateManyWithoutContractNestedInput
     disputes?: DisputeUncheckedUpdateManyWithoutContractNestedInput
-    conversations?: ConversationUncheckedUpdateManyWithoutContractNestedInput
+    escrow_entries?: EscrowLedgerUncheckedUpdateManyWithoutContractNestedInput
+    farm_updates?: FarmUpdateUncheckedUpdateManyWithoutContractNestedInput
   }
 
   export type ContractUncheckedUpdateManyWithoutListingInput = {
@@ -30170,6 +30243,7 @@ export namespace Prisma {
     acreage?: FloatFieldUpdateOperationsInput | number
     price_per_acre?: FloatFieldUpdateOperationsInput | number
     total_amount?: FloatFieldUpdateOperationsInput | number
+    total_cycles?: IntFieldUpdateOperationsInput | number
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     end_date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
@@ -30180,27 +30254,14 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type FarmUpdateCreateManyContractInput = {
+  export type ConversationCreateManyContractInput = {
     id?: string
-    farmer_id: string
-    media_url: string
-    media_type: string
-    caption?: string | null
-    wage_released?: number
-    latitude?: number | null
-    longitude?: number | null
+    participant_one_id: string
+    participant_two_id: string
+    last_message?: string | null
+    last_message_at?: Date | string | null
     created_at?: Date | string
-  }
-
-  export type EscrowLedgerCreateManyContractInput = {
-    id?: string
-    user_id: string
-    event: $Enums.EscrowEvent
-    amount: number
-    transaction_type: $Enums.TransactionType
-    description?: string | null
-    razorpay_payment_id?: string | null
-    created_at?: Date | string
+    updated_at?: Date | string
   }
 
   export type DeliveryCreateManyContractInput = {
@@ -30230,83 +30291,59 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
-  export type ConversationCreateManyContractInput = {
+  export type EscrowLedgerCreateManyContractInput = {
     id?: string
-    participant_one_id: string
-    participant_two_id: string
-    last_message?: string | null
-    last_message_at?: Date | string | null
+    user_id: string
+    event: $Enums.EscrowEvent
+    amount: number
+    transaction_type: $Enums.TransactionType
+    description?: string | null
+    razorpay_payment_id?: string | null
     created_at?: Date | string
-    updated_at?: Date | string
   }
 
-  export type FarmUpdateUpdateWithoutContractInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    media_url?: StringFieldUpdateOperationsInput | string
-    media_type?: StringFieldUpdateOperationsInput | string
-    caption?: NullableStringFieldUpdateOperationsInput | string | null
-    wage_released?: FloatFieldUpdateOperationsInput | number
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    farmer?: UserUpdateOneRequiredWithoutFarm_updatesNestedInput
+  export type FarmUpdateCreateManyContractInput = {
+    id?: string
+    farmer_id: string
+    media_url: string
+    media_type: string
+    caption?: string | null
+    wage_released?: number
+    latitude?: number | null
+    longitude?: number | null
+    created_at?: Date | string
   }
 
-  export type FarmUpdateUncheckedUpdateWithoutContractInput = {
+  export type ConversationUpdateWithoutContractInput = {
     id?: StringFieldUpdateOperationsInput | string
-    farmer_id?: StringFieldUpdateOperationsInput | string
-    media_url?: StringFieldUpdateOperationsInput | string
-    media_type?: StringFieldUpdateOperationsInput | string
-    caption?: NullableStringFieldUpdateOperationsInput | string | null
-    wage_released?: FloatFieldUpdateOperationsInput | number
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    participant_one?: UserUpdateOneRequiredWithoutConversations_as_oneNestedInput
+    participant_two?: UserUpdateOneRequiredWithoutConversations_as_twoNestedInput
+    messages?: MessageUpdateManyWithoutConversationNestedInput
   }
 
-  export type FarmUpdateUncheckedUpdateManyWithoutContractInput = {
+  export type ConversationUncheckedUpdateWithoutContractInput = {
     id?: StringFieldUpdateOperationsInput | string
-    farmer_id?: StringFieldUpdateOperationsInput | string
-    media_url?: StringFieldUpdateOperationsInput | string
-    media_type?: StringFieldUpdateOperationsInput | string
-    caption?: NullableStringFieldUpdateOperationsInput | string | null
-    wage_released?: FloatFieldUpdateOperationsInput | number
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    participant_one_id?: StringFieldUpdateOperationsInput | string
+    participant_two_id?: StringFieldUpdateOperationsInput | string
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
   }
 
-  export type EscrowLedgerUpdateWithoutContractInput = {
+  export type ConversationUncheckedUpdateManyWithoutContractInput = {
     id?: StringFieldUpdateOperationsInput | string
-    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
-    amount?: FloatFieldUpdateOperationsInput | number
-    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
+    participant_one_id?: StringFieldUpdateOperationsInput | string
+    participant_two_id?: StringFieldUpdateOperationsInput | string
+    last_message?: NullableStringFieldUpdateOperationsInput | string | null
+    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutEscrow_entriesNestedInput
-  }
-
-  export type EscrowLedgerUncheckedUpdateWithoutContractInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
-    amount?: FloatFieldUpdateOperationsInput | number
-    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type EscrowLedgerUncheckedUpdateManyWithoutContractInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    user_id?: StringFieldUpdateOperationsInput | string
-    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
-    amount?: FloatFieldUpdateOperationsInput | number
-    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DeliveryUpdateWithoutContractInput = {
@@ -30390,36 +30427,73 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ConversationUpdateWithoutContractInput = {
+  export type EscrowLedgerUpdateWithoutContractInput = {
     id?: StringFieldUpdateOperationsInput | string
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
+    amount?: FloatFieldUpdateOperationsInput | number
+    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    participant_one?: UserUpdateOneRequiredWithoutConversations_as_oneNestedInput
-    participant_two?: UserUpdateOneRequiredWithoutConversations_as_twoNestedInput
-    messages?: MessageUpdateManyWithoutConversationNestedInput
+    user?: UserUpdateOneRequiredWithoutEscrow_entriesNestedInput
   }
 
-  export type ConversationUncheckedUpdateWithoutContractInput = {
+  export type EscrowLedgerUncheckedUpdateWithoutContractInput = {
     id?: StringFieldUpdateOperationsInput | string
-    participant_one_id?: StringFieldUpdateOperationsInput | string
-    participant_two_id?: StringFieldUpdateOperationsInput | string
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user_id?: StringFieldUpdateOperationsInput | string
+    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
+    amount?: FloatFieldUpdateOperationsInput | number
+    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
   }
 
-  export type ConversationUncheckedUpdateManyWithoutContractInput = {
+  export type EscrowLedgerUncheckedUpdateManyWithoutContractInput = {
     id?: StringFieldUpdateOperationsInput | string
-    participant_one_id?: StringFieldUpdateOperationsInput | string
-    participant_two_id?: StringFieldUpdateOperationsInput | string
-    last_message?: NullableStringFieldUpdateOperationsInput | string | null
-    last_message_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user_id?: StringFieldUpdateOperationsInput | string
+    event?: EnumEscrowEventFieldUpdateOperationsInput | $Enums.EscrowEvent
+    amount?: FloatFieldUpdateOperationsInput | number
+    transaction_type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpay_payment_id?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FarmUpdateUpdateWithoutContractInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    media_url?: StringFieldUpdateOperationsInput | string
+    media_type?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    wage_released?: FloatFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    farmer?: UserUpdateOneRequiredWithoutFarm_updatesNestedInput
+  }
+
+  export type FarmUpdateUncheckedUpdateWithoutContractInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    farmer_id?: StringFieldUpdateOperationsInput | string
+    media_url?: StringFieldUpdateOperationsInput | string
+    media_type?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    wage_released?: FloatFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FarmUpdateUncheckedUpdateManyWithoutContractInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    farmer_id?: StringFieldUpdateOperationsInput | string
+    media_url?: StringFieldUpdateOperationsInput | string
+    media_type?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    wage_released?: FloatFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MessageCreateManyConversationInput = {

@@ -1,64 +1,119 @@
-import { Alert } from 'react-native';
+import RazorpayCheckout from 'react-native-razorpay';
 import api from '../config/api';
 
 interface RazorpayOptions {
   amount: number;
   contract_id: string;
-  onSuccess: (data: any) => void;
-  onFailure: (error: any) => void;
+  currency?: string;
+  name?: string;
+  description?: string;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+}
+
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
 }
 
 /**
- * MOCK Razorpay integration for the prototype.
- * In a real app, you'd use 'react-native-razorpay' or WebView.
+ * Real Razorpay payment integration using react-native-razorpay SDK.
+ * Opens native Razorpay checkout flow and verifies payment on backend.
  */
 export const startRazorpayPayment = async ({
   amount,
   contract_id,
-  onSuccess,
-  onFailure,
-}: RazorpayOptions) => {
+  currency = 'INR',
+  name = 'FarmConnect',
+  description = 'Contract payment',
+  prefill = {},
+}: RazorpayOptions): Promise<RazorpayResponse> => {
   try {
     // 1. Create order on backend
-    const orderRes = await api.post<{ data: { id: string; amount: number } }>('/api/payments/order', {
+    const orderRes = await api.post<{ data: { id: string; amount: number; currency: string } }>('/api/payments/order', {
       amount,
       contract_id,
     });
 
     const order = orderRes.data.data;
 
-    // 2. Simulate User Checkout UI
-    Alert.alert(
-      'Secure Payment',
-      `Proceed to pay ₹${amount.toLocaleString('en-IN')} via Razorpay Secure?`,
-      [
-        { text: 'Cancel', style: 'cancel', onPress: () => onFailure(new Error('User cancelled')) },
-        {
-          text: 'Pay Now',
-          onPress: async () => {
-            // 3. Simulate success response from Razorpay
-            const mockPaymentId = `pay_${Math.random().toString(36).substring(7)}`;
-            const mockSignature = `sig_${Math.random().toString(36).substring(7)}`;
+    // 2. Open native Razorpay checkout
+    const options: any = {
+      description,
+      image: 'https://your-logo-url.com/logo.png',
+      currency: order.currency || currency,
+      key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
+      amount: String(order.amount),
+      name,
+      order_id: order.id,
+      prefill,
+      theme: { color: '#4cae4f' },
+    };
 
-            try {
-              // 4. Verify and deposit on backend
-              const depositRes = await api.post('/api/payments/escrow/deposit', {
-                contract_id,
-                amount,
-                razorpay_order_id: order.id,
-                razorpay_payment_id: mockPaymentId,
-                razorpay_signature: mockSignature,
-              });
+    const paymentData: RazorpayResponse = await RazorpayCheckout.open(options);
 
-              onSuccess(depositRes.data);
-            } catch (err) {
-              onFailure(err);
-            }
-          },
-        },
-      ]
-    );
-  } catch (err) {
-    onFailure(err);
+    // 3. Verify payment on backend
+    await api.post('/api/payments/escrow/deposit', {
+      contract_id,
+      amount,
+      razorpay_order_id: paymentData.razorpay_order_id,
+      razorpay_payment_id: paymentData.razorpay_payment_id,
+      razorpay_signature: paymentData.razorpay_signature,
+    });
+
+    return paymentData;
+  } catch (error: any) {
+    // Razorpay errors have code and description
+    if (error.code) {
+      throw new Error(error.description || 'Payment failed');
+    }
+    throw error;
+  }
+};
+
+/**
+ * Helper to open Razorpay checkout for wallet top-up (non-contract specific)
+ */
+export const startRazorpayWalletTopUp = async (
+  amount: number,
+  userId: string,
+): Promise<RazorpayResponse> => {
+  try {
+    const orderRes = await api.post<{ data: { id: string; amount: number } }>('/api/payments/order', {
+      amount,
+      user_id: userId,
+    });
+
+    const order = orderRes.data.data;
+
+    const options: any = {
+      description: 'Wallet top-up',
+      image: 'https://your-logo-url.com/logo.png',
+      currency: 'INR',
+      key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
+      amount: String(order.amount),
+      name: 'FarmConnect',
+      order_id: order.id,
+      theme: { color: '#4cae4f' },
+    };
+
+    const paymentData: RazorpayResponse = await RazorpayCheckout.open(options);
+
+    // Credit wallet on successful payment
+    await api.post('/api/wallet/credit-payment', {
+      razorpay_payment_id: paymentData.razorpay_payment_id,
+      amount,
+    });
+
+    return paymentData;
+  } catch (error: any) {
+    if (error.code) {
+      throw new Error(error.description || 'Payment failed');
+    }
+    throw error;
   }
 };

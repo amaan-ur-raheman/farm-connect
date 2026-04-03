@@ -151,13 +151,13 @@ exports.Prisma.UserScalarFieldEnum = {
   years_of_experience: 'years_of_experience',
   land_records_url: 'land_records_url',
   soil_type: 'soil_type',
-  investment_range: 'investment_range',
-  investment_goals: 'investment_goals',
-  preferred_farm_types: 'preferred_farm_types',
-  bank_name: 'bank_name',
   bank_account_number: 'bank_account_number',
   bank_ifsc: 'bank_ifsc',
-  farm_name: 'farm_name'
+  bank_name: 'bank_name',
+  farm_name: 'farm_name',
+  investment_goals: 'investment_goals',
+  investment_range: 'investment_range',
+  preferred_farm_types: 'preferred_farm_types'
 };
 
 exports.Prisma.FarmListingScalarFieldEnum = {
@@ -193,6 +193,7 @@ exports.Prisma.ContractScalarFieldEnum = {
   acreage: 'acreage',
   price_per_acre: 'price_per_acre',
   total_amount: 'total_amount',
+  total_cycles: 'total_cycles',
   start_date: 'start_date',
   end_date: 'end_date',
   status: 'status',
@@ -261,12 +262,12 @@ exports.Prisma.WalletTransactionScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
   type: 'type',
-  status: 'status',
   amount: 'amount',
   description: 'description',
   balance_after: 'balance_after',
   razorpay_payout_id: 'razorpay_payout_id',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  status: 'status'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -389,9 +390,9 @@ exports.TransactionType = exports.$Enums.TransactionType = {
 exports.DeliveryStatus = exports.$Enums.DeliveryStatus = {
   PENDING: 'PENDING',
   HARVESTED: 'HARVESTED',
-  IN_TRANSIT: 'IN_TRANSIT',
   DELIVERED: 'DELIVERED',
   VERIFIED: 'VERIFIED',
+  IN_TRANSIT: 'IN_TRANSIT',
   REJECTED: 'REJECTED'
 };
 

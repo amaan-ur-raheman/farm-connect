@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { HTTPError } from "ky";
-import api, { AuthUser } from "../config/api";
+import api, { AuthUser, BASE_URL } from "../config/api";
 
 export type UserRole = "investor" | "farmer" | null;
 
@@ -10,7 +10,11 @@ const getErrorMessage = async (
 	err: unknown,
 	fallback: string,
 ): Promise<string> => {
+	console.log('[Auth Error] Error type:', err?.constructor?.name || typeof err);
+	
 	if (err instanceof HTTPError) {
+		console.log('[Auth Error] HTTP Error status:', err.response?.status);
+		console.log('[Auth Error] HTTP Error body:', await err.response.text().catch(() => 'No body'));
 		try {
 			const body = (await err.response.json()) as { message?: string };
 			return body?.message || fallback;
@@ -18,7 +22,17 @@ const getErrorMessage = async (
 			return fallback;
 		}
 	}
-	if (err instanceof Error) return err.message || fallback;
+	if (err instanceof TypeError) {
+		console.log('[Auth Error] TypeError message:', err.message);
+		if (err.message.includes('Network') || err.message.includes('network')) {
+			return 'Cannot connect to server. Please check your internet connection.';
+		}
+		return err.message || fallback;
+	}
+	if (err instanceof Error) {
+		console.log('[Auth Error] Error message:', err.message);
+		return err.message || fallback;
+	}
 	return fallback;
 };
 
@@ -49,7 +63,9 @@ interface AuthState {
 	setUserRole: (role: UserRole) => void;
 	setPushToken: (token: string | null) => void;
 	loginWithOtp: (phone: string, otp: string) => Promise<boolean>;
-	sendOtp: (phone: string) => Promise<boolean>;
+	sendOtp: (
+		phone: string,
+	) => Promise<{ success: boolean; devOtp: string | null }>;
 	refreshTokens: () => Promise<string | null>;
 	logout: () => Promise<void>;
 	clearError: () => void;
@@ -79,17 +95,23 @@ export const useAuthStore = create<AuthState>()(
 
 			sendOtp: async (phone: string) => {
 				set({ isLoading: true, error: null });
+				console.log('[Auth] Sending OTP to:', phone);
+				console.log('[Auth] API URL being used:', BASE_URL);
 				try {
-					await api.post("/api/auth/otp/send", { phone });
+					const response = await api.post("/api/auth/otp/send", {
+						phone,
+					});
+					console.log('[Auth] OTP send response:', JSON.stringify(response.data));
+					const devOtp = (response.data as any)?.data?.devOtp || null;
 					set({ isLoading: false, phone });
-					return true;
+					return { success: true, devOtp };
 				} catch (err: unknown) {
 					const message = await getErrorMessage(
 						err,
 						"Failed to send OTP",
 					);
 					set({ isLoading: false, error: message });
-					return false;
+					return { success: false, devOtp: null };
 				}
 			},
 
@@ -97,11 +119,15 @@ export const useAuthStore = create<AuthState>()(
 				set({ isLoading: true, error: null });
 				try {
 					const { pushToken } = get();
-					const response = await api.post("/api/auth/otp/verify", {
+					const requestBody: { phone: string; otp: string; fcmToken?: string } = {
 						phone,
 						otp,
-						fcmToken: pushToken,
-					});
+					};
+					// Only include fcmToken if it has a value (backend rejects null)
+					if (pushToken) {
+						requestBody.fcmToken = pushToken;
+					}
+					const response = await api.post("/api/auth/otp/verify", requestBody);
 					const { user, accessToken, refreshToken } = (
 						response.data as any
 					).data;
@@ -138,6 +164,16 @@ export const useAuthStore = create<AuthState>()(
 					).data;
 
 					set({ accessToken, refreshToken: newRefreshToken });
+
+					// Reconnect socket with new token
+					try {
+						const { reconnectWithNewToken } =
+							require("./socketStore").useSocketStore.getState();
+						reconnectWithNewToken();
+					} catch (err) {
+						console.log("Socket reconnection failed:", err);
+					}
+
 					return accessToken;
 				} catch {
 					set({

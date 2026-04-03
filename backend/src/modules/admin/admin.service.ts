@@ -45,20 +45,28 @@ export const handleKycAction = async (adminId: string, userId: string, action: "
 	return result;
 };
 
-export const getAllDisputes = async () => {
-	return prisma.dispute.findMany({
-		include: {
-			reporter: { select: { id: true, name: true, phone: true } },
-			contract: {
-				include: {
-					farmer: { select: { id: true, name: true, phone: true } },
-					consumer: { select: { id: true, name: true, phone: true } },
-					listing: { select: { name: true } },
+export const getAllDisputes = async (page = 1, limit = 20) => {
+	const skip = (page - 1) * limit;
+	const [disputes, total] = await Promise.all([
+		prisma.dispute.findMany({
+			include: {
+				reporter: { select: { id: true, name: true, phone: true } },
+				contract: {
+					include: {
+						farmer: { select: { id: true, name: true, phone: true } },
+						consumer: { select: { id: true, name: true, phone: true } },
+						listing: { select: { name: true } },
+					},
 				},
 			},
-		},
-		orderBy: { created_at: "desc" },
-	});
+			orderBy: { created_at: "desc" },
+			skip,
+			take: limit,
+		}),
+		prisma.dispute.count(),
+	]);
+
+	return { disputes, total, page, limit, totalPages: Math.ceil(total / limit) };
 };
 
 export const resolveAdminDispute = async (disputeId: string, adminId: string, input: ResolveDisputeInput) => {
@@ -70,26 +78,42 @@ export const resolveAdminDispute = async (disputeId: string, adminId: string, in
 	return result;
 };
 
-export const getAllUsers = async () => {
-	return prisma.user.findMany({
-		orderBy: { created_at: "desc" },
-		select: {
-			id: true,
-			name: true,
-			phone: true,
-			email: true,
-			role: true,
-			kyc_status: true,
-			created_at: true,
-		},
-	});
+export const getAllUsers = async (page = 1, limit = 20) => {
+	const skip = (page - 1) * limit;
+	const [users, total] = await Promise.all([
+		prisma.user.findMany({
+			orderBy: { created_at: "desc" },
+			select: {
+				id: true,
+				name: true,
+				phone: true,
+				email: true,
+				role: true,
+				kyc_status: true,
+				created_at: true,
+			},
+			skip,
+			take: limit,
+		}),
+		prisma.user.count(),
+	]);
+
+	return { users, total, page, limit, totalPages: Math.ceil(total / limit) };
 };
 
-export const getAllListings = async () => {
-	return prisma.farmListing.findMany({
-		orderBy: { created_at: "desc" },
-		include: {
-			farmer: { select: { id: true, name: true, phone: true } },
-		},
-	});
+export const getAllListings = async (page = 1, limit = 20) => {
+	const skip = (page - 1) * limit;
+	const [listings, total] = await Promise.all([
+		prisma.farmListing.findMany({
+			orderBy: { created_at: "desc" },
+			include: {
+				farmer: { select: { id: true, name: true, phone: true } },
+			},
+			skip,
+			take: limit,
+		}),
+		prisma.farmListing.count(),
+	]);
+
+	return { listings, total, page, limit, totalPages: Math.ceil(total / limit) };
 };
