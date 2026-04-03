@@ -6,6 +6,7 @@ import {
 } from "@/shared/errors";
 import { createNotification } from "@/modules/notification/notification.service";
 import { io } from "@/server";
+import { escrowQueue } from "@/config/queue";
 import type { CreateDisputeInput, ResolveDisputeInput } from "./dispute.schema";
 
 export const createDispute = async (
@@ -34,6 +35,12 @@ export const createDispute = async (
 	});
 	if (existing) throw new ForbiddenError("Active dispute already exists");
 
+	// Get latest update to cancel its auto-release
+	const latestUpdate = await prisma.farmUpdate.findFirst({
+		where: { contract_id: input.contract_id },
+		orderBy: { created_at: "desc" },
+	});
+
 	const dispute = await prisma.dispute.create({
 		data: {
 			contract_id: input.contract_id,
@@ -43,6 +50,18 @@ export const createDispute = async (
 			escrow_frozen: contract.escrow_held,
 		},
 	});
+
+	// Freeze escrow in the contract
+	await prisma.contract.update({
+		where: { id: input.contract_id },
+		data: { status: "DISPUTED", escrow_frozen: contract.escrow_held },
+	});
+
+	// Cancel scheduled release if any
+	if (latestUpdate) {
+		await escrowQueue.remove(`release-update-${latestUpdate.id}`);
+		console.log(`[Dispute] Cancelled auto-release for update ${latestUpdate.id}`);
+	}
 
 	const otherUser =
 		contract.farmer_id === reporterId

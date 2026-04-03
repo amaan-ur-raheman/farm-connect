@@ -159,13 +159,14 @@ export const getEscrowLedger = async (contractId: string) => {
 export const scheduleEscrowRelease = async (
 	contractId: string,
 	farmerId: string,
+	updateId: string,
 	amount: number,
 	delayInMs: number,
 ) => {
 	await escrowQueue.add(
-		`release-${contractId}-${Date.now()}`,
+		`release-update-${updateId}`,
 		{ contractId, farmerId, amount },
-		{ delay: delayInMs },
+		{ delay: delayInMs, jobId: `release-update-${updateId}` },
 	);
 };
 

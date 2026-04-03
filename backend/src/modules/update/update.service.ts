@@ -1,12 +1,13 @@
 import { prisma } from '@/config/database';
 import { NotFoundError, ForbiddenError } from '@/shared/errors';
+import { scheduleEscrowRelease } from '../escrow/escrow.service';
 
 export const createFarmUpdate = async (farmerId: string, contractId: string, caption?: string, mediaUrl?: string, mediaType?: string, latitude?: number, longitude?: number) => {
   const contract = await prisma.contract.findUnique({ where: { id: contractId } });
   if (!contract) throw new NotFoundError('Contract');
   if (contract.farmer_id !== farmerId) throw new ForbiddenError('Not your contract');
 
-  return prisma.farmUpdate.create({
+  const update = await prisma.farmUpdate.create({
     data: {
       contract_id: contractId,
       farmer_id: farmerId,
@@ -17,6 +18,15 @@ export const createFarmUpdate = async (farmerId: string, contractId: string, cap
       longitude,
     },
   });
+
+  // Calculate release amount: total / total_cycles
+  const releaseAmount = contract.total_amount / (contract.total_cycles || 1);
+  
+  // Schedule release in 48 hours (in ms)
+  const DELAY_48_HOURS = 48 * 60 * 60 * 1000;
+  await scheduleEscrowRelease(contractId, farmerId, update.id, releaseAmount, DELAY_48_HOURS);
+
+  return update;
 };
 
 export const getContractUpdates = async (contractId: string) => {

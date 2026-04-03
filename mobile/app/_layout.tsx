@@ -90,14 +90,48 @@ function RootLayoutNav() {
 		return () => clearInterval(interval);
 	}, [isAuthenticated, refreshUnreadCounts]);
 
-	// Refresh unread counts when app comes to foreground
+	// Handle notification response (tap on notification) for deep linking
 	useEffect(() => {
 		if (!isAuthenticated) return;
-		const subscription = Notifications.addNotificationResponseReceivedListener(() => {
+
+		const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+			const data = response.notification.request.content.data;
+			
+			if (data.screen) {
+				const screen = data.screen as string;
+				const id = data.id as string;
+
+				switch (screen) {
+					case 'chat':
+						router.push(`/chat/${id}`);
+						break;
+					case 'contract':
+						router.push(`/contracts/${id}`);
+						break;
+					case 'delivery':
+						router.push('/deliveries');
+						break;
+					case 'dispute':
+						router.push('/disputes');
+						break;
+					case 'update':
+						router.push(`/updates/${id}`);
+						break;
+					case 'notification':
+						router.push('/notifications');
+						break;
+					default:
+						router.push('/notifications');
+				}
+			} else {
+				router.push('/notifications');
+			}
+			
 			refreshUnreadCounts();
 		});
+
 		return () => subscription.remove();
-	}, [isAuthenticated, refreshUnreadCounts]);
+	}, [isAuthenticated, refreshUnreadCounts, router]);
 
 	useEffect(() => {
 		// Register push notifications silently
