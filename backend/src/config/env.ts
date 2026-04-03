@@ -15,6 +15,10 @@ const envSchema = z.object({
   REFRESH_TOKEN_EXPIRY: z.string().default('7d'),
   UPSTASH_REDIS_REST_URL: z.string().url('Invalid Redis URL'),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1, 'Redis token is required'),
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z.string().default('6379'),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_USERNAME: z.string().optional(),
   TWILIO_ACCOUNT_SID: z.string().optional(),
   TWILIO_AUTH_TOKEN: z.string().optional(),
   TWILIO_PHONE_NUMBER: z.string().optional(),
@@ -63,6 +67,10 @@ export const env = {
   redis: {
     url: envConfig.UPSTASH_REDIS_REST_URL,
     token: envConfig.UPSTASH_REDIS_REST_TOKEN,
+    host: envConfig.REDIS_HOST,
+    port: parseInt(envConfig.REDIS_PORT, 10),
+    password: envConfig.REDIS_PASSWORD,
+    username: envConfig.REDIS_USERNAME,
   },
 
   twilio: {

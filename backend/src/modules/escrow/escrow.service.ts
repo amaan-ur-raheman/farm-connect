@@ -5,6 +5,7 @@ import {
 	ForbiddenError,
 } from "@/shared/errors";
 import { createTransaction } from "@/modules/wallet/wallet.service";
+import { escrowQueue } from "@/config/queue";
 
 export const createEscrowDeposit = async (
 	contractId: string,
@@ -153,4 +154,44 @@ export const getEscrowLedger = async (contractId: string) => {
 		where: { contract_id: contractId },
 		orderBy: { created_at: "desc" },
 	});
+};
+
+export const scheduleEscrowRelease = async (
+	contractId: string,
+	farmerId: string,
+	amount: number,
+	delayInMs: number,
+) => {
+	await escrowQueue.add(
+		`release-${contractId}-${Date.now()}`,
+		{ contractId, farmerId, amount },
+		{ delay: delayInMs },
+	);
+};
+
+export const processEscrowRelease = async (
+	contractId: string,
+	farmerId: string,
+	amount: number,
+) => {
+	console.log(
+		`[EscrowWorker] Processing escrow release: contract=${contractId}, farmer=${farmerId}, amount=${amount}`,
+	);
+
+	const contract = await prisma.contract.findUnique({
+		where: { id: contractId },
+	});
+
+	if (!contract || contract.status !== "ACTIVE") {
+		console.warn(`[EscrowWorker] Contract ${contractId} not found or not active`);
+		return;
+	}
+
+	// Check if already paid or disputed
+	if (contract.escrow_held < amount) {
+		console.warn(`[EscrowWorker] Insufficient escrow for contract ${contractId}`);
+		return;
+	}
+
+	await releaseWageToFarmer(contractId, farmerId, amount, "Automated escrow release");
 };
