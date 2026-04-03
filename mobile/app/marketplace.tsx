@@ -26,7 +26,7 @@ import {
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import { Button } from '../src/components/ui/Button';
-import { useMarketplaceStore } from '../src/stores';
+import { useMarketplaceStore, useAuthStore } from '../src/stores';
 import api, { Listing } from '../src/config/api';
 
 const mapListingToProperty = (listing: Listing) => ({
@@ -66,6 +66,7 @@ export default function MarketplaceScreen() {
     setIsLoading,
     isLoading,
   } = useMarketplaceStore();
+  const { userRole } = useAuthStore();
 
   const fetchListings = useCallback(async (page = 1, search?: string, filter?: string | null) => {
     setIsLoading(true);
@@ -401,7 +402,10 @@ export default function MarketplaceScreen() {
              <Tractor size={22} color={activeTab === 'Contracts' ? '#4cae4f' : '#6b7280'} />
           </TouchableOpacity>
           <TouchableOpacity 
-            onPress={() => { setActiveTab('Management'); router.push('/dashboard'); }}
+            onPress={() => { 
+              setActiveTab('Management'); 
+              router.push(userRole === 'investor' ? '/investor-dashboard' : '/dashboard'); 
+            }}
             className="items-center"
           >
              <View className={`size-1.5 rounded-full mb-1 ${activeTab === 'Management' ? 'bg-[#4cae4f]' : 'bg-transparent'}`} />
