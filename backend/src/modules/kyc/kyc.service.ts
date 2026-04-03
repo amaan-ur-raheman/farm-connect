@@ -64,12 +64,21 @@ export const rejectKyc = async (userId: string, reason: string) => {
 		},
 	});
 
-	await createNotification(
-		userId,
-		"GENERAL",
-		"KYC Rejected",
-		`Your KYC verification was rejected: ${reason}`,
-	);
-
 	return updated;
+};
+
+export const uploadKycDocuments = async (
+	userId: string,
+	documents: Record<string, string>,
+) => {
+	const user = await prisma.user.findUnique({ where: { id: userId } });
+	if (!user) throw new NotFoundError("User");
+
+	return prisma.user.update({
+		where: { id: userId },
+		data: {
+			kyc_status: "SUBMITTED",
+			kyc_documents: documents,
+		},
+	});
 };
