@@ -73,6 +73,10 @@ export const useUserStore = create<UserState>()(
           const response = await api.get<{ data: AuthUser }>('/api/users/me');
           const user = response.data.data;
           const nameParts = (user.name || '').trim().split(' ');
+          
+          // Sync with AuthStore
+          useAuthStore.setState({ authUser: user });
+
           set({
             profile: {
               ...user,

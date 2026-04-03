@@ -191,11 +191,13 @@ export default function ProfileScreen() {
                       </View>
                       <View className={`px-3 py-1 rounded-full ${
                         kycStatus === 'VERIFIED' ? 'bg-green-100 dark:bg-green-900/30' : 
+                        kycStatus === 'SUBMITTED' ? 'bg-blue-100 dark:bg-blue-900/30' :
                         kycStatus === 'PENDING' ? 'bg-yellow-100 dark:bg-yellow-900/30' : 
                         'bg-red-100 dark:bg-red-900/30'
                       }`}>
                          <Text className={`text-[10px] font-bold uppercase ${
                           kycStatus === 'VERIFIED' ? 'text-green-700' : 
+                          kycStatus === 'SUBMITTED' ? 'text-blue-700' :
                           kycStatus === 'PENDING' ? 'text-yellow-700' : 'text-red-700'
                          }`}>
                           KYC: {kycStatus}

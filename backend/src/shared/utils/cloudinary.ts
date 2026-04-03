@@ -13,7 +13,7 @@ export const uploadToCloudinary = (
 ): Promise<string> => {
 	return new Promise((resolve, reject) => {
 		const stream = cloudinary.uploader.upload_stream(
-			{ folder },
+			{ folder, resource_type: 'auto' },
 			(err, result) => {
 				if (err) reject(err);
 				else resolve(result!.secure_url);
