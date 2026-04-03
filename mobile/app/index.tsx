@@ -15,7 +15,7 @@ export default function Index() {
     if (userRole === 'farmer') {
       router.replace('/dashboard');
     } else if (userRole === 'investor') {
-      router.replace('/marketplace');
+      router.replace('/investor-dashboard');
     } else {
       router.replace('/login');
     }
