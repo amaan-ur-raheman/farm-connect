@@ -5,6 +5,7 @@ import app from "./app";
 import { env } from "./config/env";
 import { prisma } from "./config/database";
 import { getRefreshToken } from "./config/redis";
+import "./modules/escrow/escrow.worker";
 
 const httpServer = http.createServer(app);
 
@@ -41,14 +42,18 @@ io.on("connection", (socket) => {
 	socket.join(socket.data.userId);
 });
 
-httpServer.listen(env.port, () => {
-	console.log(`🚀 Server running on port ${env.port} in ${env.node} mode`);
-	console.log(`📖 Health check: http://localhost:${env.port}/health`);
-});
+if (env.node !== "test") {
+	httpServer.listen(env.port, () => {
+		console.log(`🚀 Server running on port ${env.port} in ${env.node} mode`);
+		console.log(`📖 Health check: http://localhost:${env.port}/health`);
+	});
+}
 
 const shutdown = async () => {
 	console.log("\nShutting down gracefully...");
-	await prisma.$disconnect();
+	if (typeof prisma.$disconnect === "function") {
+		await prisma.$disconnect();
+	}
 	httpServer.close(() => {
 		console.log("Server closed");
 		process.exit(0);

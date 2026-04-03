@@ -2,29 +2,35 @@ import { Worker, Job } from "bullmq";
 import { redisConnection } from "@/config/queue";
 import { processEscrowRelease } from "./escrow.service";
 
+import { env } from "@/config/env";
+
 interface EscrowJobData {
 	contractId: string;
 	farmerId: string;
 	amount: number;
 }
 
-const escrowWorker = new Worker<EscrowJobData>(
-	"escrow-release",
-	async (job: Job<EscrowJobData>) => {
-		const { contractId, farmerId, amount } = job.data;
-		await processEscrowRelease(contractId, farmerId, amount);
-	},
-	{ connection: redisConnection },
-);
+let escrowWorker: Worker<EscrowJobData> | undefined;
 
-escrowWorker.on("completed", (job) => {
-	console.log(`[EscrowWorker] Job ${job.id} completed successfully`);
-});
+if (env.node !== "test") {
+	escrowWorker = new Worker<EscrowJobData>(
+		"escrow-release",
+		async (job: Job<EscrowJobData>) => {
+			const { contractId, farmerId, amount } = job.data;
+			await processEscrowRelease(contractId, farmerId, amount);
+		},
+		{ connection: redisConnection },
+	);
 
-escrowWorker.on("failed", (job, err) => {
-	console.error(`[EscrowWorker] Job ${job?.id} failed: ${err.message}`);
-});
+	escrowWorker.on("completed", (job) => {
+		console.log(`[EscrowWorker] Job ${job.id} completed successfully`);
+	});
 
-console.log("[EscrowWorker] Escrow release worker started");
+	escrowWorker.on("failed", (job, err) => {
+		console.error(`[EscrowWorker] Job ${job?.id} failed: ${err.message}`);
+	});
+
+	console.log("[EscrowWorker] Escrow release worker started");
+}
 
 export default escrowWorker;
