@@ -8,7 +8,7 @@ interface UiState {
   globalSearchQuery: string;
   isLoading: boolean;
   loadingMessage: string;
-  toasts: Toast[];
+  toasts: UiToast[];
 
   setTheme: (theme: Theme) => void;
   toggleSearch: () => void;
@@ -16,12 +16,12 @@ interface UiState {
   setGlobalSearchQuery: (query: string) => void;
   clearSearch: () => void;
   setIsLoading: (isLoading: boolean, message?: string) => void;
-  showToast: (toast: Omit<Toast, 'id'>) => void;
+  showToast: (toast: Omit<UiToast, 'id'>) => void;
   dismissToast: (id: string) => void;
   clearAllToasts: () => void;
 }
 
-export interface Toast {
+export interface UiToast {
   id: string;
   type: 'success' | 'error' | 'info' | 'warning';
   title: string;
@@ -59,7 +59,7 @@ export const useUiStore = create<UiState>((set) => ({
 
   showToast: (toast) => {
     const id = `toast-${++toastCounter}`;
-    const newToast: Toast = { ...toast, id };
+    const newToast: UiToast = { ...toast, id };
     
     set((state) => ({
       toasts: [...state.toasts, newToast],

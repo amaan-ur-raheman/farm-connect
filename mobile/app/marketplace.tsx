@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   ScrollView,
-  Image,
   TouchableOpacity,
   StatusBar,
   TextInput,
@@ -11,151 +10,126 @@ import {
   RefreshControl,
   FlatList,
 } from 'react-native';
+import { Image } from 'expo-image';
 import {
-  Search,
   MapPin,
+  Heart,
   Grid3X3,
   List,
-  Tractor,
-  Heart,
-  ChevronLeft,
-  ChevronRight,
+  Search,
+  X,
   ShieldCheck,
   Droplets,
-  X,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import { Button } from '../src/components/ui/Button';
-import { useMarketplaceStore, useAuthStore } from '../src/stores';
+import { useMarketplaceStore, Property } from '../src/stores';
 import api, { Listing } from '../src/config/api';
 import { haptic } from '../src/utils/haptics';
-import { cache, CACHE_KEYS } from '../src/utils/cache';
+import { getCardImage } from '../src/utils/image';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { SkeletonCard } from '../src/components/ui/SkeletonCard';
+import { PropertyCard } from '../src/components/ui/PropertyCard';
 
-const mapListingToProperty = (listing: Listing) => ({
+const mapListingToProperty = (listing: Listing): Property => ({
   id: listing.id,
   title: listing.name,
   location: listing.location_name,
-  price: `₹${listing.price_per_acre.toLocaleString('en-IN')}`,
+  price: `₹${(listing.price_per_acre / 1000).toFixed(0)}k`,
   size: `${listing.area_acres} Acres`,
-  soil: listing.soil_type || '',
-  image: listing.images?.[0] || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800',
-  verified: listing.farmer?.kyc_status === 'VERIFIED',
-  remoteReady: listing.is_organic,
-  newListing: listing.status === 'ACTIVE',
-  irrigated: !!listing.irrigation_type,
+  soil: listing.soil_type || 'Unknown',
+  image: getCardImage(listing.images?.[0] || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800'),
+  verified: true,
+  newListing: new Date(listing.created_at || '').getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000,
+  irrigated: listing.irrigation_type ? listing.irrigation_type !== 'Rainfed' : false,
+  remoteReady: true,
   rating: 4.5,
   type: listing.crops?.[0] || 'Farm',
   isOrganic: listing.is_organic,
 });
 
 export default function MarketplaceScreen() {
-  const [activeTab, setActiveTab] = React.useState('Marketplace');
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
 
-  const {
-    viewMode,
-    setViewMode,
-    toggleFavorite,
-    isFavorite,
-    currentPage,
-    setCurrentPage,
-    setProperties,
-    setIsLoading,
-    isLoading,
-  } = useMarketplaceStore();
-  const { userRole } = useAuthStore();
-  const searchTimeout = useRef<NodeJS.Timeout>();
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { toggleFavorite, isFavorite, viewMode, setViewMode } = useMarketplaceStore();
 
-  const fetchListings = useCallback(async (page = 1, search?: string, filter?: string | null, append = false) => {
-    if (!append) {
-      setIsLoading(true);
-    } else {
-      setLoadingMore(true);
-    }
-    
-    try {
-      const params = new URLSearchParams();
-      params.set('limit', '12');
-      params.set('page', page.toString());
-      if (search) params.set('search', search);
-      if (filter === 'organic') params.set('is_organic', 'true');
-      if (filter === 'price_low') params.set('sort', 'price_asc');
-      if (filter === 'price_high') params.set('sort', 'price_desc');
-      if (filter === 'newest') params.set('sort', 'newest');
-
-      const response = await api.get<{ data: Listing[]; pagination: { total: number; pages: number } }>(`/api/listings?${params.toString()}`);
-      const result = response.data;
-      const newListings = result.data || [];
-      
-      if (append) {
-        setListings(prev => [...prev, ...newListings]);
-        setProperties(prev => [...prev, ...newListings.map(mapListingToProperty)]);
-      } else {
-        setListings(newListings);
-        setProperties(newListings.map(mapListingToProperty) || []);
-      }
-      
-      setTotalCount(result.pagination?.total || 0);
-      setTotalPages(result.pagination?.pages || 1);
-      setHasMore(page < (result.pagination?.pages || 1));
-      
-      // Cache the results
-      if (!append && !search && !filter) {
-        cache.set(CACHE_KEYS.LISTINGS, { listings: newListings, total: result.pagination?.total }, 5 * 60 * 1000);
-      }
-    } catch {
-      // silent fail
-    } finally {
-      setIsLoading(false);
-      setLoadingMore(false);
-    }
-  }, [setIsLoading, setProperties]);
-
+  // Debounce search input
   useEffect(() => {
-    fetchListings(currentPage);
-  }, [currentPage, fetchListings]);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    setCurrentPage(1);
-    fetchListings(1, searchQuery, activeFilter).finally(() => setRefreshing(false));
-  };
-
-  const handleSearch = (query?: string) => {
-    const search = query !== undefined ? query : searchQuery;
-    
-    // Clear existing timeout
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
-    
-    // Debounce search by 300ms
     searchTimeout.current = setTimeout(() => {
-      setCurrentPage(1);
-      fetchListings(1, search, activeFilter);
+      setDebouncedSearch(searchQuery);
     }, 300);
+    return () => {
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    };
+  }, [searchQuery]);
+
+  const fetchListingsPage = async ({ pageParam = 1 }) => {
+    const params = new URLSearchParams();
+    params.set('limit', '12');
+    params.set('page', pageParam.toString());
+    if (debouncedSearch) params.set('search', debouncedSearch);
+    if (activeFilter === 'organic') params.set('is_organic', 'true');
+    if (activeFilter === 'price_low') params.set('sort', 'price_asc');
+    if (activeFilter === 'price_high') params.set('sort', 'price_desc');
+    if (activeFilter === 'newest') params.set('sort', 'newest');
+
+    // Use getFull to preserve the response envelope including pagination
+    // Backend returns: { success: true, data: [...], pagination: {...} }
+    const response = await api.getFull<{ success: boolean; data: Listing[]; pagination: { total: number; pages: number } }>(`/api/listings?${params.toString()}`);
+    
+    const listings = response.data.data || [];
+    const pagination = response.data.pagination;
+    
+    return {
+      listings,
+      pagination,
+      nextPage: pageParam < (pagination?.pages || 1) ? pageParam + 1 : undefined,
+    };
+  };
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+    isRefetching
+  } = useInfiniteQuery({
+    queryKey: ['listings', debouncedSearch, activeFilter],
+    queryFn: fetchListingsPage,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+  });
+
+  const listings = data?.pages.flatMap(page => page.listings) || [];
+  const totalCount = data?.pages[0]?.pagination?.total || 0;
+
+  const onRefresh = () => {
+    haptic.light();
+    refetch();
+  };
+
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
   };
 
   const handleFilterChange = (filter: string) => {
     haptic.light();
-    const newFilter = activeFilter === filter ? null : filter;
-    setActiveFilter(newFilter);
-    setCurrentPage(1);
-    fetchListings(1, searchQuery, newFilter);
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    fetchListings(page, searchQuery, activeFilter);
+    setActiveFilter(activeFilter === filter ? null : filter);
   };
 
   const filterOptions = [
@@ -165,245 +139,182 @@ export default function MarketplaceScreen() {
     { key: 'price_high', label: 'Price: High' },
   ];
 
+  const renderHeader = () => (
+    <View>
+      {/* Map Section */}
+      <View className="relative w-full h-[200px] bg-[#eaf0ea] dark:bg-[#2a352a] overflow-hidden">
+         <Image
+           source={{ uri: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940' }}
+           style={{ width: '100%', height: '100%', opacity: 0.6 }}
+           contentFit="cover"
+         />
+      </View>
+
+      {/* Discovery Area */}
+      <View className="px-4 py-8">
+         {/* Results Header */}
+         <View className="flex-col justify-between gap-4 mb-6">
+            <View>
+               <Text className="text-2xl font-bold text-[#111811] dark:text-white">Find your perfect plot</Text>
+               <Text className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                 {isLoading ? 'Searching...' : `Showing ${listings.length} of ${totalCount} properties`}
+               </Text>
+            </View>
+            
+            <View className="flex-row items-center gap-3 bg-white dark:bg-[#1e291e] p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+               <TouchableOpacity 
+                 onPress={() => { haptic.light(); setViewMode('grid'); }}
+                 className={`p-2 rounded ${viewMode === 'grid' ? 'bg-[#4cae4f]/10' : ''}`}
+               >
+                  <Grid3X3 size={18} color={viewMode === 'grid' ? '#4cae4f' : '#6b7280'} />
+               </TouchableOpacity>
+               <TouchableOpacity 
+                 onPress={() => { haptic.light(); setViewMode('list'); }}
+                 className={`p-2 rounded ${viewMode === 'list' ? 'bg-[#4cae4f]/10' : ''}`}
+               >
+                  <List size={18} color={viewMode === 'list' ? '#4cae4f' : '#6b7280'} />
+               </TouchableOpacity>
+            </View>
+         </View>
+
+         {/* Search & Filters */}
+         <View className="bg-white dark:bg-[#1e291e] rounded-xl shadow-lg p-4 border border-gray-100 dark:border-gray-800 mb-8">
+            <View className="flex-row items-center gap-2 mb-4">
+               <View className="flex-1 flex-row items-center bg-[#f9fbf9] dark:bg-[#151d15] border border-gray-200 dark:border-gray-700 rounded-lg px-3">
+                  <Search size={18} color="#94a3b8" />
+                  <TextInput
+                    className="flex-1 py-2.5 px-2 text-sm text-[#111811] dark:text-white font-medium"
+                    placeholder="Search farms, crops, or locations..."
+                    placeholderTextColor="#94a3b8"
+                    value={searchQuery}
+                    onChangeText={handleSearch}
+                    returnKeyType="search"
+                  />
+                  {searchQuery.length > 0 && (
+                    <TouchableOpacity onPress={() => { haptic.light(); setSearchQuery(''); }}>
+                      <X size={18} color="#94a3b8" />
+                    </TouchableOpacity>
+                  )}
+               </View>
+            </View>
+            
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
+               {filterOptions.map((option) => (
+                 <TouchableOpacity
+                   key={option.key}
+                   onPress={() => handleFilterChange(option.key)}
+                   className={`flex-row items-center gap-1 px-3 py-2 rounded-lg border ${
+                     activeFilter === option.key
+                       ? 'bg-[#4cae4f] border-[#4cae4f]'
+                       : 'bg-[#f9fbf9] dark:bg-[#151d15] border-gray-200 dark:border-gray-700'
+                   }`}
+                 >
+                    <Text className={`text-xs font-medium ${
+                      activeFilter === option.key ? 'text-white' : 'text-gray-700 dark:text-gray-300'
+                    }`}>
+                      {option.label}
+                    </Text>
+                 </TouchableOpacity>
+               ))}
+            </ScrollView>
+         </View>
+      </View>
+    </View>
+  );
+
+  const renderFooter = () => {
+    if (isFetchingNextPage) {
+      return (
+        <View className="py-8 items-center">
+          <ActivityIndicator color="#4cae4f" />
+          <Text className="text-xs text-gray-500 mt-2">Loading more properties...</Text>
+        </View>
+      );
+    }
+    
+    if (!hasNextPage && listings.length > 0) {
+      return (
+        <View className="py-12 items-center">
+          <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest">You've reached the end</Text>
+        </View>
+      );
+    }
+    
+    return <View className="h-20" />;
+  };
+
+  const renderEmpty = () => {
+    if (isLoading) return (
+      <View className="px-4 gap-4 flex-col">
+        <SkeletonCard />
+        <SkeletonCard />
+      </View>
+    );
+
+    return (
+      <View className="flex items-center justify-center py-20 px-8">
+        <Text className="text-4xl mb-4">🌾</Text>
+        <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">No listings found</Text>
+        <Text className="text-sm text-gray-500 text-center leading-relaxed">
+          Try adjusting your search or filters to find more properties.
+        </Text>
+        <TouchableOpacity 
+          onPress={() => { haptic.light(); setSearchQuery(''); setActiveFilter(null); }}
+          className="mt-6 bg-[#4cae4f] px-8 py-3 rounded-xl"
+        >
+          <Text className="text-white font-bold text-sm">Clear Filters</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderItem = ({ item }: { item: Listing }) => {
+    const prop = mapListingToProperty(item);
+    return (
+      <View className="px-4">
+        <PropertyCard
+          title={prop.title}
+          location={prop.location}
+          price={prop.price}
+          size={prop.size}
+          soil={prop.soil}
+          image={prop.image}
+          verified={prop.verified}
+          remoteReady={prop.remoteReady}
+          newListing={prop.newListing}
+          irrigated={prop.irrigated}
+          isFavorite={isFavorite(item.id)}
+          onToggleFavorite={() => { haptic.light(); toggleFavorite(item.id); }}
+          onPress={() => { haptic.light(); router.push(`/property/${item.id}`); }}
+        />
+      </View>
+    );
+  };
+
   return (
     <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
       <StatusBar barStyle="dark-content" />
 
       <Header
         variant="menu"
-        onAvatarPress={() => router.push('/profile')}
+        onAvatarPress={() => router.push('/(tabs)/profile')}
       />
 
-      <ScrollView 
-        className="flex-1" 
-        showsVerticalScrollIndicator={false} 
-        contentContainerStyle={{ paddingBottom: 100 }}
+      <FlatList
+        data={listings}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={renderFooter}
+        ListEmptyComponent={renderEmpty}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />
+          <RefreshControl refreshing={isRefetching && !isFetchingNextPage} onRefresh={onRefresh} tintColor="#4cae4f" />
         }
-      >
-          {/* Map Section */}
-          <View className="relative w-full h-[200px] bg-[#eaf0ea] dark:bg-[#2a352a] overflow-hidden">
-             <Image 
-               source={{ uri: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940' }} 
-               className="w-full h-full opacity-60"
-               resizeMode="cover"
-             />
-             {listings.slice(0, 3).map((listing, i) => (
-               <View 
-                 key={listing.id}
-                 className="absolute bg-white dark:bg-[#1e291e] px-3 py-1.5 rounded-lg shadow-lg border border-[#4cae4f]"
-                 style={{ top: `${20 + i * 25}%`, left: `${15 + i * 30}%` }}
-               >
-                 <Text className="text-xs font-bold text-[#111811] dark:text-white">
-                   ₹{(listing.price_per_acre / 1000).toFixed(0)}k/acre
-                 </Text>
-               </View>
-             ))}
-          </View>
-
-          {/* Discovery Area */}
-          <View className="px-4 py-8">
-             {/* Results Header */}
-             <View className="flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                <View>
-                   <Text className="text-2xl font-bold text-[#111811] dark:text-white">Find your perfect plot</Text>
-                   <Text className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                     {isLoading ? 'Loading...' : `Showing ${listings.length} of ${totalCount} properties`}
-                   </Text>
-                </View>
-                
-                <View className="flex-row items-center gap-3 bg-white dark:bg-[#1e291e] p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                   <TouchableOpacity 
-                     onPress={() => setViewMode('grid')}
-                     className={`p-2 rounded ${viewMode === 'grid' ? 'bg-[#4cae4f]/10' : ''}`}
-                   >
-                      <Grid3X3 size={18} color={viewMode === 'grid' ? '#4cae4f' : '#6b7280'} />
-                   </TouchableOpacity>
-                   <TouchableOpacity 
-                     onPress={() => setViewMode('list')}
-                     className={`p-2 rounded ${viewMode === 'list' ? 'bg-[#4cae4f]/10' : ''}`}
-                   >
-                      <List size={18} color={viewMode === 'list' ? '#4cae4f' : '#6b7280'} />
-                   </TouchableOpacity>
-                </View>
-             </View>
-
-             {/* Search & Filters */}
-             <View className="bg-white dark:bg-[#1e291e] rounded-xl shadow-lg p-4 border border-gray-100 dark:border-gray-800 mb-8">
-                <View className="flex-row items-center gap-2 mb-4">
-                   <View className="flex-1 flex-row items-center bg-[#f9fbf9] dark:bg-[#151d15] border border-gray-200 dark:border-gray-700 rounded-lg px-3">
-                      <MapPin size={18} color="#94a3b8" />
-                      <TextInput
-                        className="flex-1 py-2.5 px-2 text-sm"
-                        placeholder="Search farms, crops, or locations..."
-                        placeholderTextColor="#94a3b8"
-                        value={searchQuery}
-                        onChangeText={(text) => {
-                          setSearchQuery(text);
-                          handleSearch(text);
-                        }}
-                        returnKeyType="search"
-                      />
-                      {searchQuery.length > 0 && (
-                        <TouchableOpacity onPress={() => { setSearchQuery(''); fetchListings(1); }}>
-                          <X size={18} color="#94a3b8" />
-                        </TouchableOpacity>
-                      )}
-                   </View>
-                </View>
-                
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                   {filterOptions.map((option) => (
-                     <TouchableOpacity
-                       key={option.key}
-                       onPress={() => handleFilterChange(option.key)}
-                       className={`flex-row items-center gap-1 px-3 py-2 rounded-lg border ${
-                         activeFilter === option.key
-                           ? 'bg-[#4cae4f] border-[#4cae4f]'
-                           : 'bg-[#f9fbf9] dark:bg-[#151d15] border-gray-200 dark:border-gray-700'
-                       }`}
-                     >
-                        <Text className={`text-xs font-medium ${
-                          activeFilter === option.key ? 'text-white' : 'text-gray-700 dark:text-gray-300'
-                        }`}>
-                          {option.label}
-                        </Text>
-                     </TouchableOpacity>
-                   ))}
-                </ScrollView>
-             </View>
-
-             {/* Property Grid */}
-             {isLoading && listings.length === 0 ? (
-               <View className="flex items-center justify-center py-20">
-                 <ActivityIndicator size="large" color="#4cae4f" />
-                 <Text className="text-sm text-gray-500 mt-3">Loading listings...</Text>
-               </View>
-             ) : listings.length === 0 ? (
-               <View className="flex items-center justify-center py-20">
-                 <Text className="text-4xl mb-4">🌾</Text>
-                 <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">No listings found</Text>
-                 <Text className="text-sm text-gray-500 text-center px-8">
-                   Try adjusting your search or filters to find more properties.
-                 </Text>
-                 <TouchableOpacity 
-                   onPress={() => { setSearchQuery(''); setActiveFilter(null); fetchListings(1); }}
-                   className="mt-4 bg-[#4cae4f] px-6 py-2 rounded-xl"
-                 >
-                   <Text className="text-white font-bold text-sm">Clear Filters</Text>
-                 </TouchableOpacity>
-               </View>
-             ) : (
-             <View className={`gap-4 ${viewMode === 'grid' ? 'flex-row flex-wrap' : 'flex-col'}`}>
-                 {listings.map((item: Listing) => {
-                   const prop = mapListingToProperty(item);
-                   return (
-                     <TouchableOpacity 
-                       key={item.id} 
-                       onPress={() => router.push(`/property/${item.id}`)}
-                       className={`bg-white dark:bg-[#1e291e] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm ${
-                         viewMode === 'grid' ? 'w-[48%]' : 'w-full'
-                       }`}
-                     >
-                        <View className="relative aspect-[4/3]">
-                           <View className="absolute top-3 left-3 z-10 flex-row gap-2">
-                              {prop.verified && (
-                                <View className="bg-[#4cae4f]/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex-row items-center gap-1">
-                                   <ShieldCheck size={10} color="white" />
-                                   <Text className="text-[10px] font-bold text-white">Verified</Text>
-                                </View>
-                              )}
-                              {prop.newListing && (
-                                <View className="bg-[#f59e0b]/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                                   <Text className="text-[10px] font-bold text-white">New</Text>
-                                </View>
-                              )}
-                              {prop.irrigated && (
-                                <View className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex-row items-center gap-1">
-                                   <Droplets size={10} color="#111811" />
-                                   <Text className="text-[10px] font-medium text-[#111811]">Irrigated</Text>
-                                </View>
-                              )}
-                           </View>
-                           <TouchableOpacity 
-                             onPress={() => toggleFavorite(item.id)}
-                             className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/20 backdrop-blur-sm"
-                           >
-                              <Heart size={16} color="white" fill={isFavorite(item.id) ? '#ef4444' : 'transparent'} />
-                           </TouchableOpacity>
-                          <Image source={{ uri: prop.image }} className="w-full h-full" />
-                        </View>
-
-                        <View className="p-4">
-                           <View className="flex-row justify-between items-start mb-2">
-                              <View className="flex-1 mr-2">
-                                 <Text className="font-bold text-base text-[#111811] dark:text-white" numberOfLines={1}>{prop.title}</Text>
-                                 <View className="flex-row items-center mt-0.5">
-                                    <MapPin size={12} color="#6b7280" />
-                                    <Text className="text-xs text-gray-500 dark:text-gray-400 ml-1" numberOfLines={1}>{prop.location}</Text>
-                                 </View>
-                              </View>
-                              <Text className="text-base font-bold text-[#4cae4f]">{prop.price}</Text>
-                           </View>
-
-                           <View className="flex-row gap-2 my-3">
-                              <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] p-2 rounded">
-                                 <Text className="text-[10px] font-bold text-gray-400 uppercase mb-0.5">Size</Text>
-                                 <Text className="text-xs font-semibold text-gray-700 dark:text-gray-300">{prop.size}</Text>
-                              </View>
-                              <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] p-2 rounded">
-                                 <Text className="text-[10px] font-bold text-gray-400 uppercase mb-0.5">Soil</Text>
-                                 <Text className="text-xs font-semibold text-gray-700 dark:text-gray-300" numberOfLines={1}>{prop.soil || 'N/A'}</Text>
-                              </View>
-                           </View>
-
-                           <Button 
-                             title="View Details" 
-                             onPress={() => router.push(`/property/${item.id}`)}
-                             variant="outline"
-                             className="w-full py-2.5 rounded-lg border-[#4cae4f] border"
-                             textClassName="text-[#4cae4f] font-bold text-xs uppercase"
-                           />
-                        </View>
-                     </TouchableOpacity>
-                   );
-                 })}
-             </View>
-             )}
-
-             {/* Load More / Infinite Scroll */}
-             {hasMore && listings.length > 0 && (
-               <View className="mt-8">
-                 <TouchableOpacity
-                   onPress={() => {
-                     haptic.light();
-                     const nextPage = currentPage + 1;
-                     setCurrentPage(nextPage);
-                     fetchListings(nextPage, searchQuery, activeFilter, true);
-                   }}
-                   disabled={loadingMore}
-                   className="bg-[#4cae4f] py-4 rounded-xl items-center"
-                 >
-                   {loadingMore ? (
-                     <View className="flex-row items-center gap-2">
-                       <ActivityIndicator size="small" color="white" />
-                       <Text className="text-white font-bold text-base">Loading More...</Text>
-                     </View>
-                   ) : (
-                     <Text className="text-white font-bold text-base">Load More Farms</Text>
-                   )}
-                 </TouchableOpacity>
-               </View>
-             )}
-             
-             {!hasMore && listings.length > 0 && (
-               <View className="mt-8 items-center">
-                 <Text className="text-gray-500 text-sm">You've reached the end!</Text>
-               </View>
-             )}
-          </View>
-       </ScrollView>
-     </View>
-   );
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      />
+    </View>
+  );
 }

@@ -17,6 +17,8 @@ import {
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useUiStore, useUserStore } from '../../stores';
+import { useUnreadCounts } from '../../config/unread-context';
+import { haptic } from '../../utils/haptics';
 
 export type HeaderVariant = 'menu' | 'back-title' | 'back-avatar' | 'back';
 
@@ -52,10 +54,12 @@ export function Header({
   onSearchToggle,
   onSearchChange,
   searchPlaceholder = 'Search farms, crops, or reports...',
-  notificationCount = 0,
+  notificationCount: propNotificationCount,
 }: HeaderProps) {
   const { searchVisible, setSearchVisible, setGlobalSearchQuery } = useUiStore();
   const { profile } = useUserStore();
+  const { unreadCounts } = useUnreadCounts();
+  const actualNotificationCount = propNotificationCount !== undefined ? propNotificationCount : unreadCounts.notifications;
 
   const actualShowSearch = showSearch !== undefined ? showSearch : searchVisible;
   const actualOnSearchToggle = onSearchToggle || (() => setSearchVisible(!searchVisible));
@@ -76,8 +80,13 @@ export function Header({
           {variant === 'back' && (
             <View className="flex-row items-center gap-3">
               <TouchableOpacity 
-                onPress={onBack || (() => router.back())}
-                className="size-10 bg-gray-50 dark:bg-gray-800 rounded-full items-center justify-center border border-gray-100 dark:border-gray-700"
+                onPress={() => {
+                  haptic.light();
+                  onBack ? onBack() : router.back();
+                }}
+                className="size-11 bg-gray-50 dark:bg-gray-800 rounded-full items-center justify-center border border-gray-100 dark:border-gray-700"
+                accessibilityLabel="Go Back"
+                accessibilityRole="button"
               >
                 <ArrowLeft size={20} color="#4cae4f" strokeWidth={2.5} />
               </TouchableOpacity>
@@ -156,24 +165,42 @@ export function Header({
             {variant === 'menu' && (
               <>
                 <TouchableOpacity
-                  onPress={actualOnSearchToggle}
+                  onPress={() => {
+                    haptic.light();
+                    actualOnSearchToggle();
+                  }}
                   className="p-2"
+                  accessibilityLabel="Search"
+                  accessibilityRole="button"
                 >
                   <Search size={20} color="#608562" />
                 </TouchableOpacity>
-                <TouchableOpacity className="p-2 relative">
+                <TouchableOpacity 
+                  onPress={() => {
+                    haptic.light();
+                    router.push('/notifications');
+                  }}
+                  className="p-2 relative"
+                  accessibilityLabel="Notifications"
+                  accessibilityRole="button"
+                >
                   <Bell size={20} color="#608562" />
-                  {notificationCount > 0 && (
+                  {actualNotificationCount > 0 && (
                     <View className="absolute top-1 right-1 min-w-[12px] h-4 bg-red-500 rounded-full items-center justify-center px-1">
                       <Text style={{ fontSize: 8, color: 'white', fontWeight: 'bold' }}>
-                        {notificationCount > 99 ? '99+' : notificationCount}
+                        {actualNotificationCount > 99 ? '99+' : actualNotificationCount}
                       </Text>
                     </View>
                   )}
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  onPress={onAvatarPress || (() => router.push('/profile'))} 
-                  className="size-10 rounded-full border border-[#eaf0ea] overflow-hidden"
+                  onPress={() => {
+                    haptic.light();
+                    onAvatarPress ? onAvatarPress() : router.push('/profile');
+                  }} 
+                  className="size-11 rounded-full border border-[#eaf0ea] overflow-hidden"
+                  accessibilityLabel="View Profile"
+                  accessibilityRole="button"
                 >
                   {displayUserImage || userAvatar ? (
                     <Image
@@ -191,15 +218,41 @@ export function Header({
 
             {variant === 'back-title' && (
               <>
-                <TouchableOpacity className="p-2">
+                <TouchableOpacity 
+                  onPress={() => {
+                    haptic.light();
+                    actualOnSearchToggle();
+                  }}
+                  className="p-2"
+                >
                   <Search size={20} color="#608562" />
                 </TouchableOpacity>
-                <TouchableOpacity className="p-2 relative">
+                <TouchableOpacity 
+                  onPress={() => {
+                    haptic.light();
+                    router.push('/notifications');
+                  }}
+                  className="p-2 relative"
+                  accessibilityLabel="Notifications"
+                  accessibilityRole="button"
+                >
                   <Bell size={20} color="#608562" />
-                  <View className="absolute top-1.5 right-1.5 size-2 bg-[#4cae4f] rounded-full" />
+                  {actualNotificationCount > 0 && (
+                    <View className="absolute top-1 right-1 min-w-[12px] h-4 bg-red-500 rounded-full items-center justify-center px-1">
+                      <Text style={{ fontSize: 8, color: 'white', fontWeight: 'bold' }}>
+                        {actualNotificationCount > 99 ? '99+' : actualNotificationCount}
+                      </Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
                 {onActionPress && (
-                  <TouchableOpacity onPress={onActionPress} className="p-2">
+                  <TouchableOpacity 
+                    onPress={() => {
+                      haptic.light();
+                      onActionPress();
+                    }} 
+                    className="p-2"
+                  >
                     <Settings size={20} color="#608562" />
                   </TouchableOpacity>
                 )}
@@ -208,7 +261,10 @@ export function Header({
 
             {variant === 'back-avatar' && (
               <TouchableOpacity
-                onPress={onActionPress}
+                onPress={() => {
+                  haptic.light();
+                  onActionPress && onActionPress();
+                }}
                 className="bg-[#4cae4f] size-11 rounded-full items-center justify-center shadow-lg active:scale-95"
               >
                 <Video size={20} color="white" fill="white" />

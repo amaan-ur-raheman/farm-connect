@@ -5,6 +5,9 @@ import { useLocalSearchParams, router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import api, { FarmUpdate } from '../../src/config/api';
 import { useAuthStore } from '../../src/stores/authStore';
+import NetInfo from '@react-native-community/netinfo';
+import { SyncQueue } from '../../src/utils/syncQueue';
+import { haptic } from '../../src/utils/haptics';
 
 export default function UpdatesScreen() {
   const { contractId } = useLocalSearchParams();
@@ -13,9 +16,8 @@ export default function UpdatesScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [caption, setCaption] = useState('');
+  const [mediaUri, setMediaUri] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const fetchUpdates = useCallback(async () => {
@@ -39,31 +41,69 @@ export default function UpdatesScreen() {
   const pickMedia = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') { Alert.alert('Permission Required', 'Grant photo library permission.'); return; }
-    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsMultipleSelection: true, quality: 0.7 });
-    if (!result.canceled) {
-      setMediaUrls(prev => [...prev, ...result.assets.map(a => a.uri)].slice(0, 5));
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images', 'videos'], quality: 0.7 });
+    if (!result.canceled && result.assets[0]) {
+      setMediaUri(result.assets[0].uri);
     }
   };
 
   const handleSubmit = async () => {
-    if (!title || !description) { Alert.alert('Missing Fields', 'Title and description are required.'); return; }
-    setSubmitting(true);
-    try {
-      await api.post('/api/updates', {
-        contract_id: contractId,
-        title,
-        description,
-        media_urls: mediaUrls,
-      });
-      setTitle(''); setDescription(''); setMediaUrls([]); setShowForm(false);
-      fetchUpdates();
-    } catch (err: any) {
-      Alert.alert('Error', err.response?.data?.message || 'Failed to post update.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+      if (!caption && !mediaUri) {
+        Alert.alert('Error', 'Please provide a caption or image.');
+        return;
+      }
 
+      setSubmitting(true);
+      haptic.light();
+
+      try {
+        const netInfo = await NetInfo.fetch();
+
+        const formData = new FormData();
+        formData.append('contract_id', contractId as string);
+        if (caption) formData.append('caption', caption);
+        if (mediaUri) {
+          // @ts-ignore - React Native FormData file attachment
+          formData.append('media', {
+            uri: mediaUri,
+            name: 'update.jpg',
+            type: 'image/jpeg',
+          } as any);
+        }
+
+        if (netInfo.isConnected) {
+          await api.post('/api/updates', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          haptic.success();
+          Alert.alert('Success', 'Update posted successfully!');
+          setCaption('');
+          setMediaUri(null);
+          setShowForm(false);
+          fetchUpdates();
+        } else {
+          await SyncQueue.enqueue({
+            url: '/api/updates',
+            method: 'POST',
+            body: {
+              contract_id: contractId,
+              caption: caption,
+              media_url: mediaUri, // Note: This will be a local URI, uploading requires special handling when online
+            },
+          });
+          haptic.success();
+          Alert.alert('Offline Mode', 'Your update has been saved and will sync when you are back online.');
+          setCaption('');
+          setMediaUri(null);
+          setShowForm(false);
+        }
+      } catch (err: any) {
+        haptic.error();
+        Alert.alert('Error', err.response?.data?.message || 'Failed to post update.');
+      } finally {
+        setSubmitting(false);
+      }
+    };
   if (loading) {
     return (
       <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
@@ -90,8 +130,8 @@ export default function UpdatesScreen() {
         )}
       </View>
 
-      <ScrollView 
-        className="flex-1" 
+      <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}
       >
@@ -100,25 +140,40 @@ export default function UpdatesScreen() {
           {showForm && (
             <View className="bg-white dark:bg-[#1e291e] rounded-2xl p-4 mb-4 border border-[#eaf0ea] dark:border-[#2a382a]">
               <Text className="text-base font-bold text-slate-900 dark:text-white mb-3">New Update</Text>
-              <TextInput value={title} onChangeText={setTitle} placeholder="Update title" placeholderTextColor="#9ca3af" className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-[#f9fbf9] dark:bg-[#151d15] text-sm text-slate-900 dark:text-white mb-3" />
-              <TextInput value={description} onChangeText={setDescription} placeholder="Describe the update..." placeholderTextColor="#9ca3af" multiline numberOfLines={4} className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-[#f9fbf9] dark:bg-[#151d15] text-sm text-slate-900 dark:text-white mb-3" style={{ textAlignVertical: 'top' }} />
-              <View className="flex-row flex-wrap gap-2 mb-3">
-                {mediaUrls.map((uri, i) => (
-                  <View key={i} className="relative">
-                    <Image source={{ uri }} className="w-16 h-16 rounded-lg" resizeMode="cover" />
-                    <TouchableOpacity onPress={() => setMediaUrls(prev => prev.filter((_, idx) => idx !== i))} className="absolute -top-1 -right-1 size-5 bg-red-500 rounded-full items-center justify-center">
-                      <X size={10} color="white" />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-                {mediaUrls.length < 5 && (
-                  <TouchableOpacity onPress={pickMedia} className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 items-center justify-center">
-                    <Camera size={16} color="#94a3b8" />
+              <TextInput
+                value={caption}
+                onChangeText={setCaption}
+                placeholder="Describe the update..."
+                placeholderTextColor="#9ca3af"
+                multiline
+                numberOfLines={4}
+                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-[#f9fbf9] dark:bg-[#151d15] text-sm text-slate-900 dark:text-white mb-3"
+                style={{ textAlignVertical: 'top' }}
+              />
+
+              {/* Media Preview */}
+              {mediaUri ? (
+                <View className="relative mb-3">
+                  <Image source={{ uri: mediaUri }} className="w-full h-40 rounded-xl" resizeMode="cover" />
+                  <TouchableOpacity
+                    onPress={() => setMediaUri(null)}
+                    className="absolute top-2 right-2 size-6 bg-red-500 rounded-full items-center justify-center"
+                  >
+                    <X size={14} color="white" />
                   </TouchableOpacity>
-                )}
-              </View>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={pickMedia}
+                  className="w-full h-40 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 items-center justify-center mb-3"
+                >
+                  <Camera size={24} color="#94a3b8" />
+                  <Text className="text-xs text-gray-400 mt-2">Tap to add a photo</Text>
+                </TouchableOpacity>
+              )}
+
               <View className="flex-row gap-3">
-                <TouchableOpacity onPress={() => setShowForm(false)} className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 items-center">
+                <TouchableOpacity onPress={() => { setShowForm(false); setCaption(''); setMediaUri(null); }} className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 items-center">
                   <Text className="text-slate-700 dark:text-slate-300 font-bold">Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSubmit} disabled={submitting} className={`flex-1 py-3 rounded-xl bg-[#4cae4f] items-center ${submitting ? 'opacity-60' : ''}`}>
@@ -134,7 +189,7 @@ export default function UpdatesScreen() {
               <Text className="text-4xl mb-4">📋</Text>
               <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">No updates yet</Text>
               <Text className="text-sm text-gray-500 text-center px-8">
-                {userRole === 'farmer' ? 'Post farm updates to keep investors informed.' : 'Updates from the farmer will appear here.'}
+                {userRole === 'farmer' ? 'Post farm updates with photos to keep investors informed.' : 'Updates from the farmer will appear here.'}
               </Text>
             </View>
           ) : (
@@ -144,14 +199,11 @@ export default function UpdatesScreen() {
                   <Clock size={14} color="#4cae4f" />
                   <Text className="text-[10px] text-gray-400">{new Date(update.created_at).toLocaleString()}</Text>
                 </View>
-                <Text className="text-base font-bold text-slate-900 dark:text-white mb-2">{update.title}</Text>
-                <Text className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">{update.description}</Text>
-                {update.media_urls && update.media_urls.length > 0 && (
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                    {update.media_urls.map((url, i) => (
-                      <Image key={i} source={{ uri: url }} className="w-40 h-28 rounded-xl" resizeMode="cover" />
-                    ))}
-                  </ScrollView>
+                {update.caption && (
+                  <Text className="text-sm text-slate-900 dark:text-white mb-2">{update.caption}</Text>
+                )}
+                {update.media_url && (
+                  <Image source={{ uri: update.media_url }} className="w-full h-44 rounded-xl" resizeMode="cover" />
                 )}
               </View>
             ))

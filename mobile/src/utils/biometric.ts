@@ -2,6 +2,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BIOMETRIC_ENABLED_KEY = '@farmconnect_biometric_enabled';
+const BIOMETRIC_PHONE_KEY = '@farmconnect_biometric_phone';
 
 export const biometric = {
   // Check if device supports biometric authentication
@@ -60,7 +61,7 @@ export const biometric = {
   },
 
   // Enable biometric login for this user
-  enableBiometric: async (): Promise<boolean> => {
+  enableBiometric: async (phone?: string): Promise<boolean> => {
     try {
       const compatible = await biometric.isCompatible();
       const enrolled = await biometric.isEnrolled();
@@ -70,9 +71,13 @@ export const biometric = {
       }
 
       const authenticated = await biometric.authenticate('Enable biometric login for faster access');
-      
+
       if (authenticated) {
         await AsyncStorage.setItem(BIOMETRIC_ENABLED_KEY, 'true');
+        // Store the phone number associated with this biometric
+        if (phone) {
+          await AsyncStorage.setItem(BIOMETRIC_PHONE_KEY, phone);
+        }
         return true;
       }
 
@@ -99,6 +104,15 @@ export const biometric = {
       return enabled === 'true';
     } catch {
       return false;
+    }
+  },
+
+  // Get the phone number associated with biometric login
+  getBiometricPhone: async (): Promise<string | null> => {
+    try {
+      return await AsyncStorage.getItem(BIOMETRIC_PHONE_KEY);
+    } catch {
+      return null;
     }
   },
 };

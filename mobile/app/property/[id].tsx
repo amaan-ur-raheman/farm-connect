@@ -26,10 +26,14 @@ import {
 } from 'lucide-react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Header } from '../../src/components/ui/Header';
+import { SkeletonCard } from '../../src/components/ui/SkeletonCard';
 import { useMarketplaceStore } from '../../src/stores';
 import api, { Listing, Review } from '../../src/config/api';
 import { useAuthStore } from '../../src/stores/authStore';
 import { haptic } from '../../src/utils/haptics';
+import { getCardImage, getFullImage } from '../../src/utils/image';
+import { useQuery } from '@tanstack/react-query';
+import { ListingDetailResponseSchema, ReviewsResponseSchema } from '../../src/config/schemas';
 
 const cropIcons: Record<string, any> = {
   Cotton: Grape,
@@ -44,36 +48,39 @@ const cropColors = ['#4cae4f', '#22c55e', '#86efac', '#4ade80', '#a7f3d0'];
 export default function PropertyDetailScreen() {
   const { id } = useLocalSearchParams();
   const { toggleFavorite, isFavorite } = useMarketplaceStore();
-  const { isAuthenticated } = useAuthStore();
-  const [listing, setListing] = useState<Listing | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, authUser } = useAuthStore();
   const [creatingContract, setCreatingContract] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const isPropertyFavorite = isFavorite(id as string);
   const { width } = Dimensions.get('window');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [listingRes, reviewsRes] = await Promise.all([
-          api.get<{ data: Listing }>(`/api/listings/${id}`),
-          api.get<{ data: Review[] }>(`/api/reviews/listing/${id}`).catch(() => ({ data: { data: [] } })),
-        ]);
-        setListing(listingRes.data.data || null);
-        setReviews(reviewsRes.data.data || []);
-      } catch {
-        Alert.alert('Error', 'Failed to load property details.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [id]);
+  const { data: listing, isLoading: listingLoading } = useQuery({
+    queryKey: ['listing', id],
+    queryFn: async () => {
+      const res = await api.get(`/api/listings/${id}`, undefined, ListingDetailResponseSchema);
+      return res.data.data;
+    },
+    enabled: !!id,
+  });
+
+  const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
+    queryKey: ['reviews', id],
+    queryFn: async () => {
+      const res = await api.get(`/api/reviews/listing/${id}`, undefined, ReviewsResponseSchema).catch(() => ({ data: { success: true, data: [] } }));
+      return res.data.data || [];
+    },
+    enabled: !!id,
+  });
+
+  const loading = listingLoading || reviewsLoading;
 
   const handleCreateContract = async () => {
+    if (!isAuthenticated) {
+      Alert.alert('Login Required', 'Please login to acquire a lease.');
+      router.push('/login');
+      return;
+    }
     if (!listing) return;
     setCreatingContract(true);
     try {
@@ -85,15 +92,17 @@ export default function PropertyDetailScreen() {
       
       await api.post('/api/contracts', {
         listing_id: listing.id,
-        crop: listing.crops[0] || 'General',
+        crop: listing.crops?.[0] || 'General',
         acreage: listing.area_acres,
         price_per_acre: listing.price_per_acre,
         start_date: today.toISOString(),
         end_date: endDate.toISOString(),
       });
+      haptic.success();
       Alert.alert('Success', 'Contract request sent to the farmer!');
       router.push('/contracts');
     } catch (err: any) {
+      haptic.error();
       Alert.alert('Error', err.response?.data?.message || 'Failed to create contract.');
     } finally {
       setCreatingContract(false);
@@ -102,53 +111,41 @@ export default function PropertyDetailScreen() {
 
   const handleStartChat = async () => {
     if (!listing?.farmer_id) {
+      haptic.error();
       Alert.alert('Error', 'Could not find the farmer.');
       return;
     }
     try {
-      const res = await api.post<{ data: { id: string } }>('/api/chat/conversations', {
+      haptic.light();
+      const res = await api.post<{ id: string }>('/api/chat/conversations', {
         participant_id: listing.farmer_id,
       });
-      const conversationId = res.data.data?.id;
+      const conversationId = res.data.id;
       router.push(`/chat/${conversationId}`);
     } catch (err: any) {
+      haptic.error();
       console.error('Failed to start chat:', err);
       Alert.alert('Error', err.response?.data?.message || 'Failed to start conversation.');
     }
   };
 
-  if (loading) {
+  if (loading || !listing) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
-        <ActivityIndicator size="large" color="#4cae4f" />
-        <Text className="text-sm text-gray-500 mt-3">Loading property...</Text>
+      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] p-4 pt-12">
+        <SkeletonCard />
       </View>
     );
   }
 
-  if (!listing) {
-    return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center px-8">
-        <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">Property Not Found</Text>
-        <Text className="text-sm text-gray-500 text-center mb-6">
-          This listing may have been removed or is no longer available.
-        </Text>
-        <TouchableOpacity onPress={() => router.push('/marketplace')} className="bg-[#4cae4f] px-6 py-3 rounded-xl">
-          <Text className="text-white font-bold">Back to Marketplace</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const totalPrice = listing.price_per_acre * listing.area_acres;
-  const crops = listing.crops.map((crop, i) => ({
+  const totalPrice = (listing.price_per_acre || 0) * (listing.area_acres || 0);
+  const crops = (listing.crops || []).map((crop: string, i: number) => ({
     name: crop,
     icon: cropIcons[crop] || cropIcons.default,
     suitability: `${85 - i * 5}%`,
     color: cropColors[i % cropColors.length],
   }));
   const avgRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    ? ((reviews as Review[]).reduce((sum: number, r: Review) => sum + r.rating, 0) / reviews.length).toFixed(1)
     : 'N/A';
 
   return (
@@ -157,7 +154,7 @@ export default function PropertyDetailScreen() {
 
       <Header
         variant="menu"
-        onAvatarPress={() => router.push('/profile')}
+        onAvatarPress={() => router.push('/(tabs)/profile')}
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -186,10 +183,11 @@ export default function PropertyDetailScreen() {
               }}
               contentContainerStyle={{ paddingHorizontal: 0 }}
             >
-              {(listing.images?.length > 0 ? listing.images : ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940&auto=format&fit=crop']).map((img, idx) => (
+              {/* @ts-expect-error - expo-image class component type incompatibility */}
+              {((listing.images?.length || 0) > 0 ? listing.images : ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940&auto=format&fit=crop']).map((img: string | undefined, idx: number) => (
                 <Image
                   key={idx}
-                  source={{ uri: img }}
+                  source={{ uri: getFullImage(img)! }}
                   style={{ width: width - 32, height: 300, borderRadius: 24 }}
                   resizeMode="cover"
                 />
@@ -212,9 +210,9 @@ export default function PropertyDetailScreen() {
             </View>
             
             {/* Page Indicators */}
-            {listing.images?.length > 1 && (
+            {((listing.images?.length || 0) > 1) && (
               <View className="absolute bottom-4 left-0 right-0 flex-row justify-center gap-1.5">
-                {listing.images.map((_, idx) => (
+                {(listing.images || []).map((_: string, idx: number) => (
                   <View
                     key={idx}
                     style={{
@@ -301,7 +299,7 @@ export default function PropertyDetailScreen() {
                   {listing.irrigation_type && <DetailRow label="Irrigation" value={listing.irrigation_type} />}
                   {listing.expected_harvest_month && <DetailRow label="Harvest Month" value={listing.expected_harvest_month} />}
                   <DetailRow label="Organic" value={listing.is_organic ? 'Yes' : 'No'} />
-                  <DetailRow label="Status" value={listing.status} />
+                  <DetailRow label="Status" value={listing.status || 'N/A'} />
                 </View>
               </View>
 
@@ -449,34 +447,36 @@ export default function PropertyDetailScreen() {
             />
           </TouchableOpacity>
         </View>
-        <View className="flex-row gap-3">
-          <TouchableOpacity
-            onPress={() => {
-              haptic.medium();
-              handleStartChat();
-            }}
-            className="flex-1 bg-slate-100 dark:bg-slate-800 py-3.5 rounded-xl items-center"
-          >
-            <View className="flex-row items-center gap-2">
-              <MessageSquare size={18} color="#1e293b" className="dark:text-white" />
-              <Text className="text-sm font-black text-slate-900 dark:text-white">
-                Contact Farmer
+        {listing.farmer_id !== authUser?.id && (
+          <View className="flex-row gap-3">
+            <TouchableOpacity
+              onPress={() => {
+                haptic.medium();
+                handleStartChat();
+              }}
+              className="flex-1 bg-slate-100 dark:bg-slate-800 py-3.5 rounded-xl items-center"
+            >
+              <View className="flex-row items-center gap-2">
+                <MessageSquare size={18} color="#1e293b" className="dark:text-white" />
+                <Text className="text-sm font-black text-slate-900 dark:text-white">
+                  Contact Farmer
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                haptic.medium();
+                handleCreateContract();
+              }}
+              disabled={creatingContract}
+              className="flex-1 bg-[#4cae4f] py-3.5 rounded-xl items-center"
+            >
+              <Text className="text-sm font-black text-black">
+                {creatingContract ? 'Processing...' : 'Acquire Lease'}
               </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              haptic.medium();
-              handleCreateContract();
-            }}
-            disabled={creatingContract}
-            className="flex-1 bg-[#4cae4f] py-3.5 rounded-xl items-center"
-          >
-            <Text className="text-sm font-black text-black">
-              {creatingContract ? 'Processing...' : 'Acquire Lease'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );

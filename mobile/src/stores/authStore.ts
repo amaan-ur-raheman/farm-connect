@@ -2,19 +2,20 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { HTTPError } from "ky";
+import ky from "ky";
 import api, { AuthUser, BASE_URL } from "../config/api";
 
-export type UserRole = "investor" | "farmer" | null;
+export type UserRole = "consumer" | "farmer" | null;
 
 const getErrorMessage = async (
 	err: unknown,
 	fallback: string,
 ): Promise<string> => {
-	console.log('[Auth Error] Error type:', err?.constructor?.name || typeof err);
-	
+	if (__DEV__) console.log('[Auth Error] Error type:', err?.constructor?.name || typeof err);
+
 	if (err instanceof HTTPError) {
-		console.log('[Auth Error] HTTP Error status:', err.response?.status);
-		console.log('[Auth Error] HTTP Error body:', await err.response.text().catch(() => 'No body'));
+		if (__DEV__) console.log('[Auth Error] HTTP Error status:', err.response?.status);
+		if (__DEV__) console.log('[Auth Error] HTTP Error body:', await err.response.text().catch(() => 'No body'));
 		try {
 			const body = (await err.response.json()) as { message?: string };
 			return body?.message || fallback;
@@ -23,14 +24,14 @@ const getErrorMessage = async (
 		}
 	}
 	if (err instanceof TypeError) {
-		console.log('[Auth Error] TypeError message:', err.message);
+		if (__DEV__) console.log('[Auth Error] TypeError message:', err.message);
 		if (err.message.includes('Network') || err.message.includes('network')) {
 			return 'Cannot connect to server. Please check your internet connection.';
 		}
 		return err.message || fallback;
 	}
 	if (err instanceof Error) {
-		console.log('[Auth Error] Error message:', err.message);
+		if (__DEV__) console.log('[Auth Error] Error message:', err.message);
 		return err.message || fallback;
 	}
 	return fallback;
@@ -38,13 +39,13 @@ const getErrorMessage = async (
 
 const mapBackendRoleToMobile = (backendRole: string): UserRole => {
 	if (backendRole === "FARMER") return "farmer";
-	if (backendRole === "CONSUMER") return "investor";
+	if (backendRole === "CONSUMER") return "consumer";
 	return null;
 };
 
 const mapMobileRoleToBackend = (mobileRole: UserRole): string | null => {
 	if (mobileRole === "farmer") return "FARMER";
-	if (mobileRole === "investor") return "CONSUMER";
+	if (mobileRole === "consumer") return "CONSUMER";
 	return null;
 };
 
@@ -58,10 +59,12 @@ interface AuthState {
 	authUser: AuthUser | null;
 	isLoading: boolean;
 	error: string | null;
+	isRegistrationComplete: boolean;
 
 	setAuthenticated: (isAuthenticated: boolean) => void;
 	setUserRole: (role: UserRole) => void;
 	setPushToken: (token: string | null) => void;
+	setRegistrationComplete: (complete: boolean) => void;
 	loginWithOtp: (phone: string, otp: string) => Promise<boolean>;
 	sendOtp: (
 		phone: string,
@@ -76,7 +79,7 @@ export const useAuthStore = create<AuthState>()(
 	persist(
 		(set, get) => ({
 			isAuthenticated: false,
-			userRole: null,
+			userRole: "consumer",
 			accessToken: null,
 			refreshToken: null,
 			phone: null,
@@ -84,12 +87,15 @@ export const useAuthStore = create<AuthState>()(
 			authUser: null,
 			isLoading: false,
 			error: null,
+			isRegistrationComplete: false,
 
 			setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
 
 			setUserRole: (userRole) => set({ userRole }),
 
 			setPushToken: (pushToken) => set({ pushToken }),
+
+			setRegistrationComplete: (isRegistrationComplete) => set({ isRegistrationComplete }),
 
 			setPhone: (phone) => set({ phone }),
 
@@ -102,7 +108,7 @@ export const useAuthStore = create<AuthState>()(
 						phone,
 					});
 					console.log('[Auth] OTP send response:', JSON.stringify(response.data));
-					const devOtp = (response.data as any)?.data?.devOtp || null;
+					const devOtp = (response.data as any)?.devOtp || null;
 					set({ isLoading: false, phone });
 					return { success: true, devOtp };
 				} catch (err: unknown) {
@@ -128,9 +134,12 @@ export const useAuthStore = create<AuthState>()(
 						requestBody.fcmToken = pushToken;
 					}
 					const response = await api.post("/api/auth/otp/verify", requestBody);
-					const { user, accessToken, refreshToken } = (
-						response.data as any
-					).data;
+					const { user, accessToken, refreshToken } = (response.data as any).data;
+
+					// Assign default DiceBear avatar if missing
+					if (!user?.avatar_url) {
+						user.avatar_url = `https://api.dicebear.com/9.x/glass/svg?seed=${user?.name || user?.id}`;
+					}
 
 					const mobileRole = mapBackendRoleToMobile(user.role);
 
@@ -156,12 +165,12 @@ export const useAuthStore = create<AuthState>()(
 				if (!refreshToken) return null;
 
 				try {
-					const response = await api.post("/api/auth/refresh", {
-						refreshToken,
-					});
-					const { accessToken, refreshToken: newRefreshToken } = (
-						response.data as any
-					).data;
+					// Use ky directly to avoid circular dependency with api interceptor
+					const response = await ky.post(`${BASE_URL}/api/auth/refresh`, {
+						json: { refreshToken },
+					}).json<{ data: { accessToken: string; refreshToken: string } }>();
+
+					const { accessToken, refreshToken: newRefreshToken } = response.data;
 
 					set({ accessToken, refreshToken: newRefreshToken });
 
@@ -175,7 +184,11 @@ export const useAuthStore = create<AuthState>()(
 					}
 
 					return accessToken;
-				} catch {
+				} catch (error) {
+					if (__DEV__) {
+						console.error('[Auth] Token refresh failed:', error);
+					}
+					// Clear auth state on refresh failure
 					set({
 						isAuthenticated: false,
 						accessToken: null,
@@ -213,6 +226,7 @@ export const useAuthStore = create<AuthState>()(
 						authUser: null,
 						isLoading: false,
 						error: null,
+						isRegistrationComplete: false,
 					});
 				}
 			},
@@ -229,7 +243,17 @@ export const useAuthStore = create<AuthState>()(
 				refreshToken: state.refreshToken,
 				phone: state.phone,
 				authUser: state.authUser,
+				isRegistrationComplete: state.isRegistrationComplete,
 			}),
+			migrate: (persistedState: any) => {
+				if (persistedState && persistedState.userRole === null) {
+					persistedState.userRole = "consumer";
+				}
+				if (persistedState && persistedState.userRole === "investor") {
+					persistedState.userRole = "consumer";
+				}
+				return persistedState;
+			},
 		},
 	),
 );

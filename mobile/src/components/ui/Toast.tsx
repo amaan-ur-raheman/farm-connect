@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { CheckCircle, AlertCircle, AlertTriangle, Info, X } from 'lucide-react-native';
-import { useToastStore, Toast as ToastType } from '../stores/toastStore';
+import { useToastStore, Toast as ToastType } from '../../stores/toastStore';
 
 const toastConfig = {
   success: {

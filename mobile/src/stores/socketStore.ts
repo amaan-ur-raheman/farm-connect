@@ -23,12 +23,19 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 		if (!isAuthenticated || !accessToken) {
 			if (socket) {
 				socket.disconnect();
+				socket.removeAllListeners();
 				set({ socket: null, isConnected: false });
 			}
 			return;
 		}
 
 		if (socket?.connected) return;
+
+		// Clean up existing socket before creating new one
+		if (socket) {
+			socket.disconnect();
+			socket.removeAllListeners();
+		}
 
 		const newSocket = io(BASE_URL, {
 			auth: { token: accessToken },
@@ -78,6 +85,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 	disconnect: () => {
 		const { socket } = get();
 		if (socket) {
+			socket.removeAllListeners();
 			socket.disconnect();
 			set({ socket: null, isConnected: false });
 		}

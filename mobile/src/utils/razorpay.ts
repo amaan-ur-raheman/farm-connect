@@ -1,4 +1,3 @@
-import RazorpayCheckout from 'react-native-razorpay';
 import api from '../config/api';
 
 interface RazorpayOptions {
@@ -32,6 +31,18 @@ export const startRazorpayPayment = async ({
   description = 'Contract payment',
   prefill = {},
 }: RazorpayOptions): Promise<RazorpayResponse> => {
+  // Use require for native module to prevent top-level crashes in Expo Go
+  let RazorpayCheckout: any;
+  try {
+    RazorpayCheckout = require('react-native-razorpay').default;
+    if (!RazorpayCheckout || typeof RazorpayCheckout.open !== 'function') {
+      throw new Error('Native Razorpay module not found');
+    }
+  } catch (err) {
+    console.warn('Razorpay native module is not available in this environment.');
+    throw new Error('Native payments are not supported in Expo Go. Use a development build or production app.');
+  }
+
   try {
     // 1. Create order on backend
     const orderRes = await api.post<{ data: { id: string; amount: number; currency: string } }>('/api/payments/order', {
@@ -82,6 +93,18 @@ export const startRazorpayWalletTopUp = async (
   amount: number,
   userId: string,
 ): Promise<RazorpayResponse> => {
+  // Use require for native module to prevent top-level crashes in Expo Go
+  let RazorpayCheckout: any;
+  try {
+    RazorpayCheckout = require('react-native-razorpay').default;
+    if (!RazorpayCheckout || typeof RazorpayCheckout.open !== 'function') {
+      throw new Error('Native Razorpay module not found');
+    }
+  } catch (err) {
+    console.warn('Razorpay native module is not available in this environment.');
+    throw new Error('Native payments are not supported in Expo Go. Use a development build or production app.');
+  }
+
   try {
     const orderRes = await api.post<{ data: { id: string; amount: number } }>('/api/payments/order', {
       amount,

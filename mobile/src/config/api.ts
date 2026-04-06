@@ -1,22 +1,22 @@
 import ky, { HTTPError, type Options } from "ky";
-import { useAuthStore } from "../stores/authStore";
 import Constants from "expo-constants";
+import { ZodSchema } from 'zod';
+import { router } from 'expo-router';
 
 const getBaseUrl = (): string => {
-	// Environment variable takes priority (set in .env or during build)
+	// Environment variable MUST be present for production safety
 	if (process.env.EXPO_PUBLIC_API_URL) {
-		console.log('[API Config] Using EXPO_PUBLIC_API_URL:', process.env.EXPO_PUBLIC_API_URL);
+		if (__DEV__) {
+			console.log('[API Config] Using EXPO_PUBLIC_API_URL:', process.env.EXPO_PUBLIC_API_URL);
+		}
 		return process.env.EXPO_PUBLIC_API_URL;
 	}
-	// Fallback to app.json extra config
-	const extra = Constants.expoConfig?.extra;
-	if (extra?.apiUrl && extra.apiUrl !== "https://YOUR_PRODUCTION_URL/api") {
-		console.log('[API Config] Using app.json apiUrl:', extra.apiUrl);
-		return extra.apiUrl;
-	}
-	// Default to localhost for development
-	console.log('[API Config] Using localhost fallback');
-	return "http://localhost:3000";
+	
+	// Fail loudly if API URL is missing to prevent silent local IPs in production
+	throw new Error(
+		"CRITICAL: EXPO_PUBLIC_API_URL is missing. " +
+		"Please define it in your .env file or environment variables before building the app."
+	);
 };
 
 export const BASE_URL = getBaseUrl();
@@ -39,17 +39,25 @@ const onRefreshComplete = (token: string) => {
 	refreshSubscribers = [];
 };
 
+const getAuthStore = () => {
+	return require("../stores/authStore").useAuthStore;
+};
+
 async function request<T = unknown>(
 	method: Method,
 	path: string,
 	body?: unknown,
 	extraOptions?: Options,
+	schema?: ZodSchema<T>
 ): Promise<{ data: T }> {
+	const useAuthStore = getAuthStore();
 	const { accessToken } = useAuthStore.getState();
 
-	console.log(`[API] ${method.toUpperCase()} ${BASE_URL}${path}`);
-	if (body && method !== 'get') {
-		console.log(`[API] Request body:`, JSON.stringify(body));
+	if (__DEV__) {
+		console.log(`[API] ${method.toUpperCase()} ${BASE_URL}${path}`);
+		if (body && method !== 'get') {
+			console.log(`[API] Request body:`, JSON.stringify(body));
+		}
 	}
 
 	const isFormData =
@@ -77,32 +85,65 @@ async function request<T = unknown>(
 	const doRequest = (token?: string) => {
 		const h = { ...headers };
 		if (token) h.Authorization = `Bearer ${token}`;
-		return ky(`${BASE_URL}${path}`, { ...opts, headers: h }).json<T>();
+		return ky(`${BASE_URL}${path}`, { ...opts, headers: h }).json<{ data?: unknown; success?: boolean } | unknown>();
 	};
 
 	try {
-		const data = await doRequest();
-		return { data };
-	} catch (err) {
-		console.log(`[API] Error type:`, err?.constructor?.name || typeof err);
-		console.log(`[API] Error details:`, JSON.stringify(err, null, 2));
-		
-		// Check if it's a network error (can't reach server)
-		if (err instanceof TypeError && err.message.includes('Network')) {
-			console.log(`[API] Network error - cannot reach ${BASE_URL}${path}`);
+		const result = await doRequest();
+		const rawData = (result as any)?.data !== undefined ? (result as any).data : result;
+
+		if (schema) {
+			try {
+				if (__DEV__) {
+					const shape = (schema as any).shape;
+					const dataShape = shape?.data?.shape;
+					console.log(`[API] Schema shape keys:`, Object.keys(shape || {}));
+					if (dataShape) {
+						console.log(`[API] Data schema shape keys:`, Object.keys(dataShape));
+					}
+				}
+				const parsedData = schema.parse(result);
+				return { data: parsedData };
+			} catch (parseError) {
+				console.error('[API Zod Parse Error]', parseError);
+				// We can choose to throw or return the raw data.
+				// In a strict app, we throw.
+				throw parseError;
+			}
 		}
-		
+
+		return { data: result as T };
+	} catch (err) {
+		if (__DEV__) {
+			console.log(`[API] Error type:`, err?.constructor?.name || typeof err);
+			console.log(`[API] Error details:`, JSON.stringify(err, null, 2));
+
+			// Check if it's a network error (can't reach server)
+			if (err instanceof TypeError && err.message.includes('Network')) {
+				console.log(`[API] Network error - cannot reach ${BASE_URL}${path}`);
+			}
+		}
+
 		if (err instanceof HTTPError && err.response.status === 401) {
-			console.log('[API] 401 Unauthorized - attempting token refresh');
-			
+			if (__DEV__) {
+				console.log('[API] 401 Unauthorized - attempting token refresh');
+			}
+
 			// Token refresh logic
 			if (isRefreshing) {
-				console.log('[API] Token refresh already in progress, queuing request');
+				if (__DEV__) {
+					console.log('[API] Token refresh already in progress, queuing request');
+				}
 				return new Promise<{ data: T }>((resolve, reject) => {
 					subscribeTokenRefresh(async (newToken) => {
 						try {
-							const data = await doRequest(newToken);
-							resolve({ data });
+							const result = await doRequest(newToken);
+							const rawData = (result as any)?.data !== undefined ? (result as any).data : result;
+							if (schema) {
+								resolve({ data: schema.parse(result) });
+							} else {
+								resolve({ data: result as T });
+							}
 						} catch (e) {
 							reject(e);
 						}
@@ -112,33 +153,55 @@ async function request<T = unknown>(
 
 			isRefreshing = true;
 			try {
-				console.log('[API] Refreshing tokens...');
+				if (__DEV__) {
+					console.log('[API] Refreshing tokens...');
+				}
+				const useAuthStore = getAuthStore();
 				const { refreshTokens, logout } = useAuthStore.getState();
 				const newToken = await refreshTokens();
-				
+
 				if (newToken) {
-					console.log('[API] Token refresh successful');
+					if (__DEV__) {
+						console.log('[API] Token refresh successful');
+					}
 					onRefreshComplete(newToken);
-					const data = await doRequest(newToken);
-					return { data };
+					const result = await doRequest(newToken);
+					const rawData = (result as any)?.data !== undefined ? (result as any).data : result;
+					if (schema) {
+						return { data: schema.parse(result) };
+					}
+					return { data: result as T };
 				} else {
-					console.log('[API] Token refresh failed, logging out');
+					if (__DEV__) {
+						console.log('[API] Token refresh failed, logging out');
+					}
 					// Refresh failed - logout user
 					logout();
-					// Optionally redirect to login
+					// Redirect to login
 					try {
-						const { router } = require('expo-router');
-						router?.replace('/login');
-					} catch {}
+						setTimeout(() => router.replace('/login'), 0);
+					} catch (navError) {
+						if (__DEV__) {
+							console.error('[API] Navigation error:', navError);
+						}
+					}
+					throw new Error('Session expired. Please login again.');
 				}
 			} catch (refreshError) {
-				console.error('[API] Token refresh error:', refreshError);
+				if (__DEV__) {
+					console.error('[API] Token refresh error:', refreshError);
+				}
+				const useAuthStore = getAuthStore();
 				const { logout } = useAuthStore.getState();
 				logout();
 				try {
-					const { router } = require('expo-router');
-					router?.replace('/login');
-				} catch {}
+					setTimeout(() => router.replace('/login'), 0);
+				} catch (navError) {
+					if (__DEV__) {
+						console.error('[API] Navigation error:', navError);
+					}
+				}
+				throw new Error('Session expired. Please login again.');
 			} finally {
 				isRefreshing = false;
 				refreshSubscribers = [];
@@ -148,22 +211,87 @@ async function request<T = unknown>(
 	}
 }
 
+// Variant of request that preserves the full response envelope (for paginated endpoints)
+async function requestFull<T = unknown>(
+	method: Method,
+	path: string,
+	body?: unknown,
+	extraOptions?: Options,
+	schema?: ZodSchema<T>
+): Promise<{ data: T }> {
+	const useAuthStore = getAuthStore();
+	const { accessToken } = useAuthStore.getState();
+
+	if (__DEV__) {
+		console.log(`[API] ${method.toUpperCase()} ${BASE_URL}${path}`);
+		if (body && method !== 'get') {
+			console.log(`[API] Request body:`, JSON.stringify(body));
+		}
+	}
+
+	const isFormData =
+		typeof FormData !== "undefined" && body instanceof FormData;
+
+	const headers: Record<string, string> = {
+		...(isFormData ? {} : { "Content-Type": "application/json" }),
+		...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+		...(extraOptions?.headers as Record<string, string> | undefined),
+	};
+
+	const opts: Options = {
+		...extraOptions,
+		method,
+		headers,
+		timeout: 15000,
+		...(body !== undefined
+			? isFormData
+				? { body: body as FormData }
+				: { json: body }
+			: {}),
+	};
+
+	const doRequest = (token?: string) => {
+		const h = { ...headers };
+		if (token) h.Authorization = `Bearer ${token}`;
+		return ky(`${BASE_URL}${path}`, { ...opts, headers: h }).json<T>();
+	};
+
+	try {
+		const result = await doRequest();
+		return { data: result };
+	} catch (err) {
+		if (__DEV__) {
+			console.log(`[API] Error type:`, err?.constructor?.name || typeof err);
+			console.log(`[API] Error details:`, JSON.stringify(err, null, 2));
+
+			if (err instanceof TypeError && err.message.includes('Network')) {
+				console.log(`[API] Network error - cannot reach ${BASE_URL}${path}`);
+			}
+		}
+		throw err;
+	}
+}
+
 // Axios-compatible surface used across the app
 const api = {
-	get: <T = unknown>(url: string, options?: Options) =>
-		request<T>("get", url, undefined, options),
+	get: <T = unknown>(url: string, options?: Options, schema?: ZodSchema<T>) =>
+		request<T>("get", url, undefined, options, schema),
 
-	post: <T = unknown>(url: string, body?: unknown, options?: Options) =>
-		request<T>("post", url, body, options),
+	post: <T = unknown>(url: string, body?: unknown, options?: Options, schema?: ZodSchema<T>) =>
+		request<T>("post", url, body, options, schema),
 
-	patch: <T = unknown>(url: string, body?: unknown, options?: Options) =>
-		request<T>("patch", url, body, options),
+	patch: <T = unknown>(url: string, body?: unknown, options?: Options, schema?: ZodSchema<T>) =>
+		request<T>("patch", url, body, options, schema),
 
-	put: <T = unknown>(url: string, body?: unknown, options?: Options) =>
-		request<T>("put", url, body, options),
+	put: <T = unknown>(url: string, body?: unknown, options?: Options, schema?: ZodSchema<T>) =>
+		request<T>("put", url, body, options, schema),
 
-	delete: <T = unknown>(url: string, options?: Options) =>
-		request<T>("delete", url, undefined, options),
+	delete: <T = unknown>(url: string, options?: Options, schema?: ZodSchema<T>) =>
+		request<T>("delete", url, undefined, options, schema),
+
+	// Get the full response envelope (for paginated endpoints)
+	getFull: <T = unknown>(url: string, options?: Options, schema?: ZodSchema<T>) =>
+		requestFull<T>("get", url, undefined, options, schema),
 };
 
 export default api;
@@ -236,6 +364,7 @@ export interface Listing {
 		name: string | null;
 		avatar_url: string | null;
 		kyc_status: string;
+		phone?: string;
 	};
 }
 
@@ -281,10 +410,13 @@ export interface WalletTransaction {
 export interface FarmUpdate {
 	id: string;
 	contract_id: string;
-	title: string;
-	description: string;
-	media_urls: string[];
+	farmer_id: string;
+	media_url: string;
+	media_type: string;
+	caption: string | null;
+	wage_released: number;
 	created_at: string;
+	farmer?: { name: string | null; avatar_url: string | null };
 }
 
 export interface Delivery {
@@ -345,6 +477,11 @@ export interface ChatMessage {
 	text: string;
 	media_url?: string;
 	created_at: string;
+	sender?: {
+		id: string;
+		name: string | null;
+		avatar_url: string | null;
+	};
 }
 
 export interface EscrowLedgerEntry {
@@ -354,4 +491,18 @@ export interface EscrowLedgerEntry {
 	amount: number;
 	description: string;
 	created_at: string;
+}
+
+export interface ConsumerStats {
+	totalInvested: number;
+	activeInvestments: number;
+	totalYield: number;
+	recentUpdates: Array<{
+		id: string;
+		contract_id: string;
+		media_url: string;
+		caption: string;
+		created_at: string;
+		contract: { listing: { name: string } };
+	}>;
 }

@@ -25,6 +25,7 @@ import {
   LayoutDashboard,
   Map,
   Compass,
+  Globe,
   User,
   Heart,
   Bell,
@@ -36,8 +37,12 @@ import {
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
 import { useUserStore, useAuthStore, useRegistrationStore } from '../src/stores';
-import { useUnreadCounts } from './_layout';
+import { useUnreadCounts } from '../src/config/unread-context';
 import { biometric } from '../src/utils/biometric';
+import { haptic } from '../src/utils/haptics';
+import { useTranslation } from 'react-i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useQuery } from '@tanstack/react-query';
 
 function SidebarItem({ icon, label, active = false, onPress, badge }: { icon: any; label: string; active?: boolean; onPress?: () => void; badge?: number }) {
   return (
@@ -73,23 +78,49 @@ function MenuItem({ icon, label, isLast = false, onPress, badge }: { icon: any; 
 }
 
 export default function ProfileScreen() {
+  const { t, i18n } = useTranslation();
   const [windowWidth, setWindowWidth] = useState(Dimensions.get('window').width);
   const isLargeScreen = windowWidth > 1024;
   const [biometricEnabled, setBiometricEnabled] = useState(false);
   const [biometricSupported, setBiometricSupported] = useState(false);
 
   const { profile, wallet, holdings, fetchProfile, fetchWallet, fetchHoldings } = useUserStore();
-  const { userRole } = useAuthStore();
-  const { authUser } = useAuthStore();
+  const { userRole, authUser } = useAuthStore();
   const { unreadCounts } = useUnreadCounts();
   const resetRegistration = useRegistrationStore((s) => s.reset);
   const clearUser = useUserStore((s) => s.clearUser);
 
+  const { data: profileData, isLoading: profileLoading } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      await fetchProfile();
+      return profile;
+    },
+  });
+
+  const { data: walletData } = useQuery({
+    queryKey: ['walletBalance', 'profile'],
+    queryFn: async () => {
+      await fetchWallet();
+      return wallet;
+    },
+  });
+
+  const { data: holdingsData } = useQuery({
+    queryKey: ['userHoldings'],
+    queryFn: async () => {
+      await fetchHoldings();
+      return holdings;
+    },
+  });
+
+  const changeLanguage = async (lng: string) => {
+    haptic.light();
+    await i18n.changeLanguage(lng);
+    await AsyncStorage.setItem('user-language', lng);
+  };
+
   useEffect(() => {
-    fetchProfile();
-    fetchWallet();
-    fetchHoldings();
-    
     // Check biometric support
     const checkBiometric = async () => {
       const supported = await biometric.isCompatible();
@@ -100,7 +131,7 @@ export default function ProfileScreen() {
       setBiometricEnabled(enabled);
     };
     checkBiometric();
-  }, [fetchProfile, fetchWallet, fetchHoldings]);
+  }, []);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -110,15 +141,17 @@ export default function ProfileScreen() {
   }, []);
 
   const handleLogout = () => {
+    haptic.light();
     Alert.alert(
-      'Logout',
+      t('common.logout'),
       'Are you sure you want to logout?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         { 
-          text: 'Logout', 
+          text: t('common.logout'), 
           style: 'destructive',
           onPress: () => {
+            haptic.success();
             resetRegistration();
             clearUser();
             router.replace('/login');
@@ -129,12 +162,15 @@ export default function ProfileScreen() {
   };
 
   const toggleBiometric = async (value: boolean) => {
+    haptic.light();
     if (value) {
-      const success = await biometric.enableBiometric();
+      const success = await biometric.enableBiometric(authUser?.phone);
       if (success) {
+        haptic.success();
         setBiometricEnabled(true);
         Alert.alert('Success', 'Biometric login enabled!');
       } else {
+        haptic.error();
         Alert.alert('Failed', 'Could not enable biometric login. Please try again.');
       }
     } else {
@@ -146,9 +182,9 @@ export default function ProfileScreen() {
   const kycStatus = authUser?.kyc_status || 'PENDING';
 
   const stats = [
-    { label: 'Total Holdings', value: `${holdings.totalAcres} Acres`, icon: <Tractor size={20} color="#4cae4f" /> },
-    { label: 'Lease Revenue', value: `₹${(holdings.totalProperties * 42000).toLocaleString('en-IN')}`, icon: <TrendingUp size={20} color="#3b82f6" /> },
-    { label: 'Wallet Balance', value: `₹${wallet.balance.toLocaleString('en-IN')}`, icon: <Wallet size={20} color="#a855f7" /> },
+    { label: 'Total Holdings', value: `${holdings?.totalAcres ?? 0} Acres`, icon: <Tractor size={20} color="#4cae4f" /> },
+    { label: 'Lease Revenue', value: 'Coming Soon', icon: <TrendingUp size={20} color="#3b82f6" /> },
+    { label: 'Wallet Balance', value: `₹${(wallet?.balance ?? 0).toLocaleString('en-IN')}`, icon: <Wallet size={20} color="#a855f7" /> },
   ];
 
   const Sidebar = () => (
@@ -182,7 +218,6 @@ export default function ProfileScreen() {
       
       <Header
         variant="menu"
-        onAvatarPress={() => router.push('/marketplace')}
       />
       
       <View className="flex-1 flex-row">
@@ -194,7 +229,7 @@ export default function ProfileScreen() {
             {/* Page Title */}
             <View className="mb-8">
               <Text className="text-[10px] font-bold text-primary uppercase tracking-widest mb-0.5">
-                {userRole === 'investor' ? 'Investor Dashboard' : 'Farmer Dashboard'}
+                {userRole === 'consumer' ? 'Investor Dashboard' : 'Farmer Dashboard'}
               </Text>
               <Text className="text-2xl font-bold text-[#111811] dark:text-white tracking-tighter uppercase">My Profile</Text>
             </View> 
@@ -203,7 +238,7 @@ export default function ProfileScreen() {
             <View className="bg-white dark:bg-surface-dark rounded-[32px] border border-[#eaf0ea] dark:border-[#2a382a] p-8 mb-8 flex-row items-center gap-8 shadow-sm">
                 <View className="size-24 rounded-full border-4 border-background-light dark:border-background-dark overflow-hidden relative shadow-md">
                    <Image 
-                    source={{ uri: profile?.avatar || `https://i.pravatar.cc/300?u=${authUser?.id}` }} 
+                    source={{ uri: authUser?.avatar_url || profile?.avatar || `https://i.pravatar.cc/300?u=${authUser?.id}` }} 
                     className="w-full h-full" 
                    />
                    <View className="absolute bottom-1 right-1 size-5 bg-primary rounded-full border-2 border-white items-center justify-center">
@@ -217,7 +252,7 @@ export default function ProfileScreen() {
                    <View className="flex-row items-center gap-2 mt-2 flex-wrap">
                       <View className="bg-primary/10 px-3 py-1 rounded-full">
                          <Text className="text-[10px] font-bold text-primary uppercase tracking-wider">
-                          {userRole === 'investor' ? 'Premium Agri-Investor' : 'Verified Farmer'}
+                          {userRole === 'consumer' ? 'Premium Agri-Investor' : 'Verified Farmer'}
                          </Text>
                       </View>
                       <View className={`px-3 py-1 rounded-full ${
@@ -272,16 +307,40 @@ export default function ProfileScreen() {
                   </View>
                </View>
 
-               {/* Biometric Login Toggle */}
-               {biometricSupported && (
-                 <View>
-                    <Text className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-4 ml-2">Login Settings</Text>
-                    <View className="bg-white dark:bg-surface-dark rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden">
+               <View>
+                  <Text className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-4 ml-2">{t('profile.settings')}</Text>
+                  <View className="bg-white dark:bg-surface-dark rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden">
+                     <View className="flex-row items-center justify-between px-4 py-3 border-b border-[#f6f7f6] dark:border-[#2a382a]/50">
+                        <View className="flex-row items-center gap-3">
+                           <View className="size-8 bg-background-light dark:bg-background-dark rounded-lg items-center justify-center">
+                              <Globe size={18} color="#608562" />
+                           </View>
+                           <Text className="text-sm font-semibold text-slate-900 dark:text-white">{t('profile.language')}</Text>
+                        </View>
+                        <View className="flex-row bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                           <TouchableOpacity 
+                            onPress={() => changeLanguage('en')}
+                            className={`px-3 py-1.5 rounded-md ${i18n.language === 'en' ? 'bg-white dark:bg-gray-700 shadow-sm' : ''}`}
+                           >
+                              <Text className={`text-xs font-bold ${i18n.language === 'en' ? 'text-primary' : 'text-gray-500'}`}>EN</Text>
+                           </TouchableOpacity>
+                           <TouchableOpacity 
+                            onPress={() => changeLanguage('hi')}
+                            className={`px-3 py-1.5 rounded-md ${i18n.language === 'hi' ? 'bg-white dark:bg-gray-700 shadow-sm' : ''}`}
+                           >
+                              <Text className={`text-xs font-bold ${i18n.language === 'hi' ? 'text-primary' : 'text-gray-500'}`}>हिन्दी</Text>
+                           </TouchableOpacity>
+                        </View>
+                     </View>
+
+                     {biometricSupported && (
                        <View className="flex-row items-center justify-between px-4 py-3">
                           <View className="flex-row items-center gap-3 flex-1">
-                             <Fingerprint size={18} color="#608562" />
+                             <View className="size-8 bg-background-light dark:bg-background-dark rounded-lg items-center justify-center">
+                                <Fingerprint size={18} color="#608562" />
+                             </View>
                              <View className="flex-1">
-                                <Text className="text-sm font-semibold text-slate-900 dark:text-white">Biometric Login</Text>
+                                <Text className="text-sm font-semibold text-slate-900 dark:text-white">{t('profile.biometrics')}</Text>
                                 <Text className="text-xs text-gray-500">Use Face ID or Fingerprint</Text>
                              </View>
                           </View>
@@ -293,9 +352,9 @@ export default function ProfileScreen() {
                             ios_backgroundColor="#e5e7eb"
                           />
                        </View>
-                    </View>
-                 </View>
-               )}
+                     )}
+                  </View>
+               </View>
 
                <View>
                   <Text className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-4 ml-2">Support & Safety</Text>

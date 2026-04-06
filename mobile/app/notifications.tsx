@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator,
 import { Bell, CheckCircle, Clock, MessageSquare, AlertTriangle, Wallet, Package, ChevronLeft } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Notification } from '../src/config/api';
-import { useUnreadCounts } from './_layout';
+import { useUnreadCounts } from '../src/config/unread-context';
 
 const typeIcons: Record<string, any> = {
   CONTRACT: Clock,

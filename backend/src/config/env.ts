@@ -29,6 +29,7 @@ const envSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),
+  OPENWEATHER_API_KEY: z.string().optional(),
 });
 
 type EnvConfig = z.infer<typeof envSchema>;
@@ -90,6 +91,10 @@ export const env = {
     cloudName: envConfig.CLOUDINARY_CLOUD_NAME,
     apiKey: envConfig.CLOUDINARY_API_KEY,
     apiSecret: envConfig.CLOUDINARY_API_SECRET,
+  },
+
+  weather: {
+    openweatherApiKey: envConfig.OPENWEATHER_API_KEY,
   },
 
   isProd: envConfig.NODE_ENV === 'production',

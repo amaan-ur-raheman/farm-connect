@@ -35,7 +35,7 @@ export default function EditListingScreen() {
         const data = res.data.data;
         if (!data) {
           Alert.alert('Error', 'Listing not found.');
-          router.back();
+          router.replace('/listings');
           return;
         }
         setListing(data);
@@ -99,13 +99,19 @@ export default function EditListingScreen() {
       Alert.alert('Missing Fields', 'Please fill in all required fields.');
       return;
     }
+    const area = parseFloat(form.area_acres);
+    const price = parseFloat(form.price_per_acre);
+    if (isNaN(area) || area <= 0 || isNaN(price) || price <= 0) {
+      Alert.alert('Invalid Values', 'Area and price must be valid positive numbers.');
+      return;
+    }
     setSubmitting(true);
     try {
       await api.patch(`/api/listings/${id}`, {
         name: form.name,
         description: form.description || null,
-        area_acres: parseFloat(form.area_acres),
-        price_per_acre: parseFloat(form.price_per_acre),
+        area_acres: area,
+        price_per_acre: price,
         crops: form.crops.split(',').map((c: string) => c.trim()).filter(Boolean),
         location_name: form.location_name,
         soil_type: form.soil_type || null,

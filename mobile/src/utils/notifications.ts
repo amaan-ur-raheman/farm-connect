@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 import * as Device from "expo-device";
 
 // Detection for environments where expo-notifications will crash
-const isExpoGo = Constants.appOwnership === "expo" || Constants.executionEnvironment === "store-client";
+const isExpoGo = Constants.appOwnership === "expo" || Constants.executionEnvironment === "storeClient";
 const hasNativeModule = !!NativeModules.ExpoNotificationsModule;
 export const shouldSkipNotifications = isExpoGo || !hasNativeModule;
 

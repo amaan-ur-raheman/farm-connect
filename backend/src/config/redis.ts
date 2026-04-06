@@ -8,7 +8,7 @@ const redis = new Redis({
 });
 
 const OTP_TTL = 300; // 5 minutes
-const OTP_LIMIT = 5; // max OTP requests per hour per phone
+const OTP_LIMIT = 10; // max OTP requests per hour per phone
 
 const hashOtp = (phone: string, otp: string): string => {
 	return crypto.createHash("sha256").update(`${phone}:${otp}`).digest("hex");

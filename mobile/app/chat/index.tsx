@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { ChevronLeft, MessageSquare, Sprout } from 'lucide-react-native';
 import { router, useFocusEffect } from 'expo-router';
 import api, { Conversation, ChatMessage } from '../../src/config/api';
 import { useSocketStore } from '../../src/stores';
-import { useUnreadCounts } from '../_layout';
+import { useUnreadCounts } from '../../src/config/unread-context';
 import { Skeleton } from '../../src/components/ui/Skeleton';
 
 export default function ChatListScreen() {
@@ -14,13 +14,7 @@ export default function ChatListScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const { socket } = useSocketStore();
   const { refreshUnreadCounts } = useUnreadCounts();
-
-  // Reset chat badge when screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      refreshUnreadCounts();
-    }, [refreshUnreadCounts])
-  );
+  const lastFetchRef = useRef(0);
 
   const fetchConversations = useCallback(async () => {
     try {
@@ -33,6 +27,14 @@ export default function ChatListScreen() {
     }
   }, []);
 
+  // Reset chat badge when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      refreshUnreadCounts();
+      fetchConversations();
+    }, [refreshUnreadCounts, fetchConversations])
+  );
+
   useEffect(() => { fetchConversations(); }, [fetchConversations]);
 
   useEffect(() => {
@@ -42,6 +44,9 @@ export default function ChatListScreen() {
       setConversations(prev => {
         const index = prev.findIndex(c => c.id === msg.conversation_id);
         if (index === -1) {
+          // Throttle: prevent excessive fetchConversations calls
+          if (Date.now() - lastFetchRef.current < 2000) return prev;
+          lastFetchRef.current = Date.now();
           fetchConversations();
           return prev;
         }
@@ -76,7 +81,7 @@ export default function ChatListScreen() {
     return (
       <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
         <StatusBar barStyle="dark-content" />
-        <View className="px-4 py-4 space-y-4">
+        <View className="px-4 py-4 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
             <View key={i} className="flex-row items-center gap-3">
               <Skeleton width={50} height={50} borderRadius={25} />
@@ -131,7 +136,7 @@ export default function ChatListScreen() {
               >
                 <View className="relative mr-3">
                   <Image
-                    source={{ uri: conv.other_user.avatar_url || `https://i.pravatar.cc/100?u=${conv.other_user.id}` }}
+                    source={{ uri: conv.other_user?.avatar_url || `https://i.pravatar.cc/100?u=${conv.other_user?.id || 'unknown'}` }}
                     style={{ width: 48, height: 48, borderRadius: 24 }}
                   />
                   {conv.unread_count > 0 && (
@@ -143,7 +148,7 @@ export default function ChatListScreen() {
                 <View className="flex-1">
                   <View className="flex-row items-center justify-between mb-1">
                     <Text className={`text-sm font-bold text-slate-900 dark:text-white ${conv.unread_count > 0 ? '' : 'opacity-70'}`}>
-                      {conv.other_user.name || 'User'}
+                      {conv.other_user?.name || 'User'}
                     </Text>
                     <Text className="text-[10px] text-gray-400">
                       {conv.last_message ? new Date(conv.last_message.created_at).toLocaleDateString() : ''}

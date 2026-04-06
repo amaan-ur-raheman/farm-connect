@@ -16,8 +16,9 @@ import { Camera, MapPin, Send, Play } from "lucide-react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Header } from "../../src/components/ui/Header";
 import { useUserStore, useSocketStore } from "../../src/stores";
-import api, { ChatMessage, Conversation, BASE_URL } from "../../src/config/api";
+import api, { ChatMessage, BASE_URL } from "../../src/config/api";
 import { useAuthStore } from "../../src/stores/authStore";
+import { haptic } from "../../src/utils/haptics";
 
 export default function ChatScreen() {
 	const { id } = useLocalSearchParams();
@@ -29,39 +30,78 @@ export default function ChatScreen() {
 	const [loading, setLoading] = useState(true);
 	const [sending, setSending] = useState(false);
 	const [inputHeight, setInputTextHeight] = useState(48);
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
 	const [otherUser, setOtherUser] = useState<{
 		name: string;
 		avatar: string;
 	}>({ name: "User", avatar: "" });
 	const scrollViewRef = useRef<ScrollView>(null);
 
+	// Keyboard event listeners
+	useEffect(() => {
+		// Use keyboardWillShow for iOS (better timing), keyboardDidShow for Android
+		const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+		const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+		
+		const keyboardDidShowListener = Keyboard.addListener(
+			showEvent,
+			(e) => {
+				const kbHeight = e.endCoordinates.height;
+				console.log('[Chat] Keyboard SHOW - height:', kbHeight, 'platform:', Platform.OS);
+				setKeyboardHeight(kbHeight);
+				// Scroll to bottom when keyboard appears
+				setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+			}
+		);
+		const keyboardDidHideListener = Keyboard.addListener(
+			hideEvent,
+			(e) => {
+				console.log('[Chat] Keyboard HIDE');
+				setKeyboardHeight(0);
+			}
+		);
+
+		return () => {
+			keyboardDidShowListener.remove();
+			keyboardDidHideListener.remove();
+		};
+	}, []);
+
 	const fetchMessages = useCallback(async () => {
 		try {
+			// Fetch conversation details to get participant info
+			const convRes = await api.get<{ 
+				participant_one: { id: string; name: string | null; avatar_url: string | null };
+				participant_two: { id: string; name: string | null; avatar_url: string | null };
+			}>(`/api/chat/conversations/${id}`);
+			const conversation = convRes.data.data || convRes.data;
+
+			// Determine the other participant
+			const currentUserId = authUser?.id;
+			const participantOne = conversation.participant_one;
+			const participantTwo = conversation.participant_two;
+
+			const otherParticipant = participantOne?.id === currentUserId
+				? participantTwo
+				: participantOne;
+
+			if (otherParticipant) {
+				setOtherUser({
+					name: otherParticipant.name || "User",
+					avatar: otherParticipant.avatar_url || `https://i.pravatar.cc/100?u=${otherParticipant.id}`,
+				});
+			}
+
+			// Fetch messages
 			const res = await api.get<{ data: ChatMessage[] }>(`/api/chat/conversations/${id}/messages`);
 			const data: ChatMessage[] = res.data.data || [];
 			setMessages(data);
-
-			// Get conversation details for other user
-			const convRes = await api
-				.get<{ data: Conversation[] }>("/api/chat/conversations")
-				.catch(() => null);
-			if (convRes) {
-				const conversations: Conversation[] = convRes.data.data || [];
-				const conv = conversations.find((c) => c.id === id);
-				if (conv?.other_user) {
-					setOtherUser({
-						name: conv.other_user.name || "User",
-						avatar:
-							conv.other_user.avatar_url ||
-							`https://i.pravatar.cc/100?u=${conv.other_user.id}`,
-					});
-				}
-			}
-		} catch {
+		} catch (err) {
+			console.error('Failed to fetch chat data:', err);
 		} finally {
 			setLoading(false);
 		}
-	}, [id]);
+	}, [id, authUser?.id]);
 
 	useEffect(() => {
 		// Load message history via REST
@@ -88,13 +128,13 @@ export default function ChatScreen() {
 
 	const handleSend = async () => {
 		if (!inputText.trim() || sending) return;
+		haptic.light();
 		const text = inputText.trim();
 		setInputText("");
 		setInputTextHeight(48);
 		setSending(true);
 		try {
 			await api.post(`/api/chat/conversations/${id}/messages`, { text });
-			await fetchMessages();
 			setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
 		} catch {
 			setInputText(text); // restore on error
@@ -114,11 +154,7 @@ export default function ChatScreen() {
 	const isOwnMessage = (msg: ChatMessage) => msg.sender_id === authUser?.id;
 
 	return (
-		<KeyboardAvoidingView
-			behavior={Platform.OS === "ios" ? "padding" : undefined}
-			keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-			className="flex-1 bg-background-light dark:bg-background-dark"
-		>
+		<View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
 			<StatusBar barStyle="dark-content" />
 
 			<Header
@@ -129,25 +165,31 @@ export default function ChatScreen() {
 				onActionPress={() => {}}
 			/>
 
-			{loading ? (
-				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size="large" color="#4cae4f" />
-				</View>
-			) : (
-				<ScrollView
-					ref={scrollViewRef}
+			<View className="flex-1">
+				<KeyboardAvoidingView
+					behavior={Platform.OS === "ios" ? "padding" : undefined}
 					className="flex-1"
-					showsVerticalScrollIndicator={false}
-					keyboardShouldPersistTaps="handled"
-					contentContainerStyle={{
-						paddingHorizontal: 16,
-						paddingVertical: 20,
-						paddingBottom: 20,
-					}}
-					onContentSizeChange={() =>
-						scrollViewRef.current?.scrollToEnd({ animated: false })
-					}
+					keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
 				>
+					{loading ? (
+						<View className="flex-1 items-center justify-center">
+							<ActivityIndicator size="large" color="#4cae4f" />
+						</View>
+					) : (
+						<>
+							<ScrollView
+								ref={scrollViewRef}
+								className="flex-1"
+								showsVerticalScrollIndicator={false}
+								keyboardShouldPersistTaps="handled"
+								contentContainerStyle={{
+									paddingHorizontal: 16,
+									paddingVertical: 20,
+								}}
+								onContentSizeChange={() =>
+									scrollViewRef.current?.scrollToEnd({ animated: false })
+								}
+							>
 					{messages.length === 0 ? (
 						<View className="flex-1 items-center justify-center py-20">
 							<Text className="text-sm text-gray-500">
@@ -241,11 +283,10 @@ export default function ChatScreen() {
 							);
 						})
 					)}
-				</ScrollView>
-			)}
+							</ScrollView>
 
-			<View className="bg-white dark:bg-[#1e291e] border-t border-[#eaf0ea] dark:border-[#2a382a] px-4 pt-3 pb-8">
-				<View className="flex-row items-end gap-2">
+							<View className="bg-white dark:bg-[#1e291e] border-t border-[#eaf0ea] dark:border-[#2a382a] px-4 pt-3" style={{ paddingBottom: 8 + keyboardHeight }}>
+								<View className="flex-row items-end gap-2">
 					<View className="flex-row bg-gray-100 dark:bg-gray-800 rounded-2xl p-1 gap-1 border border-gray-100 dark:border-white/5 mb-1">
 						<TouchableOpacity className="size-10 items-center justify-center rounded-xl">
 							<Camera
@@ -264,7 +305,16 @@ export default function ChatScreen() {
 							onChangeText={setInputText}
 							multiline
 							onContentSizeChange={(e) => {
-								setInputTextHeight(Math.min(120, Math.max(48, e.nativeEvent.contentSize.height + 10)));
+								const newHeight = Math.min(120, Math.max(48, e.nativeEvent.contentSize.height + 10));
+								setInputTextHeight(newHeight);
+								// Auto-scroll when typing in multi-line
+								if (newHeight > 48) {
+									setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 50);
+								}
+							}}
+							onFocus={() => {
+								// Scroll to bottom when input is focused
+								setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 200);
 							}}
 							style={{ height: inputHeight }}
 							className="flex-1 text-[15px] text-[#111811] dark:text-white font-semibold py-2"
@@ -283,8 +333,12 @@ export default function ChatScreen() {
 							className="ml-0.5"
 						/>
 					</TouchableOpacity>
-				</View>
+								</View>
+							</View>
+						</>
+					)}
+				</KeyboardAvoidingView>
 			</View>
-		</KeyboardAvoidingView>
+		</View>
 	);
 }

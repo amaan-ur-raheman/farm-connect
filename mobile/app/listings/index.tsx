@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { Image } from 'expo-image';
-import { ChevronLeft, Plus, MapPin, Trash2, Pencil } from 'lucide-react-native';
+import { ChevronLeft, Plus, MapPin, Trash2, Pencil, Loader2 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Listing } from '../../src/config/api';
 
@@ -9,6 +9,7 @@ export default function MyListingsScreen() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchListings = useCallback(async () => {
     try {
@@ -35,11 +36,14 @@ export default function MyListingsScreen() {
         text: 'Delete',
         style: 'destructive',
         onPress: async () => {
+          setDeletingId(id);
           try {
             await api.delete(`/api/listings/${id}`);
             setListings(prev => prev.filter(l => l.id !== id));
           } catch {
             Alert.alert('Error', 'Failed to delete listing.');
+          } finally {
+            setDeletingId(null);
           }
         },
       },
@@ -128,8 +132,16 @@ export default function MyListingsScreen() {
                       <TouchableOpacity onPress={() => router.push(`/listings/edit/${listing.id}`)} className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
                         <Pencil size={16} color="#3b82f6" />
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => handleDelete(listing.id)} className="p-2 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                        <Trash2 size={16} color="#ef4444" />
+                      <TouchableOpacity
+                        onPress={() => handleDelete(listing.id)}
+                        disabled={deletingId === listing.id}
+                        className={`p-2 rounded-lg ${deletingId === listing.id ? 'bg-red-100 dark:bg-red-900/20' : 'bg-red-50 dark:bg-red-900/30'}`}
+                      >
+                        {deletingId === listing.id ? (
+                          <ActivityIndicator size="small" color="#ef4444" />
+                        ) : (
+                          <Trash2 size={16} color="#ef4444" />
+                        )}
                       </TouchableOpacity>
                     </View>
                   </View>

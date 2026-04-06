@@ -2,7 +2,9 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api, { AuthUser } from '../config/api';
+import { UserProfileResponseSchema, WalletBalanceResponseSchema, ContractsResponseSchema } from '../config/schemas';
 import { useAuthStore } from './authStore';
+import type { z } from 'zod';
 
 export interface UserProfile extends AuthUser {
   firstName: string;
@@ -70,10 +72,10 @@ export const useUserStore = create<UserState>()(
       fetchProfile: async () => {
         set({ isLoading: true });
         try {
-          const response = await api.get<{ data: AuthUser }>('/api/users/me');
-          const user = response.data.data;
+          const response = await api.get('/api/users/me', undefined, UserProfileResponseSchema);
+          const user = response.data.data as AuthUser;
           const nameParts = (user.name || '').trim().split(' ');
-          
+
           // Sync with AuthStore
           useAuthStore.setState({ authUser: user });
 
@@ -97,12 +99,11 @@ export const useUserStore = create<UserState>()(
 
       fetchWallet: async () => {
         try {
-          const response = await api.get<{ data: { balance: number; currency: string } }>('/api/wallet/balance');
-          const data = response.data.data;
+          const response = await api.get('/api/wallet/balance', undefined, WalletBalanceResponseSchema);
           set({
             wallet: {
-              balance: data.balance || 0,
-              currency: data.currency || 'INR',
+              balance: response.data.data?.balance || 0,
+              currency: response.data.data?.currency || 'INR',
             },
           });
         } catch {
@@ -113,10 +114,10 @@ export const useUserStore = create<UserState>()(
       fetchHoldings: async () => {
         try {
           const userRole = useAuthStore.getState().userRole;
-          const endpoint = userRole === 'investor'
+          const endpoint = userRole === 'consumer'
             ? '/api/contracts/consumer'
             : '/api/contracts/farmer';
-          const response = await api.get<{ data: unknown[] }>(endpoint);
+          const response = await api.get(endpoint, undefined, ContractsResponseSchema);
           const contracts = response.data.data || [];
           set({
             holdings: {
@@ -153,8 +154,6 @@ export const useUserStore = create<UserState>()(
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         profile: state.profile,
-        wallet: state.wallet,
-        holdings: state.holdings,
         investorPreferences: state.investorPreferences,
         farmerPreferences: state.farmerPreferences,
         isProfileComplete: state.isProfileComplete,

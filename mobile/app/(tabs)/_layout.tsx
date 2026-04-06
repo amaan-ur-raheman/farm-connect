@@ -1,8 +1,8 @@
 import { Tabs, useRouter } from 'expo-router';
 import { View, Text, Platform } from 'react-native';
 import { Home, Sprout, FileText, MessageSquare, User, Bell } from 'lucide-react-native';
-import { useAuthStore } from '../src/stores';
-import { useUnreadCounts } from './_layout';
+import { useAuthStore } from '../../src/stores';
+import { useUnreadCounts } from '../../src/config/unread-context';
 
 export default function TabLayout() {
 	const router = useRouter();
@@ -10,6 +10,7 @@ export default function TabLayout() {
 	const { unreadCounts } = useUnreadCounts();
 
 	const totalNotifications = unreadCounts.notifications + unreadCounts.chat;
+	const isFarmer = userRole === 'farmer';
 
 	return (
 		<Tabs
@@ -38,7 +39,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="dashboard"
 				options={{
-					title: userRole === 'farmer' ? 'My Farm' : 'Portfolio',
+					title: isFarmer ? 'My Farm' : 'Portfolio',
 					tabBarIcon: ({ color, size }) => (
 						<Home size={size} color={color} />
 					),
@@ -126,118 +127,6 @@ export default function TabLayout() {
 							)}
 						</View>
 					),
-				}}
-			/>
-
-			<Tabs.Screen
-				name="index"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="login"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="register"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="notifications"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="wallet"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="property/[id]"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="chat/[id]"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="contracts/[id]"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="listings"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="listings/create"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="listings/edit/[id]"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="updates/[contractId]"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="deliveries"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="disputes"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="reviews"
-				options={{
-					href: null,
-				}}
-			/>
-
-			<Tabs.Screen
-				name="investor-dashboard"
-				options={{
-					href: null,
 				}}
 			/>
 		</Tabs>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, TextInput, Alert } from 'react-native';
 import { ChevronLeft, Star, Plus } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import api, { Review } from '../src/config/api';
+import api, { Review, Contract } from '../src/config/api';
 
 export default function ReviewsScreen() {
   const { contractId, listingId } = useLocalSearchParams();
@@ -13,10 +13,33 @@ export default function ReviewsScreen() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [resolvedListingId, setResolvedListingId] = useState<string | null>(null);
+
+  // Resolve listing_id from contract if only contractId is provided
+  useEffect(() => {
+    const resolveListingId = async () => {
+      if (typeof listingId === 'string') {
+        setResolvedListingId(listingId);
+        return;
+      }
+      if (typeof contractId === 'string') {
+        try {
+          const res = await api.get<{ data: Contract }>(`/api/contracts/${contractId}`);
+          setResolvedListingId(res.data.data?.listing_id || null);
+        } catch (err) {
+          console.error('Failed to fetch contract for listing_id:', err);
+          setResolvedListingId(null);
+        }
+      } else {
+        setResolvedListingId(null);
+      }
+    };
+    resolveListingId();
+  }, [listingId, contractId]);
 
   const fetchReviews = useCallback(async () => {
     try {
-      const id = (listingId || contractId) as string;
+      const id = resolvedListingId;
       if (!id) { setLoading(false); return; }
       const endpoint = `/api/reviews/listing/${id}`;
       const res = await api.get<{ data: Review[] }>(endpoint).catch(() => ({ data: { data: [] } }));
@@ -26,7 +49,7 @@ export default function ReviewsScreen() {
     } finally {
       setLoading(false);
     }
-  }, [listingId, contractId]);
+  }, [resolvedListingId]);
 
   useEffect(() => { fetchReviews(); }, [fetchReviews]);
 

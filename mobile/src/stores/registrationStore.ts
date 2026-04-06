@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { UserRole } from './authStore';
 
 export interface DocumentUpload {
-  type: 'aadhaar' | 'pan' | 'land_records' | 'bank_statement';
+  type: 'aadhaar' | 'pan' | 'land_record' | 'bank_statement';
   uri: string;
   fileName: string;
   uploadedAt?: string;
@@ -16,6 +16,7 @@ export interface RegistrationFormData {
 }
 
 export interface FarmerDetails {
+  farmName?: string;
   farmSize: string;
   farmLocation: string;
   farmType: string;
@@ -95,7 +96,7 @@ const initialBankDetails: BankDetails = {
 
 export const useRegistrationStore = create<RegistrationState>((set, get) => ({
   currentStep: 1,
-  totalSteps: 3,
+  totalSteps: 4,
   
   userRole: null,
   formData: initialFormData,

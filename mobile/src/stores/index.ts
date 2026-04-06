@@ -26,7 +26,7 @@ export type {
 } from './marketplaceStore';
 
 export { useUiStore } from './uiStore';
-export type { Theme, Toast } from './uiStore';
+export type { Theme, UiToast } from './uiStore';
 
 export { useSocketStore } from './socketStore';
 

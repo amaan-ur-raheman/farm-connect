@@ -22,7 +22,7 @@ import {
   CheckCircle,
   User,
 } from 'lucide-react-native';
-import { useRegistrationStore } from '../../src/stores';
+import { useRegistrationStore, useAuthStore } from '../../src/stores';
 import { Input } from '../../src/components/ui/Input';
 import api from '../../src/config/api';
 
@@ -129,6 +129,7 @@ export default function InvestorPreferences() {
 
   const handleComplete = async () => {
     Keyboard.dismiss();
+    if (isSubmitting) return; // Prevent double-submit
     if (!validateBank()) return;
     setIsSubmitting(true);
     try {
@@ -139,12 +140,14 @@ export default function InvestorPreferences() {
         bank_name: bankDetails.bankName,
         bank_account_number: bankDetails.accountNumber,
         bank_ifsc: bankDetails.ifscCode,
+        account_type: accountType,
         investment_range: investmentRange,
         investment_goals: investmentGoals,
         preferred_farm_types: preferredFarmTypes,
       });
+      useAuthStore.getState().setRegistrationComplete(true);
       reset();
-      router.replace('/investor-dashboard');
+      router.replace('/(tabs)/dashboard');
     } catch (err: any) {
       Alert.alert(
         'Registration Failed',
@@ -160,7 +163,7 @@ export default function InvestorPreferences() {
       {/* Progress */}
       <View className="mb-8">
         <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
-          <View className="h-full w-full bg-primary rounded-full" />
+          <View className="h-full w-[75%] bg-primary rounded-full" />
         </View>
         <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
           Step 3 of 4 • Investor Profile
@@ -410,7 +413,7 @@ export default function InvestorPreferences() {
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         style={{ flex: 1 }}
       >
         <ScrollView

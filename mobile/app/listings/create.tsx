@@ -15,7 +15,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback
 } from 'react-native';
-import { ChevronLeft, ChevronRight, Camera, MapPin, X, FileText, Info, IndianRupee, Layers } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Camera, MapPin, X, FileText, Info, IndianRupee, Layers, Sprout } from 'lucide-react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import api from '../../src/config/api';
@@ -76,6 +76,14 @@ export default function CreateListingScreen() {
       Alert.alert('Missing Fields', 'Please fill in all required fields.');
       return;
     }
+
+    const acres = parseFloat(form.area_acres);
+    const price = parseFloat(form.price_per_acre);
+    if (isNaN(acres) || acres <= 0 || isNaN(price) || price <= 0) {
+      Alert.alert('Invalid Input', 'Please enter valid numbers for area and price.');
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await api.post<{ data: { id: string } }>('/api/listings', {

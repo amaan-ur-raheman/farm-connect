@@ -17,6 +17,27 @@ const mapListingToProperty = (listing: Listing) => ({
   isOrganic: listing.is_organic,
 });
 
+const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
+const BATCH_SIZE = 5;
+
+let cache: { data: Record<string, Listing>; timestamp: number } = {
+  data: {},
+  timestamp: 0,
+};
+
+function getFromCache(id: string): Listing | null {
+  const age = Date.now() - cache.timestamp;
+  if (age < CACHE_TTL_MS && cache.data[id]) {
+    return cache.data[id];
+  }
+  return null;
+}
+
+function setInCache(listings: Record<string, Listing>) {
+  cache.data = { ...cache.data, ...listings };
+  cache.timestamp = Date.now();
+}
+
 export default function FavoritesScreen() {
   const { favorites, toggleFavorite } = useMarketplaceStore();
   const [favoriteListings, setFavoriteListings] = useState<any[]>([]);
@@ -24,20 +45,38 @@ export default function FavoritesScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchFavorites = async () => {
-    if (favorites.length === 0) {
+    if (favorites.size === 0) {
       setFavoriteListings([]);
       setLoading(false);
       return;
     }
 
     try {
-      const promises = favorites.map(id => 
-        api.get<{ data: Listing }>(`/api/listings/${id}`).catch(() => null)
-      );
-      const results = await Promise.all(promises);
-      const listings = results
-        .filter(r => r !== null)
-        .map(r => mapListingToProperty(r!.data.data));
+      const ids = Array.from(favorites) as string[];
+      const allListings: Listing[] = [];
+
+      for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+        const chunk = ids.slice(i, i + BATCH_SIZE);
+        const results = await Promise.all(
+          chunk.map(async (id: string) => {
+            const cached = getFromCache(id);
+            if (cached) return cached;
+            try {
+              const res = await api.get<Listing>(`/api/listings/${id}`);
+              return res.data;
+            } catch (err) {
+              console.error(`Failed to fetch listing ${id}:`, err);
+              return null;
+            }
+          })
+        );
+        const valid = results.filter((r): r is Listing => r !== null);
+        allListings.push(...valid);
+        // Cache results from this chunk
+        setInCache(Object.fromEntries(valid.map((l) => [l.id, l])));
+      }
+
+      const listings = allListings.map(mapListingToProperty);
       setFavoriteListings(listings);
     } catch (err) {
       console.error('Failed to fetch favorites:', err);

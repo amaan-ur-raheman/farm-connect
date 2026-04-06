@@ -16,6 +16,7 @@ export interface Property {
   irrigated?: boolean;
   rating: number;
   type: string;
+  isOrganic?: boolean;
 }
 
 export interface MarketplaceFilters {

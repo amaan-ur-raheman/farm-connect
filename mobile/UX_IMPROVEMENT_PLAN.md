@@ -83,7 +83,7 @@ Replace `ActivityIndicator` with skeleton placeholders matching final layout.
 **Install:** `expo-haptics`
 **Files to modify:** All interactive components
 **Add:**
-- `Haptics.impactAsync(Haptics.ImpactStyle.Light)` on button press
+- `Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)` on button press
 - `Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)` on success
 - `Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)` on error
 

@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import { MapPin, Heart, ShieldCheck, Wifi } from 'lucide-react-native';
+import { MapPin, Heart, ShieldCheck, Droplets, Wifi } from 'lucide-react-native';
 import { Button } from './Button';
 
 interface PropertyCardProps {
@@ -12,6 +12,10 @@ interface PropertyCardProps {
   image: string;
   verified?: boolean;
   remoteReady?: boolean;
+  newListing?: boolean;
+  irrigated?: boolean;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
   onPress?: () => void;
 }
 
@@ -24,71 +28,83 @@ export function PropertyCard({
   image, 
   verified, 
   remoteReady,
+  newListing,
+  irrigated,
+  isFavorite,
+  onToggleFavorite,
   onPress
 }: PropertyCardProps) {
   return (
     <TouchableOpacity 
       activeOpacity={0.9} 
       onPress={onPress}
-      className="bg-white dark:bg-[#1a2c15] rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm mb-6"
+      className="bg-white dark:bg-[#1a2c15] rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm mb-6 w-full"
     >
       {/* Image & Tags */}
-      <View className="relative h-56 overflow-hidden">
+      <View className="relative aspect-[4/3] overflow-hidden">
         <Image 
           source={{ uri: image }} 
           style={{ width: '100%', height: '100%' }} 
           contentFit="cover"
         />
-        <View className="absolute top-4 left-4 gap-2">
+        <View className="absolute top-3 left-3 z-10 flex-row gap-2">
           {verified && (
-            <View className="bg-[#4cae4f] px-3 py-1.5 rounded-full flex-row items-center">
-              <ShieldCheck size={12} color="black" className="mr-1.5" strokeWidth={3} />
-              <Text className="text-[10px] font-black text-black uppercase tracking-tight">Verified Soil</Text>
+            <View className="bg-[#4cae4f]/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex-row items-center gap-1">
+              <ShieldCheck size={10} color="white" />
+              <Text className="text-[10px] font-bold text-white uppercase tracking-tight">Verified</Text>
+            </View>
+          )}
+          {newListing && (
+            <View className="bg-[#f59e0b]/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
+              <Text className="text-[10px] font-bold text-white uppercase tracking-tight">New</Text>
+            </View>
+          )}
+          {irrigated && (
+            <View className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex-row items-center gap-1">
+              <Droplets size={10} color="#111811" />
+              <Text className="text-[10px] font-medium text-[#111811] uppercase tracking-tight">Irrigated</Text>
             </View>
           )}
           {remoteReady && (
-            <View className="bg-white/95 dark:bg-black/70 px-3 py-1.5 rounded-full flex-row items-center border border-slate-100 dark:border-slate-800">
-              <Wifi size={12} color="#4cae4f" className="mr-1.5" strokeWidth={3} />
+            <View className="bg-white/95 dark:bg-black/70 px-3 py-1 rounded-full flex-row items-center border border-slate-100 dark:border-slate-800">
+              <Wifi size={10} color="#4cae4f" />
               <Text className="text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-tight">Remote Ready</Text>
             </View>
           )}
         </View>
         <TouchableOpacity 
-          className="absolute top-4 right-4 size-10 rounded-full bg-black/10 backdrop-blur-md items-center justify-center"
-          onPress={(e: { stopPropagation: () => void }) => {
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/20 backdrop-blur-sm"
+          onPress={(e: any) => {
             e.stopPropagation();
-            // Handle favorite
+            onToggleFavorite && onToggleFavorite();
           }}
         >
-          <Heart size={20} color="white" strokeWidth={2.5} />
+          <Heart size={16} color="white" fill={isFavorite ? '#ef4444' : 'transparent'} strokeWidth={2.5} />
         </TouchableOpacity>
       </View>
 
       {/* Content */}
       <View className="p-5">
-        <View className="flex-row justify-between items-start mb-3">
-          <View className="flex-1 mr-4">
-            <Text className="text-xl font-black text-slate-900 dark:text-white leading-tight">{title}</Text>
-            <View className="flex-row items-center mt-2">
-              <MapPin size={14} color="#94a3b8" className="mr-1.5" />
-              <Text className="text-sm font-bold text-slate-400 dark:text-slate-500">{location}</Text>
+        <View className="flex-row justify-between items-start mb-2">
+          <View className="flex-1 mr-2">
+            <Text className="text-lg font-bold text-slate-900 dark:text-white leading-tight" numberOfLines={1}>{title}</Text>
+            <View className="flex-row items-center mt-1">
+              <MapPin size={12} color="#6b7280" />
+              <Text className="text-xs font-medium text-slate-500 dark:text-slate-400 ml-1" numberOfLines={1}>{location}</Text>
             </View>
           </View>
-          <View className="items-end">
-            <Text className="text-xl font-black text-[#4cae4f]">{price}</Text>
-            <Text className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">/Month</Text>
-          </View>
+          <Text className="text-lg font-bold text-[#4cae4f]">{price}</Text>
         </View>
 
         {/* Info Grid */}
-        <View className="flex-row gap-3 my-6">
-          <View className="flex-1 bg-[#f8fafc] dark:bg-slate-900/50 p-3 rounded-2xl items-center border border-slate-50 dark:border-slate-800">
-            <Text className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1.5">Size</Text>
-            <Text className="text-sm font-black text-slate-700 dark:text-slate-200">{size}</Text>
+        <View className="flex-row gap-3 my-4">
+          <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] p-3 rounded-2xl items-center border border-slate-50 dark:border-slate-800">
+            <Text className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Size</Text>
+            <Text className="text-xs font-bold text-gray-700 dark:text-gray-300">{size}</Text>
           </View>
-          <View className="flex-1 bg-[#f8fafc] dark:bg-slate-900/50 p-3 rounded-2xl items-center border border-slate-50 dark:border-slate-800">
-            <Text className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1.5">Soil</Text>
-            <Text className="text-sm font-black text-slate-700 dark:text-slate-200">{soil}</Text>
+          <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] p-3 rounded-2xl items-center border border-slate-50 dark:border-slate-800">
+            <Text className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Soil</Text>
+            <Text className="text-xs font-bold text-gray-700 dark:text-gray-300" numberOfLines={1}>{soil}</Text>
           </View>
         </View>
 
@@ -96,8 +112,8 @@ export function PropertyCard({
         <Button 
           title="View Details" 
           variant="outline" 
-          size="md" 
-          className="w-full border-slate-100 dark:border-slate-800"
+          className="w-full py-3 rounded-xl border-[#4cae4f] border-2"
+          textClassName="text-[#4cae4f] font-black text-sm uppercase tracking-widest"
           onPress={onPress}
         />
       </View>

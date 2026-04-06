@@ -5,6 +5,7 @@ interface SkeletonProps {
   width?: number | string;
   height?: number | string;
   borderRadius?: number;
+  className?: string;
   style?: ViewStyle;
 }
 
@@ -50,7 +51,7 @@ export function Skeleton({ width, height, borderRadius = 8, style }: SkeletonPro
           opacity,
         },
         style,
-      ]}
+      ] as Animated.WithAnimatedArray<ViewStyle>}
     />
   );
 }

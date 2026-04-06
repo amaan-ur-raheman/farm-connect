@@ -58,12 +58,17 @@ export default function DeliveriesScreen() {
   };
 
   const handleCreateDelivery = async () => {
+    const quantity = parseFloat(newDelivery.quantity_kg);
+    if (isNaN(quantity) || quantity <= 0) {
+      Alert.alert('Invalid Quantity', 'Please enter a valid quantity.');
+      return;
+    }
     if (!contractId) return;
     try {
       await api.post('/api/deliveries', {
         contract_id: contractId,
         batch_number: newDelivery.batch_number,
-        quantity_kg: parseFloat(newDelivery.quantity_kg),
+        quantity_kg: quantity,
         quality_grade: newDelivery.quality_grade,
       });
       setShowCreateModal(false);
@@ -179,7 +184,7 @@ export default function DeliveriesScreen() {
                   )}
 
                   {/* Investor Actions */}
-                  {userRole === 'investor' && delivery.status === 'DELIVERED' && (
+                  {userRole === 'consumer' && delivery.status === 'DELIVERED' && (
                     <View className="flex-row gap-2">
                       <TouchableOpacity onPress={() => handleVerify(delivery.id, 'VERIFIED')} className="flex-1 bg-[#4cae4f] py-3 rounded-xl items-center">
                         <Text className="text-white font-bold text-xs">Verify & Accept</Text>

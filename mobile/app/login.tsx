@@ -187,6 +187,7 @@ export default function LoginScreen() {
 	};
 
 	const handleSendOtp = async () => {
+		haptic.light();
 		if (!userRole) {
 			Alert.alert(
 				"Select Role",
@@ -223,7 +224,9 @@ export default function LoginScreen() {
 	};
 
 	const handleVerifyOtp = async () => {
+		haptic.light();
 		if (!isOtpValid) {
+			haptic.error();
 			Alert.alert("Invalid OTP", otpValidation.error);
 			return;
 		}
@@ -234,6 +237,7 @@ export default function LoginScreen() {
 			// Navigate to tab-based navigation
 			router.replace("/(tabs)/dashboard");
 		} else {
+			haptic.error();
 			Alert.alert("Error", error || "Invalid OTP. Please try again.");
 		}
 	};
@@ -242,17 +246,32 @@ export default function LoginScreen() {
 		setBiometricLoading(true);
 		try {
 			const success = await biometric.authenticate('Login to FarmConnect');
-			
+
 			if (success) {
 				haptic.success();
-				// Get stored phone number and login
-				const { authUser } = useAuthStore.getState();
-				if (authUser?.phone) {
-					// We need to verify OTP silently or use a refresh token
-					// For now, we'll just navigate if already authenticated
+				// Verify the biometric is for the same user
+				const biometricPhone = await biometric.getBiometricPhone();
+				const { authUser, refreshTokens, accessToken } = useAuthStore.getState();
+
+				// If no stored user or phone doesn't match, require fresh login
+				if (!authUser?.phone || (biometricPhone && biometricPhone !== authUser.phone)) {
+					Alert.alert('Different Account', 'Biometric login is for a different account. Please login with OTP.');
+					return;
+				}
+
+				// Attempt to refresh tokens to get a fresh session
+				if (accessToken) {
+					// Token still valid — navigate directly
 					router.replace("/(tabs)/dashboard");
 				} else {
-					Alert.alert('Session Expired', 'Please login with OTP again.');
+					// No access token — try refresh
+					const newToken = await refreshTokens();
+					if (newToken) {
+						router.replace("/(tabs)/dashboard");
+					} else {
+						// Refresh failed — require fresh OTP login
+						Alert.alert('Session Expired', 'Please login with OTP again.');
+					}
 				}
 			}
 		} catch (error) {
@@ -262,7 +281,7 @@ export default function LoginScreen() {
 		}
 	};
 
-	const handleRoleSelect = (role: "farmer" | "investor") => {
+	const handleRoleSelect = (role: "farmer" | "consumer") => {
 		haptic.light();
 		setUserRole(role);
 		clearError();
@@ -357,17 +376,17 @@ export default function LoginScreen() {
 									{/* Investor Button */}
 									<TouchableOpacity
 										onPress={() =>
-											handleRoleSelect("investor")
+											handleRoleSelect("consumer")
 										}
 										style={[
 											styles.roleButton,
-											userRole === "investor" &&
+											userRole === "consumer" &&
 												styles.roleButtonActive,
 										]}
 									>
 										<Text
 											style={
-												userRole === "investor"
+												userRole === "consumer"
 													? styles.roleTextActive
 													: styles.roleTextInactive
 											}

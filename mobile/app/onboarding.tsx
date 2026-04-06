@@ -43,14 +43,6 @@ export default function OnboardingScreen() {
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef<ScrollView>(null);
 
-  const viewableItemsChanged = useRef(({ viewableItems }: any) => {
-    if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index);
-    }
-  }).current;
-
-  const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
-
   const scrollTo = () => {
     if (currentIndex < slides.length - 1) {
       slidesRef.current?.scrollTo({
@@ -80,8 +72,11 @@ export default function OnboardingScreen() {
     router.replace('/login');
   };
 
-  const slide = slides[currentIndex];
-  const Icon = slide.icon;
+  const handleMomentumScrollEnd = (e: any) => {
+    const contentOffsetX = e.nativeEvent.contentOffset.x;
+    const index = Math.round(contentOffsetX / width);
+    setCurrentIndex(index);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -101,32 +96,51 @@ export default function OnboardingScreen() {
         </View>
       )}
 
-      {/* Content */}
-      <View className="flex-1 items-center justify-center px-8">
-        {/* Icon */}
-        <View
-          className="w-32 h-32 rounded-full items-center justify-center mb-8"
-          style={{ backgroundColor: slide.bgColor }}
-        >
-          <Icon size={64} color={slide.color} strokeWidth={1.5} />
-        </View>
+      {/* Slides ScrollView */}
+      <ScrollView
+        ref={slidesRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: false }
+        )}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        scrollEventThrottle={16}
+        className="flex-1"
+      >
+        {slides.map((slide, index) => {
+          const Icon = slide.icon;
+          return (
+            <View key={index} className="w-screen flex-1 items-center justify-center px-8">
+              {/* Icon */}
+              <View
+                className="w-32 h-32 rounded-full items-center justify-center mb-8"
+                style={{ backgroundColor: slide.bgColor }}
+              >
+                <Icon size={64} color={slide.color} strokeWidth={1.5} />
+              </View>
 
-        {/* Title */}
-        <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
-          {slide.title}
-        </Text>
+              {/* Title */}
+              <Text className="text-3xl font-bold text-gray-900 text-center mb-4">
+                {slide.title}
+              </Text>
 
-        {/* Description */}
-        <Text className="text-base text-gray-600 text-center leading-relaxed">
-          {slide.description}
-        </Text>
-      </View>
+              {/* Description */}
+              <Text className="text-base text-gray-600 text-center leading-relaxed">
+                {slide.description}
+              </Text>
+            </View>
+          );
+        })}
+      </ScrollView>
 
       {/* Pagination Dots */}
       <View className="flex-row justify-center items-center mb-8">
         {slides.map((_, index) => {
           const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
-          
+
           const dotWidth = scrollX.interpolate({
             inputRange,
             outputRange: [8, 24, 8],

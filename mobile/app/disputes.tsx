@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator,
 import { ChevronLeft, AlertTriangle, Plus, X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Dispute } from '../src/config/api';
+import { validateDisputeReason } from '../src/utils/validation';
 
 const statusColors: Record<string, string> = { OPEN: '#f59e0b', UNDER_REVIEW: '#3b82f6', RESOLVED: '#4cae4f', ESCALATED: '#ef4444' };
 
@@ -36,6 +37,8 @@ export default function DisputesScreen() {
 
   const handleSubmit = async () => {
     if (!contractId || !reason || !description) { Alert.alert('Missing Fields', 'All fields are required.'); return; }
+    const validation = validateDisputeReason(reason);
+    if (!validation.isValid) { Alert.alert('Invalid', validation.error || 'Invalid reason'); return; }
     setSubmitting(true);
     try {
       await api.post('/api/disputes', { contract_id: contractId, reason, description, evidence_urls: [] });

@@ -28,21 +28,7 @@ import {
 import { useRegistrationStore, useAuthStore } from '../../src/stores';
 import api from '../../src/config/api';
 
-type LocalDocType = 'idFront' | 'idBack' | 'proofOfAddress';
-
-type BackendDocType = 'aadhaar_front' | 'aadhaar_back' | 'pan_card' | 'bank_statement';
-
-const LOCAL_TYPE_MAP: Record<LocalDocType, 'aadhaar' | 'pan' | 'bank_statement'> = {
-  idFront: 'aadhaar',
-  idBack: 'pan',
-  proofOfAddress: 'bank_statement',
-};
-
-const API_TYPE_MAP: Record<LocalDocType, BackendDocType> = {
-  idFront: 'aadhaar_front',
-  idBack: 'aadhaar_back',
-  proofOfAddress: 'bank_statement',
-};
+type LocalDocType = 'aadhaar' | 'land_record';
 
 const getMimeType = (uri: string): string => {
   const ext = uri.split('.').pop()?.toLowerCase() || '';
@@ -53,24 +39,21 @@ const getMimeType = (uri: string): string => {
 };
 
 const uploadKycDocument = async (
-  documentType: 'aadhaar' | 'pan' | 'bank_statement',
+  documentType: 'aadhaar' | 'land_record',
   assetUri: string,
   fileName: string
 ): Promise<void> => {
   const mimeType = getMimeType(assetUri);
   const formData = new FormData();
-  
-  // Use the correct field names for /api/kyc/upload endpoint
-  const fieldName = documentType === 'aadhaar' ? 'aadhaar' : 'land_record';
-  
-  // @ts-ignore - FormData type issue with React Native
-  formData.append(fieldName, {
+
+  // @ts-ignore - React Native FormData file attachment
+  formData.append(documentType, {
     uri: assetUri,
     name: fileName,
     type: mimeType,
   } as any);
 
-  console.log('Uploading KYC document to /api/kyc/upload...', { fieldName, mimeType, fileName });
+  console.log('Uploading KYC document to /api/kyc/upload...', { documentType, mimeType, fileName });
 
   try {
     const response = await api.post('/api/kyc/upload', formData, {
@@ -99,18 +82,11 @@ export default function RegisterStep2() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [isOtpFocused, setIsOtpFocused] = useState(false);
   const [uploadedDocs, setUploadedDocs] = useState({
-    idFront: documents.some((d) => d.type === 'aadhaar'),
-    idBack: documents.some(d => d.type === 'pan'),
-    proofOfAddress: documents.some(d => d.type === 'bank_statement'),
+    aadhaar: documents.some((d) => d.type === 'aadhaar'),
+    land_record: documents.some((d) => d.type === 'land_record'),
   });
 
   const otpInputRef = useRef<TextInput>(null);
-
-  useEffect(() => {
-    if (phone && !otpSent) {
-      handleResendOtp();
-    }
-  }, []);
 
   useEffect(() => {
     if (otpSent && !otpVerified) {
@@ -131,17 +107,19 @@ export default function RegisterStep2() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (otpInput.length === 6 && !otpVerified) {
-      handleVerifyOtp();
+    if (otpInput.length === 6 && !otpVerified && !isLoading) {
+      handleVerifyOtp().catch((err) => {
+        console.error('OTP verification failed:', err);
+      });
     }
-  }, [otpInput]);
+  }, [otpInput, isLoading]);
 
   const handleResendOtp = async () => {
     if (!phone) return;
     clearError();
     setOtpError(null);
-    const success = await sendOtp(phone);
-    if (success) {
+    const result = await sendOtp(phone);
+    if (result.success) {
       setOtpSent(true);
       setResendCooldown(30);
       setOtpInput('');
@@ -198,14 +176,14 @@ export default function RegisterStep2() {
 
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0];
-      const apiDocType = API_TYPE_MAP[type];
+      const apiDocType = type;
       try {
         Alert.alert('Uploading', 'Please wait while we upload your document...');
         await uploadKycDocument(apiDocType, asset.uri, `${type}.jpg`);
         Keyboard.dismiss();
         
         addDocument({
-          type: LOCAL_TYPE_MAP[type],
+          type: type,
           uri: asset.uri,
           fileName: `${type}.jpg`,
           uploadedAt: new Date().toISOString(),
@@ -238,7 +216,7 @@ export default function RegisterStep2() {
 
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0];
-      const apiDocType = API_TYPE_MAP[type];
+      const apiDocType = type;
       try {
         await uploadKycDocument(apiDocType, asset.uri, `${type}.jpg`);
       } catch {
@@ -246,7 +224,7 @@ export default function RegisterStep2() {
         return;
       }
       addDocument({
-        type: LOCAL_TYPE_MAP[type],
+        type: type,
         uri: asset.uri,
         fileName: `${type}.jpg`,
         uploadedAt: new Date().toISOString(),
@@ -259,7 +237,7 @@ export default function RegisterStep2() {
   };
 
   const removeDoc = (type: LocalDocType) => {
-    storeRemoveDoc(LOCAL_TYPE_MAP[type]);
+    storeRemoveDoc(type);
     setUploadedDocs((prev) => ({
       ...prev,
       [type]: false,
@@ -267,9 +245,7 @@ export default function RegisterStep2() {
   };
 
   const allDocumentsUploaded = () => {
-    return (
-      uploadedDocs.idFront && uploadedDocs.idBack && uploadedDocs.proofOfAddress
-    );
+    return uploadedDocs.aadhaar && uploadedDocs.land_record;
   };
 
   const handleNext = () => {
@@ -285,7 +261,7 @@ export default function RegisterStep2() {
       return;
     }
     router.push(
-      role === 'investor'
+      role === 'consumer'
         ? '/register/preferences-investor'
         : '/register/preferences-farmer'
     );
@@ -300,7 +276,7 @@ export default function RegisterStep2() {
     subtitle: string;
     type: LocalDocType;
   }) => {
-    const storeType = LOCAL_TYPE_MAP[type];
+    const storeType = type;
     const doc = documents.find((d) => d.type === storeType);
     const hasDocument = !!doc;
 
@@ -318,7 +294,7 @@ export default function RegisterStep2() {
             <Image
               source={{ uri: doc.uri }}
               className="w-full h-40"
-              resizeMode="cover"
+              resizeMode="contain"
             />
             <View className="flex-row items-center justify-between bg-primary px-4 py-2">
               <View className="flex-row items-center gap-2">
@@ -372,7 +348,7 @@ export default function RegisterStep2() {
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -382,12 +358,12 @@ export default function RegisterStep2() {
           alwaysBounceVertical={false}
         >
             {/* Progress Bar */}
-            <View className="mb-6">
+            <View className="mb-8">
               <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
-                <View className="h-full w-[66%] bg-primary rounded-full" />
+                <View className="h-full w-[50%] bg-primary rounded-full" />
               </View>
               <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
-                Step 2 of 3 • Verification
+                Step 2 of 4 • Verification
               </Text>
             </View>
 
@@ -401,7 +377,7 @@ export default function RegisterStep2() {
                   Verify Identity
                 </Text>
                 <Text className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                  {role === 'investor'
+                  {role === 'consumer'
                     ? 'Required for investment compliance'
                     : 'Required for farm listing verification'}
                 </Text>
@@ -507,21 +483,15 @@ export default function RegisterStep2() {
               </View>
 
               <DocumentUpload
-                title="Government ID (Front)"
-                subtitle="Clear photo of the front of your ID"
-                type="idFront"
+                title="Aadhaar Card"
+                subtitle="Clear photo of your Aadhaar card (front)"
+                type="aadhaar"
               />
 
               <DocumentUpload
-                title="Government ID (Back)"
-                subtitle="Clear photo of the back of your ID"
-                type="idBack"
-              />
-
-              <DocumentUpload
-                title="Proof of Address"
-                subtitle="Bank statement or Utility bill"
-                type="proofOfAddress"
+                title="Land Records"
+                subtitle="Screenshot or photo of your land records"
+                type="land_record"
               />
             </View>
 

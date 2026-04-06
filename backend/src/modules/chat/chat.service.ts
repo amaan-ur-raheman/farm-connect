@@ -32,12 +32,52 @@ export const getOrCreateConversation = async (
 			participant_two: {
 				select: { id: true, name: true, avatar_url: true },
 			},
+			messages: {
+				orderBy: { created_at: "desc" },
+				take: 1,
+				select: {
+					id: true,
+					text: true,
+					sender_id: true,
+					created_at: true,
+					read: true,
+				},
+			},
+			_count: {
+				select: {
+					messages: {
+						where: {
+							read: false,
+							sender_id: { not: userId },
+						},
+					},
+				},
+			},
 		},
 	});
 
-	if (existing) return existing;
+	if (existing) {
+		const isParticipantOne = existing.participant_one_id === userId;
+		const otherUser = isParticipantOne ? existing.participant_two : existing.participant_one;
+		
+		return {
+			id: existing.id,
+			user_id: userId,
+			other_user: {
+				id: otherUser.id,
+				name: otherUser.name,
+				avatar_url: otherUser.avatar_url,
+			},
+			last_message: existing.messages && existing.messages[0] ? {
+				text: existing.messages[0].text || "📎 Media",
+				created_at: existing.messages[0].created_at.toISOString(),
+			} : undefined,
+			unread_count: existing._count.messages,
+			created_at: existing.created_at.toISOString(),
+		};
+	}
 
-	return prisma.conversation.create({
+	const newConv = await prisma.conversation.create({
 		data: {
 			participant_one_id: userId,
 			participant_two_id: participant_id,
@@ -52,10 +92,25 @@ export const getOrCreateConversation = async (
 			},
 		},
 	});
+
+	const isParticipantOne = newConv.participant_one_id === userId;
+	const otherUser = isParticipantOne ? newConv.participant_two : newConv.participant_one;
+	
+	return {
+		id: newConv.id,
+		user_id: userId,
+		other_user: {
+			id: otherUser.id,
+			name: otherUser.name,
+			avatar_url: otherUser.avatar_url,
+		},
+		unread_count: 0,
+		created_at: newConv.created_at.toISOString(),
+	};
 };
 
 export const getUserConversations = async (userId: string) => {
-	return prisma.conversation.findMany({
+	const conversations = await prisma.conversation.findMany({
 		where: {
 			OR: [
 				{ participant_one_id: userId },
@@ -80,9 +135,67 @@ export const getUserConversations = async (userId: string) => {
 					read: true,
 				},
 			},
+			_count: {
+				select: {
+					messages: {
+						where: {
+							read: false,
+							sender_id: { not: userId },
+						},
+					},
+				},
+			},
 		},
 		orderBy: { last_message_at: { sort: "desc", nulls: "last" } },
 	});
+
+	return conversations.map((conv) => {
+		const isParticipantOne = conv.participant_one_id === userId;
+		const otherUser = isParticipantOne ? conv.participant_two : conv.participant_one;
+		
+		return {
+			id: conv.id,
+			user_id: userId,
+			other_user: {
+				id: otherUser.id,
+				name: otherUser.name,
+				avatar_url: otherUser.avatar_url,
+			},
+			last_message: conv.messages[0] ? {
+				text: conv.messages[0].text || "📎 Media",
+				created_at: conv.messages[0].created_at.toISOString(),
+			} : undefined,
+			unread_count: conv._count.messages,
+			created_at: conv.created_at.toISOString(),
+		};
+	});
+};
+
+export const getConversationById = async (
+	conversationId: string,
+	userId: string,
+) => {
+	const conversation = await prisma.conversation.findUnique({
+		where: { id: conversationId },
+		include: {
+			participant_one: {
+				select: { id: true, name: true, avatar_url: true },
+			},
+			participant_two: {
+				select: { id: true, name: true, avatar_url: true },
+			},
+		},
+	});
+
+	if (!conversation) throw new NotFoundError("Conversation");
+	if (
+		conversation.participant_one_id !== userId &&
+		conversation.participant_two_id !== userId
+	) {
+		throw new ForbiddenError("Not your conversation");
+	}
+
+	return conversation;
 };
 
 export const getConversationMessages = async (

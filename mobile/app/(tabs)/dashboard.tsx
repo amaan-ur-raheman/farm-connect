@@ -1,3 +1,9 @@
-// This file re-exports the actual Dashboard screen
-// It's needed for the tab navigation structure
-export { default } from '../dashboard';
+import React from 'react';
+import { useAuthStore } from '../../src/stores';
+import DashboardScreen from '../dashboard';
+import InvestorDashboardScreen from '../investor-dashboard';
+
+export default function RoleBasedDashboard() {
+  const { userRole } = useAuthStore();
+  return userRole === 'consumer' ? <InvestorDashboardScreen /> : <DashboardScreen />;
+}

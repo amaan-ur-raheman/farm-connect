@@ -1,69 +1,81 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, TextInput as RNTextInput, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Wallet, ArrowUpRight, ArrowDownLeft, ChevronLeft, CreditCard } from 'lucide-react-native';
 import { router } from 'expo-router';
-import api, { WalletTransaction } from '../src/config/api';
+import api, { WalletTransaction, WalletBalance } from '../src/config/api';
 import { useAuthStore } from '../src/stores/authStore';
 import { Input } from '../src/components/ui/Input';
+import { useQuery } from '@tanstack/react-query';
+import { WalletBalanceResponseSchema, WalletTransactionsResponseSchema } from '../src/config/schemas';
+import { haptic } from '../src/utils/haptics';
 
 export default function WalletScreen() {
   const { userRole } = useAuthStore();
-  const [balance, setBalance] = useState({ balance: 0, currency: 'INR' });
-  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
-  
+
   const withdrawRef = useRef<RNTextInput>(null);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const [balRes, txRes] = await Promise.all([
-        api.get<{ data: { balance: number; currency: string } }>('/api/wallet/balance'),
-        api.get<{ data: WalletTransaction[] }>('/api/wallet/transactions').catch(() => ({ data: { data: [] } })),
-      ]);
-      setBalance(balRes.data.data || { balance: 0, currency: 'INR' });
-      setTransactions(txRes.data.data || []);
-    } catch (err) {
-      console.error('Failed to fetch wallet data:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { data: balanceData, isLoading: balanceLoading, refetch: refetchBalance, isRefetching: isRefetchingBalance } = useQuery({
+    queryKey: ['walletBalance', 'wallet'],
+    queryFn: async () => {
+      const res = await api.get('/api/wallet/balance', undefined, WalletBalanceResponseSchema);
+      return res.data.data;
+    },
+  });
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  const { data: transactions = [], isLoading: txLoading, refetch: refetchTx, isRefetching: isRefetchingTx } = useQuery({
+    queryKey: ['walletTransactions'],
+    queryFn: async () => {
+      const res = await api.get('/api/wallet/transactions', undefined, WalletTransactionsResponseSchema).catch(() => ({ data: { success: true, data: [] } }));
+      return res.data.data || [];
+    },
+  });
+
+  const loading = balanceLoading || txLoading;
+  const isRefetching = isRefetchingBalance || isRefetchingTx;
+  const balance = {
+    balance: balanceData?.balance ?? 0,
+    currency: balanceData?.currency ?? 'INR',
+  };
 
   const onRefresh = () => {
-    setRefreshing(true);
-    fetchData().finally(() => setRefreshing(false));
+    haptic.light();
+    refetchBalance();
+    refetchTx();
   };
 
   const handleWithdraw = async () => {
     Keyboard.dismiss();
     const amount = parseFloat(withdrawAmount);
     if (!amount || amount <= 0) {
+      haptic.error();
       Alert.alert('Invalid Amount', 'Please enter a valid amount.');
       return;
     }
     if (amount > balance.balance) {
+      haptic.error();
       Alert.alert('Insufficient Balance', 'You don\'t have enough balance.');
       return;
     }
     setWithdrawing(true);
+    haptic.light();
     try {
       await api.post('/api/wallet/withdraw', { amount });
+      haptic.success();
       Alert.alert('Success', `₹${amount.toLocaleString('en-IN')} withdrawal initiated.`);
       setWithdrawAmount('');
-      fetchData();
+      refetchBalance();
+      refetchTx();
     } catch (err: any) {
+      haptic.error();
       Alert.alert('Error', err.response?.data?.message || 'Withdrawal failed.');
     } finally {
       setWithdrawing(false);
     }
   };
 
-  if (loading) {
+  if (loading && !isRefetching) {
     return (
       <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
         <ActivityIndicator size="large" color="#4cae4f" />
@@ -86,7 +98,7 @@ export default function WalletScreen() {
           className="flex-1" 
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={onRefresh} tintColor="#4cae4f" />}
         >
           {/* Balance Card */}
           <View className="mx-4 mt-6 bg-[#4cae4f] rounded-3xl p-8 shadow-xl shadow-[#4cae4f]/20">

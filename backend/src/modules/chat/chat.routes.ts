@@ -7,6 +7,7 @@ import { createConversationSchema, sendMessageSchema } from "./chat.schema";
 import {
 	getOrCreateConversation,
 	getUserConversations,
+	getConversationById,
 	getConversationMessages,
 	sendMessage,
 	getUnreadMessageCount,
@@ -33,6 +34,18 @@ chatRouter.post(
 			req.body,
 		);
 		res.status(201).json({ success: true, data: conversation });
+	}),
+);
+
+chatRouter.get(
+	"/conversations/:id",
+	authenticate,
+	asyncHandler(async (req, res) => {
+		const conversation = await getConversationById(
+			req.params.id as string,
+			req.user!.userId,
+		);
+		res.json({ success: true, data: conversation });
 	}),
 );
 

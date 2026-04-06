@@ -2,13 +2,13 @@ import * as Haptics from 'expo-haptics';
 
 export const haptic = {
   // Light tap for button presses
-  light: () => Haptics.impactAsync(Haptics.ImpactStyle.Light),
+  light: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
   
   // Medium tap for selections
-  medium: () => Haptics.impactAsync(Haptics.ImpactStyle.Medium),
+  medium: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
   
   // Heavy tap for important actions
-  heavy: () => Haptics.impactAsync(Haptics.ImpactStyle.Heavy),
+  heavy: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy),
   
   // Success feedback
   success: () => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success),

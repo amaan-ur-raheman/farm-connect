@@ -137,7 +137,7 @@ export default function RegisterStep1() {
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -149,10 +149,10 @@ export default function RegisterStep1() {
           {/* Progress Bar */}
           <View className="mb-8">
             <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
-              <View className="h-full w-[33%] bg-primary rounded-full" />
+              <View className="h-full w-[25%] bg-primary rounded-full" />
             </View>
             <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
-              Step 1 of 3 • Account Setup
+              Step 1 of 4 • Account Setup
             </Text>
           </View>
 
@@ -170,17 +170,17 @@ export default function RegisterStep1() {
             </Text>
             <View className="flex-row gap-3 mb-8">
               <TouchableOpacity
-                onPress={() => { setUserRole('investor'); clearError('role'); }}
+                onPress={() => { setUserRole('consumer'); clearError('role'); }}
                 className={`flex-1 p-4 rounded-2xl border-2 transition-all ${
-                  userRole === 'investor'
+                  userRole === 'consumer'
                     ? 'border-primary bg-primary/5'
                     : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
                 }`}
               >
                 <View className={`size-10 rounded-xl items-center justify-center mb-3 ${
-                  userRole === 'investor' ? 'bg-primary' : 'bg-[#4cae4f]/10'
+                  userRole === 'consumer' ? 'bg-primary' : 'bg-[#4cae4f]/10'
                 }`}>
-                  <TrendingUp size={20} color={userRole === 'investor' ? 'white' : '#4cae4f'} />
+                  <TrendingUp size={20} color={userRole === 'consumer' ? 'white' : '#4cae4f'} />
                 </View>
                 <Text className="text-sm font-bold text-slate-900 dark:text-white mb-1">
                   Investor
@@ -188,7 +188,7 @@ export default function RegisterStep1() {
                 <Text className="text-[10px] leading-3 text-gray-500 dark:text-gray-400 font-medium">
                   Fund farms & earn returns
                 </Text>
-                {userRole === 'investor' && (
+                {userRole === 'consumer' && (
                   <View className="absolute top-3 right-3">
                     <ShieldCheck size={18} color="#4cae4f" />
                   </View>

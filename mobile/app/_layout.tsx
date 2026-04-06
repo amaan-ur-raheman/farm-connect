@@ -6,12 +6,11 @@ import {
 	useEffect,
 	useState,
 	useCallback,
-	createContext,
-	useContext,
 	useRef,
 } from "react";
 import Constants from "expo-constants";
 import "../src/global.css";
+import "../src/i18n";
 import { useAuthStore, useSocketStore } from "../src/stores";
 import api from "../src/config/api";
 import { ErrorBoundary } from "../src/components/ui/ErrorBoundary";
@@ -24,25 +23,17 @@ import {
 	registerForPushNotifications,
 } from "../src/utils/notifications";
 
-// Context for unread counts (badges)
-interface UnreadCounts {
-	notifications: number;
-	chat: number;
-}
+import {
+	UnreadCounts,
+	UnreadCountsContext,
+	useUnreadCounts,
+} from "../src/config/unread-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import NetInfo from '@react-native-community/netinfo';
+import { SyncQueue } from '../src/utils/syncQueue';
+import { useRouter } from 'expo-router';
 
-interface UnreadCountsContextType {
-	unreadCounts: UnreadCounts;
-	refreshUnreadCounts: () => Promise<void>;
-}
-
-const UnreadCountsContext = createContext<UnreadCountsContextType | null>(null);
-
-export function useUnreadCounts() {
-	const ctx = useContext(UnreadCountsContext);
-	if (!ctx)
-		throw new Error("useUnreadCounts must be used within RootLayoutNav");
-	return ctx;
-}
+const queryClient = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,12 +41,14 @@ SplashScreen.preventAutoHideAsync();
 setupNotificationHandler();
 
 function RootLayoutNav() {
+	const router = useRouter();
 	const { isAuthenticated, setPushToken } = useAuthStore();
 	const { connect, disconnect } = useSocketStore();
 	const [unreadCounts, setUnreadCounts] = useState<UnreadCounts>({
 		notifications: 0,
 		chat: 0,
 	});
+	const isNavigating = useRef(false);
 	const isMounted = useRef(false);
 
 	useEffect(() => {
@@ -113,12 +106,33 @@ function RootLayoutNav() {
 		const Notifications = getNotificationsModule();
 		if (!Notifications) return;
 
-		// Listener for notification clicks
+		// Listener for notification clicks — deep linking
 		const subscription =
 			Notifications.addNotificationResponseReceivedListener(
 				(response: any) => {
-					// Deep linking logic moved to index.tsx or handled manually if needed
-					// For now just refresh counts
+					if (isNavigating.current) return;
+					if (!isAuthenticated) return;
+
+					const data = response.notification.request.content.data;
+					if (data?.screen) {
+						const screen = data.screen as string;
+						const id = data.id as string;
+
+						// Small delay to ensure the app is fully ready
+						setTimeout(() => {
+							isNavigating.current = true;
+							switch (screen) {
+								case 'chat': router.push(`/chat/${id}`); break;
+								case 'contract': router.push(`/contracts/${id}`); break;
+								case 'delivery': router.push('/deliveries'); break;
+								case 'dispute': router.push('/disputes'); break;
+								case 'update': router.push(`/updates/${id}`); break;
+								case 'notification': router.push('/notifications'); break;
+								default: router.push('/notifications');
+							}
+						}, 300);
+					}
+
 					refreshUnreadCounts();
 				},
 			);
@@ -140,9 +154,10 @@ function RootLayoutNav() {
 		})();
 
 		return () => subscription.remove();
-	}, [isAuthenticated, setPushToken, refreshUnreadCounts]);
+	}, [isAuthenticated, setPushToken, refreshUnreadCounts, router, isNavigating]);
 
 	return (
+		<QueryClientProvider client={queryClient}>
 		<UnreadCountsContext.Provider
 			value={{ unreadCounts, refreshUnreadCounts }}
 		>
@@ -169,11 +184,21 @@ function RootLayoutNav() {
 				<Stack.Screen name="investor-dashboard" />
 			</Stack>
 		</UnreadCountsContext.Provider>
+		</QueryClientProvider>
 	);
 }
 
 export default function RootLayout() {
 	const [loaded, error] = useFonts({});
+
+	useEffect(() => {
+		const unsubscribe = NetInfo.addEventListener((state) => {
+			if (state.isConnected) {
+				SyncQueue.processQueue();
+			}
+		});
+		return () => unsubscribe();
+	}, []);
 
 	useEffect(() => {
 		if (loaded || error) {
