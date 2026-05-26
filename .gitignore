@@ -61,6 +61,11 @@ mprocs.log
 backend/prisma/dev.db
 backend/prisma/dev.db-journal
 
+# ─── AI Tool Artifacts ───────────────────────────────────────────────────────
+.qwen/
+conductor/
+.kiro/
+
 # ─── Misc ────────────────────────────────────────────────────────────────────
 *.tgz
 .cache/
