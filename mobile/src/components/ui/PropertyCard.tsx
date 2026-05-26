@@ -109,13 +109,35 @@ export function PropertyCard({
         </View>
 
         {/* CTA */}
-        <Button 
-          title="View Details" 
-          variant="outline" 
-          className="w-full py-3 rounded-xl border-[#4cae4f] border-2"
-          textClassName="text-[#4cae4f] font-black text-sm uppercase tracking-widest"
-          onPress={onPress}
-        />
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={onPress || (() => {})}
+          style={{
+            backgroundColor: '#4cae4f',
+            paddingVertical: 14,
+            paddingHorizontal: 24,
+            borderRadius: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: '#4cae4f',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
+            elevation: 4,
+          }}
+        >
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontSize: 13,
+              fontWeight: '800',
+              letterSpacing: 1.5,
+              textTransform: 'uppercase',
+            }}
+          >
+            View Details
+          </Text>
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );

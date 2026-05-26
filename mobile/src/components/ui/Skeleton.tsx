@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, ViewStyle } from 'react-native';
+import { View, Animated, ViewStyle, StyleSheet } from 'react-native';
+import { useColorScheme } from 'react-native';
+import { colors, radii } from '../../config/theme';
 
 interface SkeletonProps {
   width?: number | string;
@@ -9,7 +11,9 @@ interface SkeletonProps {
   style?: ViewStyle;
 }
 
-export function Skeleton({ width, height, borderRadius = 8, style }: SkeletonProps) {
+export function Skeleton({ width, height, borderRadius = radii.sm, style }: SkeletonProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -43,8 +47,9 @@ export function Skeleton({ width, height, borderRadius = 8, style }: SkeletonPro
   return (
     <Animated.View
       style={[
+        styles.skeleton,
         {
-          backgroundColor: '#e5e7eb',
+          backgroundColor: isDark ? '#2A382A' : colors.primary[100],
           borderRadius,
           ...widthStyle,
           ...heightStyle,
@@ -55,3 +60,9 @@ export function Skeleton({ width, height, borderRadius = 8, style }: SkeletonPro
     />
   );
 }
+
+const styles = StyleSheet.create({
+  skeleton: {
+    overflow: 'hidden',
+  },
+});
