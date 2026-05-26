@@ -134,7 +134,7 @@ export const useAuthStore = create<AuthState>()(
 						requestBody.fcmToken = pushToken;
 					}
 					const response = await api.post("/api/auth/otp/verify", requestBody);
-					const { user, accessToken, refreshToken } = (response.data as any).data;
+					const { user, accessToken, refreshToken } = response.data as any;
 
 					// Assign default DiceBear avatar if missing
 					if (!user?.avatar_url) {

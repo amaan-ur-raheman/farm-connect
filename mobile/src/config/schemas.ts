@@ -172,7 +172,7 @@ export const DisputeSchema = z.object({
 export const ReviewSchema = z.object({
   id: z.string(),
   contract_id: z.string(),
-  listing_id: z.string(),
+  listing_id: z.string().nullish(),
   reviewer_id: z.string(),
   rating: z.number(),
   comment: z.string(),

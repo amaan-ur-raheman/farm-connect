@@ -112,7 +112,9 @@ async function request<T = unknown>(
 			}
 		}
 
-		return { data: result as T };
+		// Return the unwrapped data (rawData) so callers get the actual payload,
+		// not the full { success, data } envelope
+		return { data: rawData as T };
 	} catch (err) {
 		if (__DEV__) {
 			console.log(`[API] Error type:`, err?.constructor?.name || typeof err);
