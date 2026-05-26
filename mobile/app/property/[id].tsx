@@ -9,7 +9,9 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  useColorScheme,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Heart,
   MapPin,
@@ -26,7 +28,8 @@ import {
 } from 'lucide-react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Header } from '../../src/components/ui/Header';
-import { SkeletonCard } from '../../src/components/ui/SkeletonCard';
+import { Card, Skeleton, EmptyState, Button, StatTile } from '../../src/components/ui';
+import { colors, spacing, radii, typography, theme, getShadow } from '../../src/config/theme';
 import { useMarketplaceStore } from '../../src/stores';
 import api, { Listing, Review } from '../../src/config/api';
 import { useAuthStore } from '../../src/stores/authStore';
@@ -54,6 +57,10 @@ export default function PropertyDetailScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const isPropertyFavorite = isFavorite(id as string);
   const { width } = Dimensions.get('window');
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const t = isDark ? theme.dark : theme.light;
+  const insets = useSafeAreaInsets();
 
   const { data: listing, isLoading: listingLoading } = useQuery({
     queryKey: ['listing', id],
@@ -84,12 +91,11 @@ export default function PropertyDetailScreen() {
     if (!listing) return;
     setCreatingContract(true);
     try {
-      // Calculate total amount based on acreage and price per acre
       const totalAmount = listing.area_acres * listing.price_per_acre;
       const today = new Date();
       const endDate = new Date(today);
-      endDate.setMonth(endDate.getMonth() + 6); // 6 months contract
-      
+      endDate.setMonth(endDate.getMonth() + 6);
+
       await api.post('/api/contracts', {
         listing_id: listing.id,
         crop: listing.crops?.[0] || 'General',
@@ -131,8 +137,17 @@ export default function PropertyDetailScreen() {
 
   if (loading || !listing) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] p-4 pt-12">
-        <SkeletonCard />
+      <View style={{ flex: 1, backgroundColor: t.background, padding: spacing.lg, paddingTop: spacing['3xl'] }}>
+        <Card padding="lg">
+          <Skeleton height={24} width="70%" borderRadius={radii.md} />
+          <Skeleton height={16} width="50%" borderRadius={radii.sm} style={{ marginTop: spacing.sm }} />
+          <Skeleton height={200} width="100%" borderRadius={radii.xl} style={{ marginTop: spacing.lg }} />
+          <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg }}>
+            <Skeleton height={80} width="33%" borderRadius={radii.lg} />
+            <Skeleton height={80} width="33%" borderRadius={radii.lg} />
+            <Skeleton height={80} width="33%" borderRadius={radii.lg} />
+          </View>
+        </Card>
       </View>
     );
   }
@@ -149,8 +164,8 @@ export default function PropertyDetailScreen() {
     : 'N/A';
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
+    <View style={{ flex: 1, backgroundColor: t.background }}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <Header
         variant="menu"
@@ -159,19 +174,23 @@ export default function PropertyDetailScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Breadcrumb */}
-        <View className="px-4 py-3 flex-row items-center">
-          <TouchableOpacity onPress={() => router.push('/marketplace')}>
-            <Text className="text-xs font-semibold text-[#608562]">Marketplace</Text>
+        <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => router.push('/marketplace')}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={{ minHeight: 44, justifyContent: 'center' }}
+          >
+            <Text style={{ fontSize: 12, fontWeight: '600', color: t.textSecondary }}>Marketplace</Text>
           </TouchableOpacity>
-          <ChevronRight size={12} color="#94a3b8" className="mx-2" />
-          <Text className="text-xs font-semibold text-slate-900 dark:text-white">
+          <ChevronRight size={12} color={t.textTertiary} style={{ marginHorizontal: spacing.sm }} />
+          <Text style={{ fontSize: 12, fontWeight: '600', color: t.text, flexShrink: 1 }} numberOfLines={1}>
             {listing.name}
           </Text>
         </View>
 
         {/* Image Carousel */}
-        <View className="px-4 mb-4">
-          <View className="relative">
+        <View style={{ paddingHorizontal: spacing.lg, marginBottom: spacing.md }}>
+          <View style={{ position: 'relative' }}>
             <ScrollView
               ref={scrollViewRef}
               horizontal
@@ -188,30 +207,30 @@ export default function PropertyDetailScreen() {
                 <Image
                   key={idx}
                   source={{ uri: getFullImage(img)! }}
-                  style={{ width: width - 32, height: 300, borderRadius: 24 }}
+                  style={{ width: width - 32, height: 300, borderRadius: radii.xl }}
                   resizeMode="cover"
                 />
               ))}
             </ScrollView>
-            
+
             {/* Badges */}
-            <View className="absolute top-4 left-4 flex-row gap-2">
+            <View style={{ position: 'absolute', top: spacing.md, left: spacing.md, flexDirection: 'row', gap: spacing.sm }}>
               {listing.is_organic && (
-                <View className="bg-[#4cae4f] px-3 py-1.5 rounded-full flex-row items-center">
-                  <CheckCircle2 size={12} color="black" />
-                  <Text className="text-[10px] font-black text-black ml-1">Organic</Text>
+                <View style={{ backgroundColor: t.success, paddingHorizontal: spacing.sm, paddingVertical: 6, borderRadius: radii.full, flexDirection: 'row', alignItems: 'center', minHeight: 44, justifyContent: 'center' }}>
+                  <CheckCircle2 size={12} color={isDark ? colors.primary[900] : '#000000'} />
+                  <Text style={{ fontSize: 10, fontWeight: '900', color: isDark ? colors.primary[900] : '#000000', marginLeft: 4 }}>Organic</Text>
                 </View>
               )}
               {listing.status === 'ACTIVE' && (
-                <View className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                  <Text className="text-[10px] font-black text-white">Active</Text>
+                <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: spacing.sm, paddingVertical: 6, borderRadius: radii.full, minHeight: 44, justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 10, fontWeight: '900', color: '#FFFFFF' }}>Active</Text>
                 </View>
               )}
             </View>
-            
+
             {/* Page Indicators */}
             {((listing.images?.length || 0) > 1) && (
-              <View className="absolute bottom-4 left-0 right-0 flex-row justify-center gap-1.5">
+              <View style={{ position: 'absolute', bottom: spacing.md, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
                 {(listing.images || []).map((_: string, idx: number) => (
                   <View
                     key={idx}
@@ -219,7 +238,7 @@ export default function PropertyDetailScreen() {
                       width: currentImageIndex === idx ? 24 : 8,
                       height: 8,
                       borderRadius: 4,
-                      backgroundColor: currentImageIndex === idx ? '#4cae4f' : 'rgba(255,255,255,0.5)',
+                      backgroundColor: currentImageIndex === idx ? t.success : 'rgba(255,255,255,0.5)',
                     }}
                   />
                 ))}
@@ -229,207 +248,161 @@ export default function PropertyDetailScreen() {
         </View>
 
         {/* Title & Location */}
-        <View className="px-4 pt-4">
-          <Text className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+        <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.md }}>
+          <Text style={{ ...typography.display, color: t.text }}>
             {listing.name}
           </Text>
-          <View className="flex-row items-center mt-1">
-            <MapPin size={14} color="#4cae4f" />
-            <Text className="text-sm font-semibold text-slate-500 ml-1">
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs }}>
+            <MapPin size={14} color={t.success} />
+            <Text style={{ ...typography.bodySm, color: t.textTertiary, marginLeft: 4 }}>
               {listing.location_name}
             </Text>
           </View>
           {listing.farmer && (
-            <View className="flex-row items-center mt-2">
-              <Text className="text-xs text-gray-400">by </Text>
-              <Text className="text-xs font-semibold text-[#608562]">{listing.farmer.name || 'Farmer'}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm }}>
+              <Text style={{ ...typography.caption, color: t.textTertiary }}>by </Text>
+              <Text style={{ ...typography.caption, fontWeight: '600', color: t.textSecondary }}>{listing.farmer.name || 'Farmer'}</Text>
               {listing.farmer.kyc_status === 'VERIFIED' && (
-                <CheckCircle2 size={12} color="#4cae4f" className="ml-1" />
+                <CheckCircle2 size={12} color={t.success} style={{ marginLeft: 4 }} />
               )}
             </View>
           )}
         </View>
 
         {/* Stats Grid */}
-        <View className="px-4 py-6">
-          <View className="flex-row gap-3">
-            <StatCard
-              icon={<Ruler size={20} color="#4cae4f" />}
+        <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }}>
+          <View style={{ flexDirection: 'row', gap: spacing.md }}>
+            <StatTile
+              icon={Ruler}
+              iconColor={t.success}
               label="Total Area"
               value={`${listing.area_acres}`}
-              unit="Acres"
+              subtitle="Acres"
             />
-            <StatCard
-              icon={<IndianRupee size={20} color="#4cae4f" />}
+            <StatTile
+              icon={IndianRupee}
+              iconColor={t.success}
               label="Price/Acre"
               value={`₹${listing.price_per_acre.toLocaleString('en-IN')}`}
-              unit="/year"
+              subtitle="/year"
             />
-            <StatCard
-              icon={<Star size={20} color="#4cae4f" />}
+            <StatTile
+              icon={Star}
+              iconColor={t.accent}
               label="Rating"
               value={avgRating}
-              unit={reviews.length > 0 ? `/5 (${reviews.length})` : 'reviews'}
+              subtitle={reviews.length > 0 ? `/5 (${reviews.length})` : 'reviews'}
             />
           </View>
         </View>
 
         {/* Main Content */}
-        <View className="px-4 pb-32">
-          <View className="flex-col md:flex-row gap-6">
-            {/* Left Column */}
-            <View className="md:w-[65%]">
-              {/* Description */}
-              {listing.description && (
-                <View className="bg-white dark:bg-[#1e291e] rounded-3xl p-6 mb-6 border border-slate-100 dark:border-slate-800">
-                  <Text className="text-lg font-black text-slate-900 dark:text-white mb-4">Description</Text>
-                  <Text className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                    {listing.description}
-                  </Text>
-                </View>
-              )}
+        <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing['3xl'] }}>
+          {/* Description */}
+          {listing.description && (
+            <Card padding="xl" style={{ marginBottom: spacing.lg }}>
+              <Text style={{ ...typography.heading, color: t.text, marginBottom: spacing.md }}>Description</Text>
+              <Text style={{ ...typography.bodySm, color: t.textSecondary, lineHeight: 24 }}>
+                {listing.description}
+              </Text>
+            </Card>
+          )}
 
-              {/* Soil & Land Details */}
-              <View className="bg-white dark:bg-[#1e291e] rounded-3xl p-6 mb-6 border border-slate-100 dark:border-slate-800">
-                <Text className="text-lg font-black text-slate-900 dark:text-white mb-6">
-                  Land Details
+          {/* Soil & Land Details */}
+          <Card padding="xl" style={{ marginBottom: spacing.lg }}>
+            <Text style={{ ...typography.heading, color: t.text, marginBottom: spacing.xl }}>
+              Land Details
+            </Text>
+            <View style={{ gap: spacing.md }}>
+              {listing.soil_type && <DetailRow label="Soil Type" value={listing.soil_type} isDark={isDark} theme={t} />}
+              {listing.irrigation_type && <DetailRow label="Irrigation" value={listing.irrigation_type} isDark={isDark} theme={t} />}
+              {listing.expected_harvest_month && <DetailRow label="Harvest Month" value={listing.expected_harvest_month} isDark={isDark} theme={t} />}
+              <DetailRow label="Organic" value={listing.is_organic ? 'Yes' : 'No'} isDark={isDark} theme={t} />
+              <DetailRow label="Status" value={listing.status || 'N/A'} isDark={isDark} theme={t} />
+            </View>
+          </Card>
+
+          {/* Recommended Crops */}
+          {crops.length > 0 && (
+            <Card padding="xl" style={{ marginBottom: spacing.lg }}>
+              <Text style={{ ...typography.heading, color: t.text, marginBottom: spacing.xl }}>
+                Crops Grown
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
+                {crops.map((crop, index) => (
+                  <View
+                    key={index}
+                    style={{ alignItems: 'center', padding: spacing.md, backgroundColor: isDark ? t.surfaceElevated : colors.primary[50], borderRadius: radii.lg, borderWidth: 1, borderColor: isDark ? t.borderStrong : t.border, minWidth: 100 }}
+                  >
+                    <View
+                      style={{ width: 48, height: 48, borderRadius: radii.full, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm, backgroundColor: `${crop.color}20` }}
+                    >
+                      <crop.icon size={24} color={crop.color} />
+                    </View>
+                    <Text style={{ ...typography.bodySm, fontWeight: '700', color: t.text }}>
+                      {crop.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </Card>
+          )}
+
+          {/* Reviews */}
+          {reviews.length > 0 ? (
+            <Card padding="xl">
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.xl }}>
+                <Text style={{ ...typography.heading, color: t.text }}>
+                  Reviews
                 </Text>
-                <View className="gap-4">
-                  {listing.soil_type && <DetailRow label="Soil Type" value={listing.soil_type} />}
-                  {listing.irrigation_type && <DetailRow label="Irrigation" value={listing.irrigation_type} />}
-                  {listing.expected_harvest_month && <DetailRow label="Harvest Month" value={listing.expected_harvest_month} />}
-                  <DetailRow label="Organic" value={listing.is_organic ? 'Yes' : 'No'} />
-                  <DetailRow label="Status" value={listing.status || 'N/A'} />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Star size={16} color={t.accent} fill={t.accent} />
+                  <Text style={{ ...typography.bodySm, fontWeight: '700', color: t.text, marginLeft: 4 }}>
+                    {avgRating} ({reviews.length})
+                  </Text>
                 </View>
               </View>
-
-              {/* Recommended Crops */}
-              {crops.length > 0 && (
-                <View className="bg-white dark:bg-[#1e291e] rounded-3xl p-6 mb-6 border border-slate-100 dark:border-slate-800">
-                  <Text className="text-lg font-black text-slate-900 dark:text-white mb-6">
-                    Crops Grown
-                  </Text>
-                  <View className="flex-row flex-wrap gap-4">
-                    {crops.map((crop, index) => (
-                      <View
-                        key={index}
-                        className="items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700"
-                        style={{ minWidth: 100 }}
-                      >
-                        <View
-                          className="size-12 rounded-full items-center justify-center mb-3"
-                          style={{ backgroundColor: `${crop.color}20` }}
-                        >
-                          <crop.icon size={24} color={crop.color} />
-                        </View>
-                        <Text className="text-sm font-bold text-slate-900 dark:text-white">
-                          {crop.name}
-                        </Text>
-                      </View>
+              {reviews.slice(0, 5).map((review, reviewIdx) => (
+                <View key={review.id} style={{ marginBottom: spacing.md, paddingBottom: spacing.md, borderBottomWidth: reviewIdx < 4 ? 1 : 0, borderBottomColor: t.divider }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs }}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={12} color={t.accent} fill={i < review.rating ? t.accent : 'transparent'} />
                     ))}
-                  </View>
-                </View>
-              )}
-
-              {/* Reviews */}
-              {reviews.length > 0 && (
-                <View className="bg-white dark:bg-[#1e291e] rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
-                  <View className="flex-row items-center justify-between mb-6">
-                    <Text className="text-lg font-black text-slate-900 dark:text-white">
-                      Reviews
+                    <Text style={{ ...typography.captionXs, color: t.textTertiary, marginLeft: spacing.sm }}>
+                      {new Date(review.created_at).toLocaleDateString()}
                     </Text>
-                    <View className="flex-row items-center">
-                      <Star size={16} color="#facc15" fill="#facc15" />
-                      <Text className="text-sm font-bold text-slate-900 dark:text-white ml-1">
-                        {avgRating} ({reviews.length})
-                      </Text>
-                    </View>
                   </View>
-                  {reviews.slice(0, 5).map((review) => (
-                    <View key={review.id} className="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800">
-                      <View className="flex-row items-center mb-2">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} size={12} color="#facc15" fill={i < review.rating ? '#facc15' : 'transparent'} />
-                        ))}
-                        <Text className="text-xs text-gray-400 ml-2">
-                          {new Date(review.created_at).toLocaleDateString()}
-                        </Text>
-                      </View>
-                      <Text className="text-sm text-slate-600 dark:text-slate-400">
-                        {review.comment}
-                      </Text>
-                    </View>
-                  ))}
+                  <Text style={{ ...typography.bodySm, color: t.textSecondary }}>
+                    {review.comment}
+                  </Text>
                 </View>
-              )}
-            </View>
-
-            {/* Right Column - Sidebar */}
-            <View className="md:w-[35%]">
-              <View className="bg-white dark:bg-[#1e291e] rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
-                <Text className="text-xs font-black text-[#608562] uppercase tracking-widest mb-2">
-                  Contract Summary
-                </Text>
-                <Text className="text-3xl font-black text-slate-900 dark:text-white mb-4">
-                  ₹{totalPrice.toLocaleString('en-IN')}
-                </Text>
-                <Text className="text-sm font-medium text-slate-500 mb-6">Total Lease Value</Text>
-
-                <View className="gap-4 mb-6">
-                  <SummaryRow label="Price/Acre" value={`₹${listing.price_per_acre.toLocaleString('en-IN')}`} />
-                  <SummaryRow label="Total Area" value={`${listing.area_acres} Acres`} />
-                  <SummaryRow label="Total Value" value={`₹${totalPrice.toLocaleString('en-IN')}`} valueColor="#4cae4f" />
-                  {listing.expected_harvest_month && (
-                    <SummaryRow label="Harvest" value={listing.expected_harvest_month} />
-                  )}
-                </View>
-
-                {/* Farmer Card */}
-                {listing.farmer && (
-                  <View className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-                    <Text className="text-xs font-black text-[#608562] uppercase tracking-widest mb-4">
-                      Land Representative
-                    </Text>
-                    <View className="flex-row items-center">
-                      <Image
-                        source={{ uri: listing.farmer.avatar_url || `https://i.pravatar.cc/100?u=${listing.farmer.id}` }}
-                        className="size-12 rounded-full"
-                      />
-                      <View className="flex-1 ml-3">
-                        <Text className="text-sm font-bold text-slate-900 dark:text-white">
-                          {listing.farmer.name || 'Farmer'}
-                        </Text>
-                        <View className="flex-row items-center">
-                          <Star size={10} color="#facc15" fill="#facc15" />
-                          <Text className="text-[10px] font-medium text-slate-500 ml-1">
-                            {avgRating} ({reviews.length} reviews)
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  </View>
-                )}
-              </View>
-            </View>
-          </View>
+              ))}
+            </Card>
+          ) : (
+            <EmptyState
+              icon={Star}
+              title="No Reviews Yet"
+              description="Be the first to review this property."
+            />
+          )}
         </View>
 
         {/* Footer */}
-        <View className="bg-[#1e291e] px-4 py-8">
-          <View className="flex-row items-center justify-center gap-2 mb-8">
-            <Tractor size={24} color="#4cae4f" />
-            <Text className="text-xl font-black text-white">FarmConnect</Text>
+        <View style={{ backgroundColor: t.surfaceElevated, paddingHorizontal: spacing.lg, paddingVertical: spacing['2xl'] }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, marginBottom: spacing.lg }}>
+            <Tractor size={24} color={t.success} />
+            <Text style={{ ...typography.heading, color: t.text }}>FarmConnect</Text>
           </View>
-          <Text className="text-center text-xs text-gray-500">Alpha v2.4.0 — Connecting Farmers with Investors</Text>
+          <Text style={{ ...typography.caption, textAlign: 'center', color: t.textTertiary }}>Alpha v2.4.0 \u2014 Connecting Farmers with Investors</Text>
         </View>
       </ScrollView>
 
       {/* Sticky Bottom Action Bar */}
-      <View className="bg-white dark:bg-[#1e291e] border-t border-gray-200 dark:border-[#2a382a] px-4 py-3 pb-6">
-        <View className="flex-row items-center justify-between mb-3">
-          <View>
-            <Text className="text-xs text-gray-500 dark:text-gray-400">Total Lease Value</Text>
-            <Text className="text-2xl font-black text-[#4cae4f]">
+      <View style={{ backgroundColor: t.surface, paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: insets.bottom + spacing.md, borderTopWidth: 1, borderTopColor: t.border }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
+          <View style={{ flex: 1, marginRight: spacing.sm }}>
+            <Text style={{ ...typography.caption, color: t.textTertiary }}>Total Lease Value</Text>
+            <Text style={{ ...typography.display, color: t.success }} numberOfLines={1} adjustsFontSizeToFit>
               ₹{totalPrice.toLocaleString('en-IN')}
             </Text>
           </View>
@@ -438,43 +411,41 @@ export default function PropertyDetailScreen() {
               haptic.medium();
               toggleFavorite(id as string);
             }}
-            className="p-2"
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={{ padding: 12, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
           >
             <Heart
               size={24}
-              color={isPropertyFavorite ? '#ef4444' : '#94a3b8'}
-              fill={isPropertyFavorite ? '#ef4444' : 'transparent'}
+              color={isPropertyFavorite ? t.error : t.textTertiary}
+              fill={isPropertyFavorite ? t.error : 'transparent'}
             />
           </TouchableOpacity>
         </View>
         {listing.farmer_id !== authUser?.id && (
-          <View className="flex-row gap-3">
-            <TouchableOpacity
+          <View style={{ flexDirection: 'row', gap: spacing.md }}>
+            <Button
+              label="Contact Farmer"
               onPress={() => {
                 haptic.medium();
                 handleStartChat();
               }}
-              className="flex-1 bg-slate-100 dark:bg-slate-800 py-3.5 rounded-xl items-center"
-            >
-              <View className="flex-row items-center gap-2">
-                <MessageSquare size={18} color="#1e293b" className="dark:text-white" />
-                <Text className="text-sm font-black text-slate-900 dark:text-white">
-                  Contact Farmer
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
+              variant="secondary"
+              size="lg"
+              style={{ flex: 1 }}
+              leftIcon={<MessageSquare size={18} color={t.text} />}
+            />
+            <Button
+              label={creatingContract ? 'Processing...' : 'Acquire Lease'}
               onPress={() => {
                 haptic.medium();
                 handleCreateContract();
               }}
+              variant="primary"
+              size="lg"
+              loading={creatingContract}
               disabled={creatingContract}
-              className="flex-1 bg-[#4cae4f] py-3.5 rounded-xl items-center"
-            >
-              <Text className="text-sm font-black text-black">
-                {creatingContract ? 'Processing...' : 'Acquire Lease'}
-              </Text>
-            </TouchableOpacity>
+              style={{ flex: 1 }}
+            />
           </View>
         )}
       </View>
@@ -482,35 +453,11 @@ export default function PropertyDetailScreen() {
   );
 }
 
-function StatCard({ icon, label, value, unit, valueColor = '#1e293b' }: any) {
+function DetailRow({ label, value, isDark, theme: t }: { label: string; value: string; isDark: boolean; theme: typeof theme.light }) {
   return (
-    <View className="flex-1 bg-white dark:bg-[#1e291e] rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
-      <View className="size-10 bg-slate-50 dark:bg-slate-800 rounded-xl items-center justify-center mb-3">
-        {icon}
-      </View>
-      <Text className="text-[10px] font-semibold text-[#608562] uppercase tracking-wide">{label}</Text>
-      <View className="flex-row items-baseline">
-        <Text className="text-xl font-black" style={{ color: valueColor }}>{value}</Text>
-        <Text className="text-[10px] font-medium text-slate-400 ml-1">{unit}</Text>
-      </View>
-    </View>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View className="flex-row justify-between py-2 border-b border-slate-100 dark:border-slate-800">
-      <Text className="text-sm font-medium text-slate-500">{label}</Text>
-      <Text className="text-sm font-bold text-slate-900 dark:text-white">{value}</Text>
-    </View>
-  );
-}
-
-function SummaryRow({ label, value, valueColor = '#1e293b' }: any) {
-  return (
-    <View className="flex-row justify-between py-2 border-b border-slate-100 dark:border-slate-800">
-      <Text className="text-sm font-medium text-slate-500">{label}</Text>
-      <Text className="text-sm font-bold" style={{ color: valueColor }}>{value}</Text>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: t.divider }}>
+      <Text style={{ ...typography.bodySm, color: t.textTertiary }}>{label}</Text>
+      <Text style={{ ...typography.bodySm, fontWeight: '700', color: t.text }}>{value}</Text>
     </View>
   );
 }

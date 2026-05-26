@@ -9,6 +9,9 @@ import {
   ActivityIndicator,
   RefreshControl,
   FlatList,
+  useColorScheme,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import { Image } from 'expo-image';
 import {
@@ -20,6 +23,7 @@ import {
   X,
   ShieldCheck,
   Droplets,
+  Sprout,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
@@ -31,6 +35,8 @@ import { getCardImage } from '../src/utils/image';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { SkeletonCard } from '../src/components/ui/SkeletonCard';
 import { PropertyCard } from '../src/components/ui/PropertyCard';
+import { EmptyState } from '../src/components/ui/EmptyState';
+import { colors, spacing, radii, typography, theme, getShadow } from '../src/config/theme';
 
 const mapListingToProperty = (listing: Listing): Property => ({
   id: listing.id,
@@ -50,9 +56,14 @@ const mapListingToProperty = (listing: Listing): Property => ({
 });
 
 export default function MarketplaceScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { toggleFavorite, isFavorite, viewMode, setViewMode } = useMarketplaceStore();
@@ -80,13 +91,11 @@ export default function MarketplaceScreen() {
     if (activeFilter === 'price_high') params.set('sort', 'price_desc');
     if (activeFilter === 'newest') params.set('sort', 'newest');
 
-    // Use getFull to preserve the response envelope including pagination
-    // Backend returns: { success: true, data: [...], pagination: {...} }
     const response = await api.getFull<{ success: boolean; data: Listing[]; pagination: { total: number; pages: number } }>(`/api/listings?${params.toString()}`);
-    
+
     const listings = response.data.data || [];
     const pagination = response.data.pagination;
-    
+
     return {
       listings,
       pagination,
@@ -142,7 +151,13 @@ export default function MarketplaceScreen() {
   const renderHeader = () => (
     <View>
       {/* Map Section */}
-      <View className="relative w-full h-[200px] bg-[#eaf0ea] dark:bg-[#2a352a] overflow-hidden">
+      <View style={{
+        position: 'relative',
+        width: '100%',
+        height: 200,
+        backgroundColor: isDark ? '#2a352a' : '#eaf0ea',
+        overflow: 'hidden',
+      }}>
          <Image
            source={{ uri: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2940' }}
            style={{ width: '100%', height: '100%', opacity: 0.6 }}
@@ -151,67 +166,158 @@ export default function MarketplaceScreen() {
       </View>
 
       {/* Discovery Area */}
-      <View className="px-4 py-8">
+      <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing['2xl'] }}>
          {/* Results Header */}
-         <View className="flex-col justify-between gap-4 mb-6">
-            <View>
-               <Text className="text-2xl font-bold text-[#111811] dark:text-white">Find your perfect plot</Text>
-               <Text className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+         <View style={{
+           flexDirection: 'row',
+           justifyContent: 'space-between',
+           alignItems: 'center',
+           marginBottom: spacing.xl,
+         }}>
+            <View style={{ flex: 1 }}>
+               <Text style={{
+                 ...typography.heading,
+                 color: currentTheme.text,
+               }}>Find your perfect plot</Text>
+               <Text style={{
+                 ...typography.bodySm,
+                 color: currentTheme.textTertiary,
+                 marginTop: spacing.xs,
+               }}>
                  {isLoading ? 'Searching...' : `Showing ${listings.length} of ${totalCount} properties`}
                </Text>
             </View>
-            
-            <View className="flex-row items-center gap-3 bg-white dark:bg-[#1e291e] p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-               <TouchableOpacity 
+
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing.xs,
+              backgroundColor: currentTheme.surface,
+              padding: spacing.xs,
+              borderRadius: radii.md,
+              borderWidth: 1,
+              borderColor: currentTheme.border,
+              ...getShadow('sm', isDark),
+            }}>
+               <TouchableOpacity
                  onPress={() => { haptic.light(); setViewMode('grid'); }}
-                 className={`p-2 rounded ${viewMode === 'grid' ? 'bg-[#4cae4f]/10' : ''}`}
+                 style={{
+                   padding: spacing.sm,
+                   borderRadius: radii.sm,
+                   backgroundColor: viewMode === 'grid' ? `${colors.primary[500]}1A` : 'transparent',
+                   minWidth: 44,
+                   minHeight: 44,
+                   justifyContent: 'center',
+                   alignItems: 'center',
+                 }}
                >
-                  <Grid3X3 size={18} color={viewMode === 'grid' ? '#4cae4f' : '#6b7280'} />
+                  <Grid3X3 size={18} color={viewMode === 'grid' ? colors.primary[500] : currentTheme.textTertiary} />
                </TouchableOpacity>
-               <TouchableOpacity 
+               <TouchableOpacity
                  onPress={() => { haptic.light(); setViewMode('list'); }}
-                 className={`p-2 rounded ${viewMode === 'list' ? 'bg-[#4cae4f]/10' : ''}`}
+                 style={{
+                   padding: spacing.sm,
+                   borderRadius: radii.sm,
+                   backgroundColor: viewMode === 'list' ? `${colors.primary[500]}1A` : 'transparent',
+                   minWidth: 44,
+                   minHeight: 44,
+                   justifyContent: 'center',
+                   alignItems: 'center',
+                 }}
                >
-                  <List size={18} color={viewMode === 'list' ? '#4cae4f' : '#6b7280'} />
+                  <List size={18} color={viewMode === 'list' ? colors.primary[500] : currentTheme.textTertiary} />
                </TouchableOpacity>
             </View>
          </View>
 
          {/* Search & Filters */}
-         <View className="bg-white dark:bg-[#1e291e] rounded-xl shadow-lg p-4 border border-gray-100 dark:border-gray-800 mb-8">
-            <View className="flex-row items-center gap-2 mb-4">
-               <View className="flex-1 flex-row items-center bg-[#f9fbf9] dark:bg-[#151d15] border border-gray-200 dark:border-gray-700 rounded-lg px-3">
-                  <Search size={18} color="#94a3b8" />
+         <View style={{
+           backgroundColor: currentTheme.surface,
+           borderRadius: radii.lg,
+           ...getShadow('lg', isDark),
+           padding: spacing.lg,
+           borderWidth: 1,
+           borderColor: currentTheme.border,
+           marginBottom: spacing['2xl'],
+         }}>
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: spacing.md,
+            }}>
+               <View style={{
+                 flex: 1,
+                 flexDirection: 'row',
+                 alignItems: 'center',
+                 backgroundColor: isSearchFocused ? (isDark ? '#1E2D1E' : colors.primary[50]) : (isDark ? '#151d15' : '#f9fbf9'),
+                 borderWidth: isSearchFocused ? 2 : 1,
+                 borderColor: isSearchFocused ? colors.primary[500] : currentTheme.border,
+                 borderRadius: radii.md,
+                 paddingHorizontal: spacing.md,
+                 minHeight: 44,
+               }}>
+                  <Search size={18} color={isSearchFocused ? colors.primary[500] : currentTheme.textTertiary} />
                   <TextInput
-                    className="flex-1 py-2.5 px-2 text-sm text-[#111811] dark:text-white font-medium"
+                    style={{
+                      flex: 1,
+                      paddingVertical: spacing.sm,
+                      paddingHorizontal: spacing.sm,
+                      fontSize: typography.bodySm.fontSize,
+                      lineHeight: typography.bodySm.lineHeight,
+                      fontWeight: typography.bodySm.fontWeight,
+                      color: currentTheme.text,
+                    }}
                     placeholder="Search farms, crops, or locations..."
-                    placeholderTextColor="#94a3b8"
+                    placeholderTextColor={currentTheme.inputPlaceholder}
                     value={searchQuery}
                     onChangeText={handleSearch}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
                     returnKeyType="search"
+                    autoCapitalize="none"
+                    autoCorrect={false}
                   />
                   {searchQuery.length > 0 && (
-                    <TouchableOpacity onPress={() => { haptic.light(); setSearchQuery(''); }}>
-                      <X size={18} color="#94a3b8" />
+                    <TouchableOpacity
+                      onPress={() => { haptic.light(); setSearchQuery(''); }}
+                      style={{
+                        padding: spacing.xs,
+                        minWidth: 44,
+                        minHeight: 44,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <X size={18} color={currentTheme.textTertiary} />
                     </TouchableOpacity>
                   )}
                </View>
             </View>
-            
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm }}>
                {filterOptions.map((option) => (
                  <TouchableOpacity
                    key={option.key}
                    onPress={() => handleFilterChange(option.key)}
-                   className={`flex-row items-center gap-1 px-3 py-2 rounded-lg border ${
-                     activeFilter === option.key
-                       ? 'bg-[#4cae4f] border-[#4cae4f]'
-                       : 'bg-[#f9fbf9] dark:bg-[#151d15] border-gray-200 dark:border-gray-700'
-                   }`}
+                   style={{
+                     flexDirection: 'row',
+                     alignItems: 'center',
+                     gap: spacing.xs,
+                     paddingHorizontal: spacing.md,
+                     paddingVertical: spacing.sm,
+                     borderRadius: radii.md,
+                     borderWidth: 1,
+                     borderColor: activeFilter === option.key ? colors.primary[500] : currentTheme.border,
+                     backgroundColor: activeFilter === option.key ? colors.primary[500] : (isDark ? '#151d15' : '#f9fbf9'),
+                     minHeight: 44,
+                   }}
                  >
-                    <Text className={`text-xs font-medium ${
-                      activeFilter === option.key ? 'text-white' : 'text-gray-700 dark:text-gray-300'
-                    }`}>
+                    <Text style={{
+                      ...typography.caption,
+                      fontWeight: '600',
+                      color: activeFilter === option.key ? colors.neutral[50] : currentTheme.textSecondary,
+                    }}>
                       {option.label}
                     </Text>
                  </TouchableOpacity>
@@ -225,53 +331,63 @@ export default function MarketplaceScreen() {
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return (
-        <View className="py-8 items-center">
-          <ActivityIndicator color="#4cae4f" />
-          <Text className="text-xs text-gray-500 mt-2">Loading more properties...</Text>
+        <View style={{
+          paddingVertical: spacing['2xl'],
+          alignItems: 'center',
+        }}>
+          <ActivityIndicator color={colors.primary[500]} />
+          <Text style={{
+            ...typography.caption,
+            color: currentTheme.textTertiary,
+            marginTop: spacing.sm,
+          }}>Loading more properties...</Text>
         </View>
       );
     }
-    
+
     if (!hasNextPage && listings.length > 0) {
       return (
-        <View className="py-12 items-center">
-          <Text className="text-gray-400 text-xs font-bold uppercase tracking-widest">You've reached the end</Text>
+        <View style={{
+          paddingVertical: spacing['3xl'],
+          alignItems: 'center',
+        }}>
+          <Text style={{
+            ...typography.captionXs,
+            fontWeight: '700',
+            color: currentTheme.textTertiary,
+            textTransform: 'uppercase',
+            letterSpacing: 2,
+          }}>You've reached the end</Text>
         </View>
       );
     }
-    
-    return <View className="h-20" />;
+
+    return <View style={{ height: spacing['4xl'] }} />;
   };
 
   const renderEmpty = () => {
     if (isLoading) return (
-      <View className="px-4 gap-4 flex-col">
+      <View style={{ paddingHorizontal: spacing.lg, gap: spacing.xl }}>
         <SkeletonCard />
         <SkeletonCard />
       </View>
     );
 
     return (
-      <View className="flex items-center justify-center py-20 px-8">
-        <Text className="text-4xl mb-4">🌾</Text>
-        <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">No listings found</Text>
-        <Text className="text-sm text-gray-500 text-center leading-relaxed">
-          Try adjusting your search or filters to find more properties.
-        </Text>
-        <TouchableOpacity 
-          onPress={() => { haptic.light(); setSearchQuery(''); setActiveFilter(null); }}
-          className="mt-6 bg-[#4cae4f] px-8 py-3 rounded-xl"
-        >
-          <Text className="text-white font-bold text-sm">Clear Filters</Text>
-        </TouchableOpacity>
-      </View>
+      <EmptyState
+        icon={Sprout}
+        title="No listings found"
+        description="Try adjusting your search or filters to find more properties."
+        actionLabel="Clear Filters"
+        onAction={() => { haptic.light(); setSearchQuery(''); setActiveFilter(null); }}
+      />
     );
   };
 
   const renderItem = ({ item }: { item: Listing }) => {
     const prop = mapListingToProperty(item);
     return (
-      <View className="px-4">
+      <View style={{ paddingHorizontal: spacing.lg }}>
         <PropertyCard
           title={prop.title}
           location={prop.location}
@@ -292,8 +408,8 @@ export default function MarketplaceScreen() {
   };
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
+    <View style={{ flex: 1, backgroundColor: currentTheme.background }}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <Header
         variant="menu"
@@ -310,10 +426,14 @@ export default function MarketplaceScreen() {
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         refreshControl={
-          <RefreshControl refreshing={isRefetching && !isFetchingNextPage} onRefresh={onRefresh} tintColor="#4cae4f" />
+          <RefreshControl
+            refreshing={isRefetching && !isFetchingNextPage}
+            onRefresh={onRefresh}
+            tintColor={colors.primary[500]}
+          />
         }
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: spacing.xl }}
       />
     </View>
   );

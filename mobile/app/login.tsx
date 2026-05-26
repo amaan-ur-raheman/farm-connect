@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import {
 	View,
 	Text,
-	TouchableOpacity,
 	StatusBar,
 	ImageBackground,
 	Platform,
@@ -14,93 +13,18 @@ import {
 	TextInput as RNTextInput,
 	StyleSheet,
 	ActivityIndicator,
+	useColorScheme,
+	TouchableOpacity,
 } from "react-native";
 import { Phone, Sprout, Lock, ShieldCheck, Fingerprint } from "lucide-react-native";
 import { router } from "expo-router";
-import { Input } from "../src/components/ui/Input";
+import { Input, Button, Card, EmptyState } from "../src/components/ui";
 import { useAuthStore } from "../src/stores";
 import { validatePhone, validateOtp } from "../src/utils/validation";
 import { haptic } from "../src/utils/haptics";
 import { biometric } from "../src/utils/biometric";
 import { BASE_URL, testConnection } from "../src/config/api";
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	scrollView: {
-		flex: 1,
-	},
-	scrollContent: {
-		flexGrow: 1,
-		justifyContent: "center",
-		padding: 16,
-	},
-	card: {
-		backgroundColor: "#ffffff",
-		borderRadius: 16,
-		padding: 32,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 4 },
-		shadowOpacity: 0.1,
-		shadowRadius: 8,
-		elevation: 4,
-		maxWidth: 480,
-		width: "100%",
-		alignSelf: "center",
-	},
-	roleButtonContainer: {
-		flexDirection: "row",
-		backgroundColor: "#f0f4f0",
-		padding: 6,
-		borderRadius: 12,
-		marginBottom: 32,
-		width: "100%",
-	},
-	roleButton: {
-		flex: 1,
-		paddingVertical: 12,
-		borderRadius: 8,
-		alignItems: "center",
-		justifyContent: "center",
-		flexDirection: "row",
-		gap: 8,
-	},
-	roleButtonActive: {
-		backgroundColor: "#ffffff",
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.1,
-		shadowRadius: 2,
-		elevation: 2,
-	},
-	roleTextActive: {
-		fontSize: 14,
-		fontWeight: "bold",
-		color: "#111b0e",
-	},
-	roleTextInactive: {
-		fontSize: 14,
-		fontWeight: "bold",
-		color: "#6b7280",
-	},
-	submitButton: {
-		width: "100%",
-		paddingVertical: 16,
-		borderRadius: 16,
-		backgroundColor: "#4cae4f",
-		shadowColor: "#4cae4f",
-		shadowOffset: { width: 0, height: 4 },
-		shadowOpacity: 0.3,
-		shadowRadius: 8,
-		elevation: 4,
-		alignItems: "center",
-		marginTop: 8,
-	},
-	submitButtonDisabled: {
-		opacity: 0.5,
-	},
-});
+import { colors, spacing, radii, typography, theme, getShadow } from "../src/config/theme";
 
 export default function LoginScreen() {
 	const [phone, setPhone] = useState("");
@@ -112,6 +36,10 @@ export default function LoginScreen() {
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
 	const [showBiometric, setShowBiometric] = useState(false);
 	const [biometricLoading, setBiometricLoading] = useState(false);
+
+	const colorScheme = useColorScheme();
+	const isDark = colorScheme === "dark";
+	const t = isDark ? theme.dark : theme.light;
 
 	const {
 		userRole,
@@ -128,24 +56,22 @@ export default function LoginScreen() {
 	const scrollViewRef = useRef<ScrollView>(null);
 
 	useEffect(() => {
-		// Check if biometric login is available and enabled
 		const checkBiometric = async () => {
 			const enabled = await biometric.isBiometricEnabled();
 			const compatible = await biometric.isCompatible();
 			const enrolled = await biometric.isEnrolled();
-			
+
 			if (enabled && compatible && enrolled) {
 				setShowBiometric(true);
 			}
 		};
 		checkBiometric();
 
-		// Test API connection on mount
 		testConnection().then(result => {
 			console.log('[Login] API Connection:', result.message);
 			console.log('[Login] Using API URL:', BASE_URL);
 		});
-		
+
 		const showSubscription = Keyboard.addListener(
 			Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
 			(e: KeyboardEvent) => {
@@ -234,7 +160,6 @@ export default function LoginScreen() {
 		const success = await loginWithOtp(phone, otp);
 		if (success) {
 			haptic.success();
-			// Navigate to tab-based navigation
 			router.replace("/(tabs)/dashboard");
 		} else {
 			haptic.error();
@@ -249,27 +174,21 @@ export default function LoginScreen() {
 
 			if (success) {
 				haptic.success();
-				// Verify the biometric is for the same user
 				const biometricPhone = await biometric.getBiometricPhone();
 				const { authUser, refreshTokens, accessToken } = useAuthStore.getState();
 
-				// If no stored user or phone doesn't match, require fresh login
 				if (!authUser?.phone || (biometricPhone && biometricPhone !== authUser.phone)) {
 					Alert.alert('Different Account', 'Biometric login is for a different account. Please login with OTP.');
 					return;
 				}
 
-				// Attempt to refresh tokens to get a fresh session
 				if (accessToken) {
-					// Token still valid — navigate directly
 					router.replace("/(tabs)/dashboard");
 				} else {
-					// No access token — try refresh
 					const newToken = await refreshTokens();
 					if (newToken) {
 						router.replace("/(tabs)/dashboard");
 					} else {
-						// Refresh failed — require fresh OTP login
 						Alert.alert('Session Expired', 'Please login with OTP again.');
 					}
 				}
@@ -298,6 +217,11 @@ export default function LoginScreen() {
 			? "Send OTP"
 			: "Verify & Login";
 
+	const logoIconColor = !otpSent ? t.primary : t.textTertiary;
+	const roleActiveBg = t.surface;
+	const roleInactiveText = t.textSecondary;
+	const roleActiveText = t.text;
+
 	return (
 		<ImageBackground
 			source={{
@@ -305,11 +229,11 @@ export default function LoginScreen() {
 			}}
 			style={styles.container}
 		>
-			<StatusBar barStyle="dark-content" />
+			<StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
 			<View
 				style={[
 					styles.container,
-					{ backgroundColor: "rgba(246, 248, 246, 0.8)" },
+					{ backgroundColor: isDark ? "rgba(15, 26, 15, 0.85)" : "rgba(240, 253, 244, 0.85)" },
 				]}
 			>
 				<ScrollView
@@ -317,40 +241,38 @@ export default function LoginScreen() {
 					style={styles.scrollView}
 					contentContainerStyle={[
 						styles.scrollContent,
-						{ paddingBottom: keyboardHeight + 20 },
+						{ paddingBottom: keyboardHeight + spacing.lg },
 					]}
 					showsVerticalScrollIndicator={false}
 					keyboardShouldPersistTaps="handled"
 					bounces={false}
 				>
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-						<View style={styles.card}>
+						<Card variant="elevated" padding="2xl" style={styles.card}>
 							{/* Logo */}
 							<View
 								style={{
 									width: 56,
 									height: 56,
-									backgroundColor: "rgba(76, 175, 80, 0.1)",
-									borderRadius: 16,
+									backgroundColor: isDark ? "rgba(34, 197, 94, 0.15)" : "rgba(76, 175, 80, 0.1)",
+									borderRadius: radii.lg,
 									alignItems: "center",
 									justifyContent: "center",
-									marginBottom: 16,
+									marginBottom: spacing.md,
 									alignSelf: "center",
 								}}
 							>
 								<Sprout
 									size={28}
-									color="#3db814"
+									color={t.primary}
 									strokeWidth={1.5}
 								/>
 							</View>
 
 							<Text
 								style={{
-									fontSize: 28,
-									fontWeight: "bold",
-									color: "#111b0e",
-									letterSpacing: -0.5,
+									...typography.display,
+									color: t.text,
 									textAlign: "center",
 								}}
 							>
@@ -358,11 +280,11 @@ export default function LoginScreen() {
 							</Text>
 							<Text
 								style={{
-									marginTop: 8,
-									fontSize: 14,
-									color: "#6b7280",
+									...typography.bodySm,
+									color: t.textSecondary,
 									textAlign: "center",
-									marginBottom: 32,
+									marginTop: spacing.sm,
+									marginBottom: spacing.xl,
 								}}
 							>
 								{otpSent
@@ -380,16 +302,20 @@ export default function LoginScreen() {
 										}
 										style={[
 											styles.roleButton,
-											userRole === "consumer" &&
-												styles.roleButtonActive,
+											{
+												backgroundColor: userRole === "consumer" ? roleActiveBg : "transparent",
+												...(userRole === "consumer" ? getShadow("sm", isDark) : {}),
+											},
 										]}
+										accessibilityRole="button"
+										accessibilityLabel="Select Investor role"
+										accessibilityState={{ selected: userRole === "consumer" }}
 									>
 										<Text
-											style={
-												userRole === "consumer"
-													? styles.roleTextActive
-													: styles.roleTextInactive
-											}
+											style={{
+												...typography.labelSm,
+												color: userRole === "consumer" ? roleActiveText : roleInactiveText,
+											}}
 										>
 											Investor
 										</Text>
@@ -402,16 +328,20 @@ export default function LoginScreen() {
 										}
 										style={[
 											styles.roleButton,
-											userRole === "farmer" &&
-												styles.roleButtonActive,
+											{
+												backgroundColor: userRole === "farmer" ? roleActiveBg : "transparent",
+												...(userRole === "farmer" ? getShadow("sm", isDark) : {}),
+											},
 										]}
+										accessibilityRole="button"
+										accessibilityLabel="Select Farmer role"
+										accessibilityState={{ selected: userRole === "farmer" }}
 									>
 										<Text
-											style={
-												userRole === "farmer"
-													? styles.roleTextActive
-													: styles.roleTextInactive
-											}
+											style={{
+												...typography.labelSm,
+												color: userRole === "farmer" ? roleActiveText : roleInactiveText,
+											}}
 										>
 											Farmer
 										</Text>
@@ -443,7 +373,7 @@ export default function LoginScreen() {
 								icon={
 									<Phone
 										size={20}
-										color={!otpSent ? "#4cae4f" : "#9ca3af"}
+										color={logoIconColor}
 									/>
 								}
 								onClear={
@@ -455,7 +385,7 @@ export default function LoginScreen() {
 
 							{/* OTP Input */}
 							{otpSent && (
-								<View style={{ marginTop: 8 }}>
+								<View style={{ marginTop: spacing.sm }}>
 									<Input
 										ref={otpRef}
 										label="Verification Code"
@@ -481,7 +411,7 @@ export default function LoginScreen() {
 										keyboardType="number-pad"
 										maxLength={6}
 										icon={
-											<Lock size={20} color="#4cae4f" />
+											<Lock size={20} color={t.primary} />
 										}
 										returnKeyType="go"
 										onSubmitEditing={handleVerifyOtp}
@@ -490,34 +420,32 @@ export default function LoginScreen() {
 									{devOtpHint && (
 										<View
 											style={{
-												backgroundColor:
-													"rgba(254, 252, 232, 1)",
-												borderRadius: 12,
-												paddingHorizontal: 16,
-												paddingVertical: 12,
-												marginBottom: 16,
+												backgroundColor: isDark ? "rgba(66, 32, 6, 0.4)" : colors.accent[50],
+												borderRadius: radii.md,
+												paddingHorizontal: spacing.lg,
+												paddingVertical: spacing.md,
+												marginBottom: spacing.md,
 												borderWidth: 1,
-												borderColor:
-													"rgba(254, 243, 199, 1)",
+												borderColor: isDark ? colors.accent[700] : colors.accent[200],
 											}}
 										>
 											<Text
 												style={{
-													fontSize: 11,
-													fontWeight: "bold",
-													color: "#a16207",
+													...typography.caption,
+													fontWeight: "700",
+													color: isDark ? colors.accent[300] : colors.accent[600],
 													textTransform: "uppercase",
 													letterSpacing: 1,
-													marginBottom: 4,
+													marginBottom: spacing.xs,
 												}}
 											>
 												Developer Mode
 											</Text>
 											<Text
 												style={{
-													fontSize: 14,
+													...typography.bodySm,
 													fontWeight: "500",
-													color: "#ca8a04",
+													color: isDark ? colors.accent[400] : colors.warning.light,
 													fontFamily: "monospace",
 												}}
 											>
@@ -533,15 +461,19 @@ export default function LoginScreen() {
 											setTouchedOtp(false);
 										}}
 										style={{
-											paddingVertical: 8,
-											marginBottom: 16,
+											paddingVertical: spacing.md,
+											marginBottom: spacing.md,
+											minHeight: 44,
+											justifyContent: "center",
 										}}
+										accessibilityRole="button"
+										accessibilityLabel="Resend OTP code"
 									>
 										<Text
 											style={{
-												fontSize: 14,
+												...typography.bodySm,
 												fontWeight: "500",
-												color: "#4cae4f",
+												color: t.primary,
 												textAlign: "center",
 											}}
 										>
@@ -555,22 +487,21 @@ export default function LoginScreen() {
 							{error && (
 								<View
 									style={{
-										backgroundColor:
-											"rgba(254, 242, 242, 1)",
-										borderRadius: 12,
-										paddingHorizontal: 16,
-										paddingVertical: 12,
-										marginBottom: 16,
+										backgroundColor: isDark ? "rgba(127, 29, 29, 0.4)" : colors.error.light + "10",
+										borderRadius: radii.md,
+										paddingHorizontal: spacing.lg,
+										paddingVertical: spacing.md,
+										marginBottom: spacing.md,
 										borderWidth: 1,
-										borderColor: "rgba(254, 226, 226, 1)",
+										borderColor: isDark ? "rgba(248, 113, 113, 0.4)" : colors.error.light + "20",
 										width: "100%",
 									}}
 								>
 									<Text
 										style={{
-											fontSize: 14,
+											...typography.bodySm,
 											fontWeight: "500",
-											color: "#dc2626",
+											color: isDark ? colors.error.dark : colors.error.light,
 										}}
 									>
 										{error}
@@ -581,12 +512,12 @@ export default function LoginScreen() {
 							{/* Biometric Login Button */}
 							{showBiometric && !otpSent && (
 								<>
-									<View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 16 }}>
-										<View style={{ flex: 1, height: 1, backgroundColor: '#e5e7eb' }} />
-										<Text style={{ marginHorizontal: 12, fontSize: 12, color: '#6b7280', fontWeight: '500' }}>
+									<View style={styles.dividerRow}>
+										<View style={[styles.dividerLine, { backgroundColor: t.border }]} />
+										<Text style={{ ...typography.caption, color: t.textSecondary, fontWeight: "500", marginHorizontal: spacing.sm }}>
 											Or login with
 										</Text>
-										<View style={{ flex: 1, height: 1, backgroundColor: '#e5e7eb' }} />
+										<View style={[styles.dividerLine, { backgroundColor: t.border }]} />
 									</View>
 									<TouchableOpacity
 										onPress={handleBiometricLogin}
@@ -594,23 +525,26 @@ export default function LoginScreen() {
 										activeOpacity={0.8}
 										style={{
 											width: '100%',
-											paddingVertical: 16,
-											borderRadius: 16,
-											backgroundColor: 'white',
+											paddingVertical: spacing.xl,
+											borderRadius: radii.lg,
+											backgroundColor: t.surface,
 											borderWidth: 2,
-											borderColor: '#4cae4f',
+											borderColor: t.primary,
 											flexDirection: 'row',
 											alignItems: 'center',
 											justifyContent: 'center',
-											gap: 10,
+											gap: spacing.sm,
+											minHeight: 56,
 										}}
+										accessibilityRole="button"
+										accessibilityLabel="Login with biometric"
 									>
 										{biometricLoading ? (
-											<ActivityIndicator size="small" color="#4cae4f" />
+											<ActivityIndicator size="small" color={t.primary} />
 										) : (
 											<>
-												<Fingerprint size={24} color="#4cae4f" />
-												<Text style={{ color: '#4cae4f', fontWeight: 'bold', fontSize: 16 }}>
+												<Fingerprint size={24} color={t.primary} />
+												<Text style={{ ...typography.label, color: t.primary }}>
 													Use Biometric
 												</Text>
 											</>
@@ -620,55 +554,45 @@ export default function LoginScreen() {
 							)}
 
 							{/* Submit Button */}
-							<TouchableOpacity
-								onPress={
-									!otpSent ? handleSendOtp : handleVerifyOtp
-								}
+							<Button
+								label={submitText}
+								onPress={!otpSent ? handleSendOtp : handleVerifyOtp}
 								disabled={isSubmitDisabled}
-								activeOpacity={0.8}
-								style={[
-									styles.submitButton,
-									isSubmitDisabled &&
-										styles.submitButtonDisabled,
-								]}
-							>
-								<Text
-									style={{
-										color: "#ffffff",
-										fontWeight: "bold",
-										fontSize: 16,
-									}}
-								>
-									{submitText}
-								</Text>
-							</TouchableOpacity>
+								loading={isLoading}
+								size="lg"
+								fullWidth
+								style={styles.submitButton}
+							/>
 
 							{/* Sign Up Link */}
 							<View
 								style={{
-									marginTop: 32,
+									marginTop: spacing.xl,
 									flexDirection: "row",
 									alignItems: "center",
 									justifyContent: "center",
-									gap: 4,
+									gap: spacing.xs,
 								}}
 							>
 								<Text
 									style={{
-										fontSize: 14,
-										color: "#6b7280",
+										...typography.bodySm,
+										color: t.textSecondary,
 									}}
 								>
 									Don't have an account?
 								</Text>
 								<TouchableOpacity
 									onPress={() => router.push("/register")}
+									style={{ minHeight: 44, justifyContent: "center" }}
+									accessibilityRole="link"
+									accessibilityLabel="Sign up for a new account"
 								>
 									<Text
 										style={{
-											fontSize: 14,
-											fontWeight: "bold",
-											color: "#4cae4f",
+											...typography.bodySm,
+											fontWeight: "700",
+											color: t.primary,
 										}}
 									>
 										{" "}
@@ -680,32 +604,81 @@ export default function LoginScreen() {
 							{/* Security Badge */}
 							<View
 								style={{
-									marginTop: 24,
+									marginTop: spacing.lg,
 									flexDirection: "row",
 									alignItems: "center",
-									gap: 8,
-									backgroundColor: "rgba(249, 250, 251, 1)",
-									paddingHorizontal: 16,
-									paddingVertical: 8,
-									borderRadius: 8,
+									gap: spacing.sm,
+									backgroundColor: isDark ? t.divider : t.divider,
+									paddingHorizontal: spacing.lg,
+									paddingVertical: spacing.sm,
+									borderRadius: radii.sm,
 									justifyContent: "center",
 								}}
 							>
-								<ShieldCheck size={14} color="#9ca3af" />
+								<ShieldCheck size={14} color={t.textTertiary} />
 								<Text
 									style={{
-										fontSize: 12,
-										color: "#6b7280",
+										...typography.caption,
+										color: t.textSecondary,
 										fontWeight: "500",
 									}}
 								>
 									Secure login with OTP verification
 								</Text>
 							</View>
-						</View>
+						</Card>
 					</TouchableWithoutFeedback>
 				</ScrollView>
 			</View>
 		</ImageBackground>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
+	scrollView: {
+		flex: 1,
+	},
+	scrollContent: {
+		flexGrow: 1,
+		justifyContent: "center",
+		padding: spacing.lg,
+	},
+	card: {
+		maxWidth: 480,
+		width: "100%",
+		alignSelf: "center",
+	},
+	roleButtonContainer: {
+		flexDirection: "row",
+		backgroundColor: colors.primary[100],
+		padding: spacing.xs,
+		borderRadius: radii.md,
+		marginBottom: spacing.xl,
+		width: "100%",
+	},
+	roleButton: {
+		flex: 1,
+		paddingVertical: spacing.md,
+		borderRadius: radii.sm,
+		alignItems: "center",
+		justifyContent: "center",
+		flexDirection: "row",
+		gap: spacing.sm,
+		minHeight: 44,
+	},
+	submitButton: {
+		marginTop: spacing.sm,
+	},
+	dividerRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginVertical: spacing.lg,
+	},
+	dividerLine: {
+		flex: 1,
+		height: 1,
+	},
+});

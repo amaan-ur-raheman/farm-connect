@@ -1,10 +1,25 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, TextInput, Image, Alert } from 'react-native';
-import { ChevronLeft, Plus, Clock, Camera, X } from 'lucide-react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
+  RefreshControl,
+  TextInput,
+  Image,
+  Alert,
+  useColorScheme,
+  StyleSheet,
+} from 'react-native';
+import { ChevronLeft, Plus, Clock, Camera, X, Sprout } from 'lucide-react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import api, { FarmUpdate } from '../../src/config/api';
 import { useAuthStore } from '../../src/stores/authStore';
+import { colors, spacing, radii, typography, theme } from '../../src/config/theme';
+import { Card, Skeleton, EmptyState } from '../../src/components/ui';
 import NetInfo from '@react-native-community/netinfo';
 import { SyncQueue } from '../../src/utils/syncQueue';
 import { haptic } from '../../src/utils/haptics';
@@ -12,6 +27,10 @@ import { haptic } from '../../src/utils/haptics';
 export default function UpdatesScreen() {
   const { contractId } = useLocalSearchParams();
   const { userRole } = useAuthStore();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+
   const [updates, setUpdates] = useState<FarmUpdate[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -104,113 +123,294 @@ export default function UpdatesScreen() {
         setSubmitting(false);
       }
     };
+
   if (loading) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
-        <ActivityIndicator size="large" color="#4cae4f" />
+      <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+        <Skeleton width={48} height={48} borderRadius={radii.lg} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
-      <View className="bg-white dark:bg-[#1e291e] px-4 pt-12 pb-4 flex-row items-center justify-between border-b border-[#eaf0ea] dark:border-[#2a382a]">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity onPress={() => router.back()} className="p-2">
-            <ChevronLeft size={24} color="#4cae4f" />
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+      <View style={[styles.header, { backgroundColor: currentTheme.surface, borderBottomColor: currentTheme.border }]}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={touch.hitSlop}
+            accessibilityLabel="Go back"
+          >
+            <ChevronLeft size={24} color={currentTheme.primary} />
           </TouchableOpacity>
-          <Text className="text-xl font-bold text-slate-900 dark:text-white">Farm Updates</Text>
+          <Text style={[typography.heading, { color: currentTheme.text }]}>Farm Updates</Text>
         </View>
         {userRole === 'farmer' && !showForm && (
-          <TouchableOpacity onPress={() => setShowForm(true)} className="bg-[#4cae4f] px-4 py-2 rounded-xl flex-row items-center gap-2">
-            <Plus size={16} color="white" />
-            <Text className="text-white font-bold text-sm">Post</Text>
+          <TouchableOpacity
+            onPress={() => setShowForm(true)}
+            style={[styles.postButton, { backgroundColor: currentTheme.primary }]}
+            activeOpacity={0.8}
+            hitSlop={touch.hitSlop}
+          >
+            <Plus size={16} color={currentTheme.onPrimary} />
+            <Text style={[typography.labelSm, { color: currentTheme.onPrimary }]}>Post</Text>
           </TouchableOpacity>
         )}
       </View>
 
       <ScrollView
-        className="flex-1"
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={currentTheme.primary}
+          />
+        }
       >
-        <View className="px-4 py-4">
-          {/* Post Form */}
-          {showForm && (
-            <View className="bg-white dark:bg-[#1e291e] rounded-2xl p-4 mb-4 border border-[#eaf0ea] dark:border-[#2a382a]">
-              <Text className="text-base font-bold text-slate-900 dark:text-white mb-3">New Update</Text>
-              <TextInput
-                value={caption}
-                onChangeText={setCaption}
-                placeholder="Describe the update..."
-                placeholderTextColor="#9ca3af"
-                multiline
-                numberOfLines={4}
-                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-[#f9fbf9] dark:bg-[#151d15] text-sm text-slate-900 dark:text-white mb-3"
-                style={{ textAlignVertical: 'top' }}
-              />
+        {/* Post Form */}
+        {showForm && (
+          <Card variant="outlined" padding="lg" style={styles.formCard}>
+            <Text style={[typography.titleSm, { color: currentTheme.text, marginBottom: spacing.md }]}>
+              New Update
+            </Text>
+            <TextInput
+              value={caption}
+              onChangeText={setCaption}
+              placeholder="Describe the update..."
+              placeholderTextColor={currentTheme.inputPlaceholder}
+              multiline
+              numberOfLines={4}
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: currentTheme.inputBackground,
+                  borderColor: currentTheme.inputBorder,
+                  color: currentTheme.inputText,
+                },
+              ]}
+            />
 
-              {/* Media Preview */}
-              {mediaUri ? (
-                <View className="relative mb-3">
-                  <Image source={{ uri: mediaUri }} className="w-full h-40 rounded-xl" resizeMode="cover" />
-                  <TouchableOpacity
-                    onPress={() => setMediaUri(null)}
-                    className="absolute top-2 right-2 size-6 bg-red-500 rounded-full items-center justify-center"
-                  >
-                    <X size={14} color="white" />
-                  </TouchableOpacity>
-                </View>
-              ) : (
+            {/* Media Preview */}
+            {mediaUri ? (
+              <View style={styles.mediaPreviewContainer}>
+                <Image source={{ uri: mediaUri }} style={styles.mediaImage} resizeMode="cover" />
                 <TouchableOpacity
-                  onPress={pickMedia}
-                  className="w-full h-40 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 items-center justify-center mb-3"
+                  onPress={() => setMediaUri(null)}
+                  style={styles.mediaRemoveButtonInner}
+                  hitSlop={touch.hitSlop}
+                  accessibilityLabel="Remove image"
                 >
-                  <Camera size={24} color="#94a3b8" />
-                  <Text className="text-xs text-gray-400 mt-2">Tap to add a photo</Text>
+                  <View style={styles.mediaRemoveButton}>
+                    <X size={14} color={currentTheme.onPrimary} />
+                  </View>
                 </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={pickMedia}
+                style={[
+                  styles.mediaPickButton,
+                  { borderColor: isDark ? colors.neutral[600] : colors.neutral[300] },
+                ]}
+                hitSlop={touch.hitSlop}
+                accessibilityLabel="Add a photo"
+              >
+                <Camera size={24} color={currentTheme.textTertiary} />
+                <Text style={[typography.caption, { color: currentTheme.textTertiary, marginTop: spacing.sm }]}>
+                  Tap to add a photo
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <View style={styles.formActions}>
+              <TouchableOpacity
+                onPress={() => { setShowForm(false); setCaption(''); setMediaUri(null); }}
+                style={[styles.formButton, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[100] }]}
+                activeOpacity={0.8}
+                hitSlop={touch.hitSlop}
+              >
+                <Text style={[typography.labelSm, { color: currentTheme.textSecondary }]}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSubmit}
+                disabled={submitting}
+                style={[styles.formButton, styles.submitButton, { backgroundColor: currentTheme.primary, opacity: submitting ? 0.6 : 1 }]}
+                activeOpacity={0.8}
+                hitSlop={touch.hitSlop}
+                accessibilityLabel={submitting ? 'Posting update...' : 'Post update'}
+              >
+                {submitting ? (
+                  <ActivityIndicator color={currentTheme.onPrimary} size="small" />
+                ) : (
+                  <Text style={[typography.label, { color: currentTheme.onPrimary }]}>Post Update</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </Card>
+        )}
+
+        {/* Updates List */}
+        {updates.length === 0 ? (
+          <EmptyState
+            icon={Sprout}
+            title="No updates yet"
+            description={
+              userRole === 'farmer'
+                ? 'Post farm updates with photos to keep investors informed.'
+                : 'Updates from the farmer will appear here.'
+            }
+          />
+        ) : (
+          updates.map((update) => (
+            <Card key={update.id} variant="default" padding="lg" style={styles.updateCard}>
+              <View style={styles.timestampRow}>
+                <Clock size={14} color={currentTheme.primary} />
+                <Text style={[typography.captionXs, { color: currentTheme.textTertiary }]}>
+                  {new Date(update.created_at).toLocaleString()}
+                </Text>
+              </View>
+              {update.caption && (
+                <Text style={[typography.bodySm, { color: currentTheme.text, marginBottom: spacing.sm }]}>
+                  {update.caption}
+                </Text>
               )}
-
-              <View className="flex-row gap-3">
-                <TouchableOpacity onPress={() => { setShowForm(false); setCaption(''); setMediaUri(null); }} className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 items-center">
-                  <Text className="text-slate-700 dark:text-slate-300 font-bold">Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleSubmit} disabled={submitting} className={`flex-1 py-3 rounded-xl bg-[#4cae4f] items-center ${submitting ? 'opacity-60' : ''}`}>
-                  {submitting ? <ActivityIndicator color="white" size="small" /> : <Text className="text-white font-bold">Post Update</Text>}
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          {/* Updates List */}
-          {updates.length === 0 ? (
-            <View className="items-center py-16">
-              <Text className="text-4xl mb-4">📋</Text>
-              <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">No updates yet</Text>
-              <Text className="text-sm text-gray-500 text-center px-8">
-                {userRole === 'farmer' ? 'Post farm updates with photos to keep investors informed.' : 'Updates from the farmer will appear here.'}
-              </Text>
-            </View>
-          ) : (
-            updates.map((update) => (
-              <View key={update.id} className="bg-white dark:bg-[#1e291e] rounded-2xl p-4 mb-4 border border-[#eaf0ea] dark:border-[#2a382a]">
-                <View className="flex-row items-center gap-2 mb-2">
-                  <Clock size={14} color="#4cae4f" />
-                  <Text className="text-[10px] text-gray-400">{new Date(update.created_at).toLocaleString()}</Text>
-                </View>
-                {update.caption && (
-                  <Text className="text-sm text-slate-900 dark:text-white mb-2">{update.caption}</Text>
-                )}
-                {update.media_url && (
-                  <Image source={{ uri: update.media_url }} className="w-full h-44 rounded-xl" resizeMode="cover" />
-                )}
-              </View>
-            ))
-          )}
-          <View className="h-20" />
-        </View>
+              {update.media_url && (
+                <Image source={{ uri: update.media_url }} style={styles.updateMedia} resizeMode="cover" />
+              )}
+            </Card>
+          ))
+        )}
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </View>
   );
 }
+
+const touch = {
+  hitSlop: { top: 10, bottom: 10, left: 10, right: 10 },
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: 48,
+    paddingBottom: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  backButton: {
+    padding: spacing.sm,
+    minHeight: 44,
+    minWidth: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  postButton: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: 44,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+  },
+  formCard: {
+    marginBottom: spacing.md,
+  },
+  textInput: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    fontSize: typography.bodySm.fontSize,
+    lineHeight: typography.bodySm.lineHeight,
+    textAlignVertical: 'top',
+    marginBottom: spacing.md,
+    minHeight: 44,
+  },
+  mediaPreviewContainer: {
+    position: 'relative',
+    marginBottom: spacing.md,
+  },
+  mediaImage: {
+    width: '100%',
+    height: 160,
+    borderRadius: radii.lg,
+  },
+  mediaRemoveButton: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 24,
+    height: 24,
+    backgroundColor: colors.error.light,
+    borderRadius: radii.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mediaRemoveButtonInner: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mediaPickButton: {
+    width: '100%',
+    height: 160,
+    borderRadius: radii.lg,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: colors.neutral[300],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  formActions: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  formButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    alignItems: 'center',
+    minHeight: 44,
+  },
+  submitButton: {},
+  bottomSpacer: {
+    height: 80,
+  },
+  timestampRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  updateMedia: {
+    width: '100%',
+    height: 176,
+    borderRadius: radii.lg,
+  },
+});

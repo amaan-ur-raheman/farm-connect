@@ -1,50 +1,60 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, Alert, useColorScheme, StyleSheet } from 'react-native';
 import {
   Plus,
-  Sprout,
-  MapPin,
-  Clock,
-  CheckCircle,
-  XCircle,
   MessageSquare,
   FileText,
   TrendingUp,
   AlertCircle,
   ChevronRight,
   Wallet,
+  CheckCircle,
+  XCircle,
+  Clock,
+  MapPin,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Header } from '../../src/components/ui/Header';
 import api, { Contract } from '../../src/config/api';
 import { useAuthStore, useSocketStore } from '../../src/stores';
 import { Skeleton } from '../../src/components/ui/Skeleton';
+import { EmptyState } from '../../src/components/ui/EmptyState';
 import { haptic } from '../../src/utils/haptics';
 import { useQuery } from '@tanstack/react-query';
 import { ContractsResponseSchema } from '../../src/config/schemas';
+import { colors, spacing, radii, typography, theme, getShadow } from '../../src/config/theme';
 
-const statusConfig: Record<string, { color: string; bg: string; icon: React.ElementType; label: string }> = {
-  PENDING: { color: '#f59e0b', bg: '#fef3c7', icon: Clock, label: 'Pending' },
-  ACTIVE: { color: '#4cae4f', bg: '#dcfce7', icon: CheckCircle, label: 'Active' },
-  COMPLETED: { color: '#3b82f6', bg: '#dbeafe', icon: FileText, label: 'Completed' },
-  CANCELLED: { color: '#ef4444', bg: '#fee2e2', icon: XCircle, label: 'Cancelled' },
-  DISPUTED: { color: '#a855f7', bg: '#f3e8ff', icon: AlertCircle, label: 'Disputed' },
+const statusConfig: Record<string, { colorLight: string; colorDark: string; bgLight: string; bgDark: string; icon: React.ElementType; label: string }> = {
+  PENDING: { colorLight: colors.warning.light, colorDark: colors.warning.dark, bgLight: `${colors.warning.light}15`, bgDark: `${colors.warning.dark}20`, icon: Clock, label: 'Pending' },
+  ACTIVE: { colorLight: colors.success.light, colorDark: colors.success.dark, bgLight: `${colors.success.light}15`, bgDark: `${colors.success.dark}20`, icon: CheckCircle, label: 'Active' },
+  COMPLETED: { colorLight: colors.info.light, colorDark: colors.info.dark, bgLight: `${colors.info.light}15`, bgDark: `${colors.info.dark}20`, icon: FileText, label: 'Completed' },
+  CANCELLED: { colorLight: colors.error.light, colorDark: colors.error.dark, bgLight: `${colors.error.light}15`, bgDark: `${colors.error.dark}20`, icon: XCircle, label: 'Cancelled' },
+  DISPUTED: { colorLight: '#a855f7', colorDark: '#a855f7', bgLight: '#f3e8ff', bgDark: '#a855f720', icon: AlertCircle, label: 'Disputed' },
 };
 
 function StatusBadge({ status, size = 'sm' }: { status: string; size?: 'sm' | 'md' }) {
-  const config = statusConfig[status] || { color: '#6b7280', bg: '#f3f4f6', icon: FileText, label: status };
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+  const config = statusConfig[status] || { colorLight: currentTheme.textTertiary, colorDark: currentTheme.textTertiary, bgLight: `${colors.neutral[400]}15`, bgDark: `${colors.neutral[400]}20`, icon: FileText, label: status };
   const Icon = config.icon;
   const isMd = size === 'md';
+  const statusColor = isDark ? config.colorDark : config.colorLight;
+  const statusBg = isDark ? config.bgDark : config.bgLight;
 
   return (
     <View
-      className="flex-row items-center rounded-full px-2.5 py-1"
-      style={{ backgroundColor: config.bg }}
+      style={[
+        styles.statusBadge,
+        { backgroundColor: statusBg, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
+      ]}
     >
-      <Icon size={isMd ? 14 : 10} color={config.color} />
+      <Icon size={isMd ? 14 : 10} color={statusColor} />
       <Text
-        className={`font-bold uppercase ${isMd ? 'text-xs ml-1.5' : 'text-[10px] ml-1'}`}
-        style={{ color: config.color }}
+        style={[
+          isMd ? styles.statusTextMd : styles.statusTextSm,
+          { color: statusColor, marginLeft: isMd ? spacing.sm : spacing.xs },
+        ]}
       >
         {config.label}
       </Text>
@@ -65,28 +75,36 @@ function StatTile({
   onPress: () => void;
   active: boolean;
 }) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+
   return (
     <TouchableOpacity
       onPress={() => {
         haptic.light();
         onPress();
       }}
-      className="flex-1 bg-white dark:bg-[#1e291e] rounded-xl p-3 items-center border-2 transition-colors"
-      style={{
-        borderColor: active ? color : 'transparent',
-      }}
+      style={[
+        styles.statTile,
+        {
+          backgroundColor: currentTheme.surface,
+          borderColor: active ? color : currentTheme.border,
+          borderWidth: active ? 2 : 1,
+        },
+      ]}
+      activeOpacity={0.7}
     >
-      <Text className="text-2xl font-bold" style={{ color }}>
-        {value}
-      </Text>
-      <Text className="text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-0.5">
-        {label}
-      </Text>
+      <Text style={[styles.statValue, { color }]}>{value}</Text>
+      <Text style={[styles.statLabel, { color: currentTheme.textTertiary }]}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
 export default function ContractsScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
   const { isAuthenticated, userRole } = useAuthStore();
   const [filter, setFilter] = useState<string>('ALL');
 
@@ -169,18 +187,18 @@ export default function ContractsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
+      <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
         <StatusBar barStyle="dark-content" />
         <Header variant="back-title" title="Contracts" />
-        <View className="px-4 py-4 space-y-4">
+        <View style={styles.loadingContent}>
           {[1, 2, 3].map((i) => (
-            <View key={i} className="bg-white dark:bg-[#1e291e] p-4 rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a]">
-              <View className="flex-row justify-between items-start mb-3">
+            <View key={i} style={[styles.loadingCard, { backgroundColor: currentTheme.surface, borderColor: currentTheme.border }]}>
+              <View style={styles.loadingCardHeader}>
                 <View>
                   <Skeleton width={160} height={18} />
-                  <Skeleton width={100} height={14} style={{ marginTop: 6 }} />
+                  <Skeleton width={100} height={14} style={{ marginTop: spacing.sm }} />
                 </View>
-                <Skeleton width={70} height={24} borderRadius={12} />
+                <Skeleton width={70} height={24} borderRadius={radii.full} />
               </View>
               <Skeleton width={200} height={16} />
             </View>
@@ -194,76 +212,75 @@ export default function ContractsScreen() {
   const pendingCount = getCount('PENDING');
   const completedCount = getCount('COMPLETED');
 
+  const emptyStateMessages = {
+    ALL: userRole === 'consumer'
+      ? 'Browse the marketplace to find farms to invest in.'
+      : 'Your contracts will appear here once investors sign up.',
+    PENDING: "You don't have any pending contracts right now.",
+    ACTIVE: "You don't have any active contracts right now.",
+    COMPLETED: "You don't have any completed contracts right now.",
+    CANCELLED: "You don't have any cancelled contracts right now.",
+    DISPUTED: "You don't have any disputed contracts right now.",
+  };
+
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <StatusBar barStyle="dark-content" />
       <Header variant="back-title" title="Contracts" />
 
       {/* Summary Stats */}
-      <View className="px-4 py-3">
-        <View className="flex-row gap-2">
-          <StatTile label="Active" value={activeCount} color="#4cae4f" onPress={() => setFilter('ACTIVE')} active={filter === 'ACTIVE'} />
-          <StatTile label="Pending" value={pendingCount} color="#f59e0b" onPress={() => setFilter('PENDING')} active={filter === 'PENDING'} />
-          <StatTile label="Done" value={completedCount} color="#3b82f6" onPress={() => setFilter('COMPLETED')} active={filter === 'COMPLETED'} />
+      <View style={styles.statsContainer}>
+        <View style={styles.statsRow}>
+          <StatTile label="Active" value={activeCount} color={currentTheme.success} onPress={() => setFilter('ACTIVE')} active={filter === 'ACTIVE'} />
+          <StatTile label="Pending" value={pendingCount} color={currentTheme.warning} onPress={() => setFilter('PENDING')} active={filter === 'PENDING'} />
+          <StatTile label="Done" value={completedCount} color={currentTheme.info} onPress={() => setFilter('COMPLETED')} active={filter === 'COMPLETED'} />
         </View>
       </View>
 
       <ScrollView
-        className="flex-1"
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={currentTheme.primary} />
+        }
       >
-        <View className="px-4 py-2">
+        <View style={styles.content}>
           {filteredContracts.length === 0 ? (
-            <View className="items-center py-20">
-              <View className="w-20 h-20 rounded-full bg-[#eaf0ea] dark:bg-[#2a382a] items-center justify-center mb-4">
-                <FileText size={36} color="#94a3b8" />
-              </View>
-              <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                No {filter === 'ALL' ? '' : filter.toLowerCase()} Contracts
-              </Text>
-              <Text className="text-sm text-gray-500 text-center px-12 leading-relaxed">
-                {filter !== 'ALL'
-                  ? `You don't have any ${filter.toLowerCase()} contracts right now.`
-                  : userRole === 'consumer'
-                    ? 'Browse the marketplace to find farms to invest in.'
-                    : 'Your contracts will appear here once investors sign up.'}
-              </Text>
-              {userRole === 'consumer' && filter === 'ALL' && (
-                <TouchableOpacity
-                  onPress={() => router.push('/marketplace')}
-                  className="mt-5 bg-[#4cae4f] px-8 py-3 rounded-xl flex-row items-center gap-2"
-                >
-                  <TrendingUp size={18} color="white" />
-                  <Text className="text-white font-bold">Browse Marketplace</Text>
-                </TouchableOpacity>
-              )}
-              {userRole === 'farmer' && filter === 'ALL' && (
-                <TouchableOpacity
-                  onPress={() => router.push('/listings/create')}
-                  className="mt-5 bg-[#4cae4f] px-8 py-3 rounded-xl flex-row items-center gap-2"
-                >
-                  <Plus size={18} color="white" />
-                  <Text className="text-white font-bold">Create Your First Listing</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            <EmptyState
+              icon={FileText}
+              title={`No ${filter === 'ALL' ? '' : filter.toLowerCase()} Contracts`}
+              description={emptyStateMessages[filter as keyof typeof emptyStateMessages] || emptyStateMessages.ALL}
+              actionLabel={
+                userRole === 'consumer' && filter === 'ALL'
+                  ? 'Browse Marketplace'
+                  : userRole === 'farmer' && filter === 'ALL'
+                    ? 'Create Listing'
+                    : undefined
+              }
+              onAction={
+                userRole === 'consumer' && filter === 'ALL'
+                  ? () => router.push('/marketplace')
+                  : userRole === 'farmer' && filter === 'ALL'
+                    ? () => router.push('/listings/create')
+                    : undefined
+              }
+            />
           ) : (
             <>
-              <View className="flex-row items-center justify-between mb-3 px-1">
-                <Text className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+              <View style={styles.filterHeader}>
+                <Text style={[styles.filterText, { color: currentTheme.textTertiary }]}>
                   {filteredContracts.length} contract{filteredContracts.length !== 1 ? 's' : ''}
                 </Text>
                 {filter !== 'ALL' && (
-                  <TouchableOpacity onPress={() => setFilter('ALL')}>
-                    <Text className="text-xs font-bold text-[#4cae4f]">Show All</Text>
+                  <TouchableOpacity onPress={() => setFilter('ALL')} style={styles.showAllButton} activeOpacity={0.7}>
+                    <Text style={[styles.showAllText, { color: currentTheme.primary }]}>Show All</Text>
                   </TouchableOpacity>
                 )}
               </View>
 
               {(filteredContracts as Contract[]).map((contract: Contract) => {
                 const config = statusConfig[contract.status] || statusConfig.PENDING;
-                const StatusIcon = config.icon;
+                const statusColor = isDark ? config.colorDark : config.colorLight;
                 const totalAmount = contract.total_amount || 0;
 
                 return (
@@ -271,23 +288,29 @@ export default function ContractsScreen() {
                     key={contract.id}
                     onPress={() => router.push(`/contracts/${contract.id}`)}
                     activeOpacity={0.7}
-                    className="bg-white dark:bg-[#1e291e] rounded-2xl mb-3 border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden"
+                    style={[
+                      styles.contractCard,
+                      {
+                        backgroundColor: currentTheme.surface,
+                        borderColor: currentTheme.border,
+                      },
+                    ]}
                   >
                     {/* Left accent bar */}
-                    <View className="flex-row">
-                      <View className="w-1.5 self-stretch" style={{ backgroundColor: config.color }} />
+                    <View style={styles.contractCardInner}>
+                      <View style={[styles.accentBar, { backgroundColor: statusColor }]} />
 
-                      <View className="flex-1 p-4">
+                      <View style={styles.contractCardContent}>
                         {/* Header row */}
-                        <View className="flex-row items-start justify-between mb-3">
-                          <View className="flex-1 mr-3">
-                            <Text className="text-base font-bold text-slate-900 dark:text-white" numberOfLines={1}>
+                        <View style={styles.contractHeader}>
+                          <View style={styles.contractTitleContainer}>
+                            <Text style={[styles.contractTitle, { color: currentTheme.text }]} numberOfLines={1}>
                               {contract.listing?.name || 'Farm Contract'}
                             </Text>
                             {contract.listing && (
-                              <View className="flex-row items-center mt-1">
-                                <MapPin size={12} color="#94a3b8" />
-                                <Text className="text-xs text-gray-500 dark:text-gray-400 ml-1" numberOfLines={1}>
+                              <View style={styles.locationRow}>
+                                <MapPin size={12} color={currentTheme.textTertiary} />
+                                <Text style={[styles.locationText, { color: currentTheme.textTertiary }]} numberOfLines={1}>
                                   {contract.listing.location_name}
                                 </Text>
                               </View>
@@ -297,49 +320,51 @@ export default function ContractsScreen() {
                         </View>
 
                         {/* Financial row */}
-                        <View className="flex-row items-center gap-4 mb-3 bg-gray-50 dark:bg-black/10 rounded-lg p-3">
-                          <View className="flex-row items-center gap-1.5 flex-1">
-                            <Wallet size={14} color="#4cae4f" />
-                            <View>
-                              <Text className="text-[10px] text-gray-400 uppercase">₹/Acre</Text>
-                              <Text className="text-sm font-bold text-[#4cae4f]">
-                                ₹{(contract.price_per_acre || 0).toLocaleString('en-IN')}
-                              </Text>
+                        <View style={[styles.financialRow, { backgroundColor: isDark ? 'rgba(0,0,0,0.1)' : colors.primary[50] }]}>
+                          <View style={styles.financialItem}>
+                            <View style={styles.financialIconRow}>
+                              <Wallet size={14} color={currentTheme.primary} />
+                              <View>
+                                <Text style={[styles.financialLabel, { color: currentTheme.textTertiary }]}>$/Acre</Text>
+                                <Text style={[styles.financialValue, { color: currentTheme.primary }]}>
+                                  ${(contract.price_per_acre || 0).toLocaleString('en-IN')}
+                                </Text>
+                              </View>
                             </View>
                           </View>
-                          <View className="w-px h-8 bg-gray-200 dark:bg-gray-700" />
-                          <View className="flex-1">
-                            <Text className="text-[10px] text-gray-400 uppercase">Acreage</Text>
-                            <Text className="text-sm font-bold text-slate-900 dark:text-white">
-                              {contract.acreage || 0}
-                            </Text>
+                          <View style={[styles.divider, { backgroundColor: isDark ? colors.neutral[700] : colors.neutral[200] }]} />
+                          <View style={styles.financialItem}>
+                            <Text style={[styles.financialLabel, { color: currentTheme.textTertiary }]}>Acreage</Text>
+                            <Text style={[styles.financialValue, { color: currentTheme.text }]}>{contract.acreage || 0}</Text>
                           </View>
-                          <View className="w-px h-8 bg-gray-200 dark:bg-gray-700" />
-                          <View className="flex-1 items-end">
-                            <Text className="text-[10px] text-gray-400 uppercase">Total</Text>
-                            <Text className="text-sm font-bold text-slate-900 dark:text-white">
-                              ₹{totalAmount.toLocaleString('en-IN')}
+                          <View style={[styles.divider, { backgroundColor: isDark ? colors.neutral[700] : colors.neutral[200] }]} />
+                          <View style={[styles.financialItem, styles.financialItemEnd]}>
+                            <Text style={[styles.financialLabel, { color: currentTheme.textTertiary }]}>Total</Text>
+                            <Text style={[styles.financialValue, { color: currentTheme.text }]}>
+                              ${totalAmount.toLocaleString('en-IN')}
                             </Text>
                           </View>
                         </View>
 
                         {/* Action buttons */}
-                        <View className="flex-row gap-2">
+                        <View style={styles.actionRow}>
                           {contract.status === 'PENDING' && userRole === 'farmer' && (
                             <>
                               <TouchableOpacity
                                 onPress={() => handleAction(contract.id, 'accept')}
-                                className="flex-1 bg-[#4cae4f] py-2.5 rounded-xl flex-row items-center justify-center gap-1.5"
+                                style={[styles.actionButton, { backgroundColor: currentTheme.primary }]}
+                                activeOpacity={0.8}
                               >
-                                <CheckCircle size={14} color="white" />
-                                <Text className="text-white font-bold text-xs">Accept</Text>
+                                <CheckCircle size={14} color={currentTheme.onPrimary} />
+                                <Text style={[styles.actionButtonText, { color: currentTheme.onPrimary }]}>Accept</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
                                 onPress={() => handleAction(contract.id, 'reject')}
-                                className="flex-1 bg-red-500 py-2.5 rounded-xl flex-row items-center justify-center gap-1.5"
+                                style={[styles.actionButton, { backgroundColor: currentTheme.error }]}
+                                activeOpacity={0.8}
                               >
-                                <XCircle size={14} color="white" />
-                                <Text className="text-white font-bold text-xs">Reject</Text>
+                                <XCircle size={14} color={currentTheme.onPrimary} />
+                                <Text style={[styles.actionButtonText, { color: currentTheme.onPrimary }]}>Reject</Text>
                               </TouchableOpacity>
                             </>
                           )}
@@ -347,26 +372,32 @@ export default function ContractsScreen() {
                             <>
                               <TouchableOpacity
                                 onPress={() => router.push(`/contracts/${contract.id}`)}
-                                className="flex-1 bg-[#4cae4f] py-2.5 rounded-xl flex-row items-center justify-center gap-1.5"
+                                style={[styles.actionButton, { backgroundColor: currentTheme.primary }]}
+                                activeOpacity={0.8}
                               >
-                                <FileText size={14} color="white" />
-                                <Text className="text-white font-bold text-xs">View Details</Text>
+                                <FileText size={14} color={currentTheme.onPrimary} />
+                                <Text style={[styles.actionButtonText, { color: currentTheme.onPrimary }]}>View Details</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
                                 onPress={() => handleStartChat(contract)}
-                                className="bg-[#eaf0ea] dark:bg-[#2a382a] px-4 py-2.5 rounded-xl items-center justify-center"
+                                style={[styles.chatButton, { backgroundColor: isDark ? colors.primary[900] : colors.primary[100] }]}
+                                activeOpacity={0.8}
                               >
-                                <MessageSquare size={16} color="#4cae4f" />
+                                <MessageSquare size={16} color={currentTheme.primary} />
                               </TouchableOpacity>
                             </>
                           )}
                           {(contract.status === 'COMPLETED' || contract.status === 'CANCELLED') && (
-                            <View className="flex-1 flex-row items-center justify-between bg-gray-50 dark:bg-black/10 rounded-xl px-4 py-2.5">
-                              <Text className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                            <TouchableOpacity
+                              onPress={() => router.push(`/contracts/${contract.id}`)}
+                              style={[styles.passiveRow, { backgroundColor: isDark ? 'rgba(0,0,0,0.1)' : colors.primary[50] }]}
+                              activeOpacity={0.7}
+                            >
+                              <Text style={[styles.passiveText, { color: currentTheme.textTertiary }]}>
                                 {new Date(contract.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </Text>
-                              <ChevronRight size={16} color="#94a3b8" />
-                            </View>
+                              <ChevronRight size={16} color={currentTheme.textTertiary} />
+                            </TouchableOpacity>
                           )}
                         </View>
                       </View>
@@ -376,9 +407,223 @@ export default function ContractsScreen() {
               })}
             </>
           )}
-          <View className="h-20" />
+          <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  loadingContent: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
+    gap: spacing.lg,
+  },
+  loadingCard: {
+    padding: spacing.lg,
+    borderRadius: radii.xl,
+    borderWidth: 1,
+  },
+  loadingCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: spacing.md,
+  },
+  statsContainer: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  statTile: {
+    flex: 1,
+    borderRadius: radii.lg,
+    padding: spacing.md,
+    alignItems: 'center',
+    borderWidth: 1,
+    minHeight: 44,
+  },
+  statValue: {
+    fontSize: 24,
+    lineHeight: 32,
+    fontWeight: '700',
+  },
+  statLabel: {
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: spacing.xs,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  filterHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.sm,
+    paddingHorizontal: spacing.xs,
+    minHeight: 44,
+  },
+  filterText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600',
+  },
+  showAllButton: {
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  showAllText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+  },
+  contractCard: {
+    borderRadius: radii.xl,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+    overflow: 'hidden',
+  },
+  contractCardInner: {
+    flexDirection: 'row',
+  },
+  accentBar: {
+    width: 6,
+    alignSelf: 'stretch',
+  },
+  contractCardContent: {
+    flex: 1,
+    padding: spacing.lg,
+  },
+  contractHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+  },
+  contractTitleContainer: {
+    flex: 1,
+    marginRight: spacing.md,
+  },
+  contractTitle: {
+    ...typography.title,
+    fontWeight: '700',
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.xs,
+  },
+  locationText: {
+    ...typography.caption,
+    marginLeft: spacing.xs,
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radii.full,
+  },
+  statusTextMd: {
+    ...typography.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  statusTextSm: {
+    fontSize: 10,
+    lineHeight: 14,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  financialRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  financialItem: {
+    flex: 1,
+  },
+  financialItemEnd: {
+    alignItems: 'flex-end',
+  },
+  financialIconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  financialLabel: {
+    ...typography.captionXs,
+    textTransform: 'uppercase',
+  },
+  financialValue: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '700',
+  },
+  divider: {
+    width: 1,
+    height: 32,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    minHeight: 44,
+  },
+  actionButtonText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+  },
+  chatButton: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 44,
+    minWidth: 44,
+  },
+  passiveRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: radii.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    minHeight: 44,
+  },
+  passiveText: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600',
+  },
+  bottomSpacer: {
+    height: 80,
+  },
+});

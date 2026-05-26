@@ -1,9 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, RefreshControl, Image, ActivityIndicator } from 'react-native';
-import { TrendingUp, Sprout, Wheat, ChevronRight, Bell, Package, Wallet } from 'lucide-react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar,
+  RefreshControl,
+  Image,
+  useColorScheme,
+  StyleSheet,
+} from 'react-native';
+import { TrendingUp, Sprout, Wheat, Package, Wallet } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Header } from '../src/components/ui/Header';
-import { Skeleton } from '../src/components/ui/Skeleton';
+import { Card, Skeleton, EmptyState, StatTile } from '../src/components/ui';
 import { Badge } from '../src/components/ui/Badge';
 import api, { ConsumerStats, Contract } from '../src/config/api';
 import { useAuthStore, useSocketStore } from '../src/stores';
@@ -11,8 +21,12 @@ import { useUnreadCounts } from '../src/config/unread-context';
 import { haptic } from '../src/utils/haptics';
 import { useQuery } from '@tanstack/react-query';
 import { ConsumerStatsResponseSchema, ContractsResponseSchema } from '../src/config/schemas';
+import { colors, spacing, radii, typography, theme, touch } from '../src/config/theme';
 
 export default function InvestorDashboardScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
   const { socket } = useSocketStore();
   const { authUser } = useAuthStore();
   const { unreadCounts } = useUnreadCounts();
@@ -73,27 +87,27 @@ export default function InvestorDashboardScreen() {
 
   if (loading && !isRefetching) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-        <StatusBar barStyle="dark-content" />
+      <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
         <Header
           variant="menu"
           userImage={userImage}
           onAvatarPress={() => router.push('/(tabs)/profile')}
           notificationCount={unreadCounts.notifications}
         />
-        <View className="p-4">
-          <Skeleton width={200} height={28} style={{ marginBottom: 24 }} />
-          <View className="flex-row gap-3 mb-8">
-            <View className="flex-1 bg-white dark:bg-[#1e291e] p-4 rounded-2xl">
-              <Skeleton width={40} height={40} style={{ marginBottom: 8 }} />
-              <Skeleton width={80} height={12} style={{ marginBottom: 4 }} />
+        <View style={styles.content}>
+          <Skeleton width={200} height={28} style={{ marginBottom: spacing['2xl'] }} />
+          <View style={styles.statsRow}>
+            <Card padding="md" style={styles.statCard}>
+              <Skeleton width={40} height={40} style={{ marginBottom: spacing.sm }} />
+              <Skeleton width={80} height={12} style={{ marginBottom: spacing.xs }} />
               <Skeleton width={100} height={20} />
-            </View>
-            <View className="flex-1 bg-white dark:bg-[#1e291e] p-4 rounded-2xl">
-              <Skeleton width={40} height={40} style={{ marginBottom: 8 }} />
-              <Skeleton width={80} height={12} style={{ marginBottom: 4 }} />
+            </Card>
+            <Card padding="md" style={styles.statCard}>
+              <Skeleton width={40} height={40} style={{ marginBottom: spacing.sm }} />
+              <Skeleton width={80} height={12} style={{ marginBottom: spacing.xs }} />
               <Skeleton width={60} height={20} />
-            </View>
+            </Card>
           </View>
         </View>
       </View>
@@ -101,8 +115,8 @@ export default function InvestorDashboardScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <Header
         variant="menu"
@@ -112,75 +126,78 @@ export default function InvestorDashboardScreen() {
       />
 
       <ScrollView
-        className="flex-1"
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={currentTheme.primary} />
         }
       >
-        <View className="px-4 pt-4">
-          <Text className="text-2xl font-bold text-[#111811] dark:text-white mb-6">Portfolio</Text>
+        <View style={styles.section}>
+          <Text style={[typography.heading, { color: currentTheme.text, marginBottom: spacing.xl }]}>Portfolio</Text>
 
           {/* Stats Grid */}
-          <View className="flex-row gap-3 mb-6">
-            <View className="flex-1 bg-white dark:bg-[#1e291e] p-4 rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a]">
-              <View className="size-10 bg-[#4cae4f]/10 rounded-xl items-center justify-center mb-3">
-                <TrendingUp size={20} color="#4cae4f" />
-              </View>
-              <Text className="text-[10px] font-bold text-gray-400 uppercase">Total Invested</Text>
-              <Text className="text-lg font-bold text-[#111811] dark:text-white">₹{(stats?.totalInvested || 0).toLocaleString('en-IN')}</Text>
-            </View>
-            <View className="flex-1 bg-white dark:bg-[#1e291e] p-4 rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a]">
-              <View className="size-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl items-center justify-center mb-3">
-                <Sprout size={20} color="#3b82f6" />
-              </View>
-              <Text className="text-[10px] font-bold text-gray-400 uppercase">Active Farms</Text>
-              <Text className="text-lg font-bold text-[#111811] dark:text-white">{stats?.activeInvestments || 0}</Text>
-            </View>
+          <View style={styles.statsRow}>
+            <StatTile
+              icon={TrendingUp}
+              iconColor={currentTheme.primary}
+              label="Total Invested"
+              value={`₹${(stats?.totalInvested || 0).toLocaleString('en-IN')}`}
+            />
+            <StatTile
+              icon={Sprout}
+              iconColor={currentTheme.info}
+              label="Active Farms"
+              value={stats?.activeInvestments || 0}
+            />
           </View>
 
-          <View className="bg-white dark:bg-[#1e291e] p-4 rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] mb-6">
-            <View className="flex-row items-center gap-3">
-              <View className="size-10 bg-amber-50 dark:bg-amber-900/20 rounded-xl items-center justify-center">
-                <Wheat size={20} color="#f59e0b" />
+          <Card padding="md" style={styles.yieldCard}>
+            <View style={styles.yieldRow}>
+              <View style={[styles.iconContainer, { backgroundColor: isDark ? `${colors.accent[400]}20` : `${colors.accent[600]}10` }]}>
+                <Wheat size={20} color={currentTheme.accent} />
               </View>
               <View>
-                <Text className="text-[10px] font-bold text-gray-400 uppercase">Total Yield</Text>
-                <Text className="text-lg font-bold text-[#111811] dark:text-white">{(stats?.totalYield || 0).toLocaleString('en-IN')} kg</Text>
+                <Text style={[typography.caption, { color: currentTheme.textTertiary, fontWeight: '700', textTransform: 'uppercase' }]}>Total Yield</Text>
+                <Text style={[typography.titleSm, { color: currentTheme.text, fontWeight: '700' }]}>{(stats?.totalYield || 0).toLocaleString('en-IN')} kg</Text>
               </View>
             </View>
-          </View>
+          </Card>
 
           {/* Active Contracts */}
           {activeContracts.length > 0 && (
-            <View className="mb-6">
-              <View className="flex-row items-center justify-between mb-3">
-                <Text className="text-base font-bold text-[#111811] dark:text-white">Active Contracts</Text>
-                <TouchableOpacity onPress={() => router.push('/contracts')}>
-                  <Text className="text-xs font-bold text-[#4cae4f]">View My Contracts</Text>
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={[typography.title, { color: currentTheme.text }]}>Active Contracts</Text>
+                <TouchableOpacity
+                  onPress={() => router.push('/contracts')}
+                  hitSlop={touch.hitSlop}
+                  style={styles.linkButton}
+                >
+                  <Text style={[typography.labelSm, { color: currentTheme.primary }]}>View My Contracts</Text>
                 </TouchableOpacity>
               </View>
               {activeContracts.slice(0, 3).map((contract) => (
                 <TouchableOpacity
                   key={contract.id}
                   onPress={() => router.push(`/contracts/${contract.id}`)}
-                  className="bg-white dark:bg-[#1e291e] p-4 rounded-xl mb-2 border border-[#eaf0ea] dark:border-[#2a382a] flex-row items-center justify-between"
+                  style={[styles.contractCard, { backgroundColor: currentTheme.surface, borderColor: currentTheme.border }]}
+                  hitSlop={touch.hitSlop}
                 >
-                  <View className="flex-1">
-                    <Text className="text-sm font-bold text-[#111811] dark:text-white">
+                  <View style={styles.contractInfo}>
+                    <Text style={[typography.labelSm, { color: currentTheme.text }]} numberOfLines={1}>
                       {contract.listing?.name || contract.crop}
                     </Text>
-                    <Text className="text-xs text-gray-500 mt-0.5">
+                    <Text style={[typography.caption, { color: currentTheme.textSecondary, marginTop: spacing.xs }]}>
                       {contract.acreage} Acres · {new Date(contract.start_date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                     </Text>
                   </View>
-                  <View className="items-end gap-2">
+                  <View style={styles.contractActions}>
                     <Badge
                       variant={contract.status === 'ACTIVE' ? 'success' : 'warning'}
                       label={contract.status}
                     />
-                    <Text className="text-sm font-bold text-[#111811] dark:text-white">
+                    <Text style={[typography.titleSm, { color: currentTheme.text }]}>
                       ₹{contract.total_amount?.toLocaleString('en-IN')}
                     </Text>
                   </View>
@@ -190,47 +207,51 @@ export default function InvestorDashboardScreen() {
           )}
 
           {/* Recent Updates */}
-          <View className="mb-6">
-            <View className="flex-row items-center justify-between mb-3">
-              <Text className="text-base font-bold text-[#111811] dark:text-white">Farm Updates</Text>
-              <TouchableOpacity onPress={() => router.push('/contracts')}>
-                <Text className="text-xs font-bold text-[#4cae4f]">View My Contracts</Text>
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={[typography.title, { color: currentTheme.text }]}>Farm Updates</Text>
+              <TouchableOpacity
+                onPress={() => router.push('/contracts')}
+                hitSlop={touch.hitSlop}
+                style={styles.linkButton}
+              >
+                <Text style={[typography.labelSm, { color: currentTheme.primary }]}>View All</Text>
               </TouchableOpacity>
             </View>
 
             {stats?.recentUpdates?.length === 0 ? (
-              <View className="bg-white dark:bg-[#1e291e] p-8 rounded-2xl items-center border border-[#eaf0ea] dark:border-[#2a382a]">
-                <Sprout size={40} color="#94a3b8" />
-                <Text className="text-gray-400 text-sm mt-3 mb-1 text-center">No updates from your farms yet.</Text>
-                <Text className="text-gray-400 text-xs mb-4 text-center">Updates will appear once farmers post from their fields.</Text>
-                <TouchableOpacity
-                  onPress={() => router.push('/marketplace')}
-                  className="bg-[#4cae4f] px-6 py-3 rounded-xl flex-row items-center gap-2"
-                >
-                  <Sprout size={18} color="white" />
-                  <Text className="text-white font-bold">Browse Farms</Text>
-                </TouchableOpacity>
-              </View>
+              <EmptyState
+                icon={Sprout}
+                title="No updates yet"
+                description="Updates will appear once farmers post from their fields."
+                actionLabel="Browse Farms"
+                onAction={() => router.push('/marketplace')}
+              />
             ) : (
               stats?.recentUpdates?.map((update) => (
                 <TouchableOpacity
                   key={update.id}
                   onPress={() => router.push(`/updates/${update.contract_id}`)}
-                  className="bg-white dark:bg-[#1e291e] p-4 rounded-xl mb-2 border border-[#eaf0ea] dark:border-[#2a382a] flex-row gap-4"
+                  style={[styles.updateCard, { backgroundColor: currentTheme.surface, borderColor: currentTheme.border }]}
+                  hitSlop={touch.hitSlop}
                 >
                   {update.media_url ? (
-                    <Image source={{ uri: update.media_url }} className="size-16 rounded-lg" />
+                    <Image source={{ uri: update.media_url }} style={styles.updateImage} />
                   ) : (
-                    <View className="size-16 rounded-lg bg-[#f9fbf9] dark:bg-[#1a231a] items-center justify-center">
-                      <Package size={20} color="#94a3b8" />
+                    <View style={[styles.updatePlaceholder, { backgroundColor: isDark ? `${currentTheme.text}10` : colors.primary[50] }]}>
+                      <Package size={20} color={currentTheme.textTertiary} />
                     </View>
                   )}
-                  <View className="flex-1">
-                    <Text className="text-sm font-bold text-[#111811] dark:text-white">
+                  <View style={styles.updateContent}>
+                    <Text style={[typography.labelSm, { color: currentTheme.text }]} numberOfLines={1}>
                       {update.contract?.listing?.name || 'Farm Update'}
                     </Text>
-                    <Text className="text-xs text-gray-500 mt-0.5" numberOfLines={2}>{update.caption || 'New update from the farm'}</Text>
-                    <Text className="text-[10px] text-gray-400 mt-2">{new Date(update.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</Text>
+                    <Text style={[typography.bodySm, { color: currentTheme.textSecondary, marginTop: spacing.xs }]} numberOfLines={2}>
+                      {update.caption || 'New update from the farm'}
+                    </Text>
+                    <Text style={[typography.captionXs, { color: currentTheme.textTertiary, marginTop: spacing.sm }]}>
+                      {new Date(update.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               ))
@@ -238,53 +259,180 @@ export default function InvestorDashboardScreen() {
           </View>
 
           {/* Quick Actions */}
-          <View className="flex-row flex-wrap gap-3">
-            <TouchableOpacity 
+          <View style={styles.quickActionsRow}>
+            <TouchableOpacity
               onPress={() => {
                 haptic.light();
                 router.push('/marketplace');
-              }} 
-              className="bg-[#4cae4f] p-4 rounded-2xl flex-1 items-center"
+              }}
+              style={[styles.quickActionCard, { backgroundColor: currentTheme.primary, minHeight: touch.minTarget }]}
+              hitSlop={touch.hitSlop}
+              activeOpacity={0.8}
             >
-              <View className="size-12 bg-white/20 rounded-full items-center justify-center mb-2">
-                <Sprout size={24} color="white" />
+              <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+                <Sprout size={24} color={currentTheme.onPrimary} />
               </View>
-              <Text className="text-white font-bold text-sm">Invest More</Text>
+              <Text style={[typography.labelSm, { color: currentTheme.onPrimary }]}>Invest More</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => {
                 haptic.light();
                 router.push('/contracts');
-              }} 
-              className="bg-white dark:bg-[#1e291e] p-4 rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] flex-1 items-center"
+              }}
+              style={[styles.quickActionCard, { backgroundColor: currentTheme.surface, borderColor: currentTheme.border, borderWidth: 1, minHeight: touch.minTarget }]}
+              hitSlop={touch.hitSlop}
+              activeOpacity={0.8}
             >
-              <View className="size-12 bg-blue-50 dark:bg-blue-900/20 rounded-full items-center justify-center mb-2">
-                <TrendingUp size={24} color="#3b82f6" />
+              <View style={[styles.quickActionIcon, { backgroundColor: isDark ? `${colors.info.dark}20` : `${colors.info.light}10` }]}>
+                <TrendingUp size={24} color={currentTheme.info} />
               </View>
-              <Text className="text-sm font-bold text-slate-900 dark:text-white">Portfolio</Text>
+              <Text style={[typography.labelSm, { color: currentTheme.text }]}>Portfolio</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => {
                 haptic.light();
                 router.push('/wallet');
-              }} 
-              className="bg-white dark:bg-[#1e291e] p-4 rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] flex-1 items-center"
+              }}
+              style={[styles.quickActionCard, { backgroundColor: currentTheme.surface, borderColor: currentTheme.border, borderWidth: 1, minHeight: touch.minTarget }]}
+              hitSlop={touch.hitSlop}
+              activeOpacity={0.8}
             >
-              <View className="size-12 bg-amber-50 dark:bg-amber-900/20 rounded-full items-center justify-center mb-2">
-                <Wallet size={24} color="#f59e0b" />
+              <View style={[styles.quickActionIcon, { backgroundColor: isDark ? `${colors.accent[400]}20` : `${colors.accent[600]}10` }]}>
+                <Wallet size={24} color={currentTheme.accent} />
               </View>
-              <Text className="text-sm font-bold text-slate-900 dark:text-white">Wallet</Text>
+              <Text style={[typography.labelSm, { color: currentTheme.text }]}>Wallet</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Footer */}
-        <View className="mt-8 px-4">
-          <Text className="text-xs text-center text-gray-400">
-            © {new Date().getFullYear()} FarmConnect. All rights reserved.
+        <View style={styles.footer}>
+          <Text style={[typography.captionXs, { color: currentTheme.textTertiary, textAlign: 'center' }]}>
+            \u00A9 {new Date().getFullYear()} FarmConnect. All rights reserved.
           </Text>
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginBottom: spacing.xl,
+  },
+  statCard: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: spacing['3xl'],
+  },
+  section: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    marginBottom: spacing.xl,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+  },
+  linkButton: {
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    minHeight: touch.minTarget,
+    justifyContent: 'center',
+  },
+  yieldCard: {
+    marginBottom: spacing.xl,
+  },
+  yieldRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: radii.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contractCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    marginBottom: spacing.sm,
+    minHeight: touch.minTarget,
+  },
+  contractInfo: {
+    flex: 1,
+    paddingRight: spacing.md,
+  },
+  contractActions: {
+    alignItems: 'flex-end',
+    gap: spacing.sm,
+  },
+  updateCard: {
+    flexDirection: 'row',
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    marginBottom: spacing.sm,
+    gap: spacing.lg,
+    minHeight: touch.minTarget,
+  },
+  updateImage: {
+    width: 64,
+    height: 64,
+    borderRadius: radii.md,
+  },
+  updatePlaceholder: {
+    width: 64,
+    height: 64,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  updateContent: {
+    flex: 1,
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+  },
+  quickActionCard: {
+    flex: 1,
+    minWidth: '30%',
+    padding: spacing.lg,
+    borderRadius: radii.xl,
+    alignItems: 'center',
+  },
+  quickActionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: radii.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+  },
+  footer: {
+    marginTop: spacing['2xl'],
+    paddingHorizontal: spacing.lg,
+  },
+});

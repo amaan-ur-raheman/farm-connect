@@ -1,11 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert, useColorScheme, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
-import { ChevronLeft, Plus, MapPin, Trash2, Pencil, Loader2 } from 'lucide-react-native';
+import { ChevronLeft, Plus, MapPin, Trash2, Pencil, Loader2, Sprout } from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Listing } from '../../src/config/api';
+import { colors, spacing, radii, typography, theme, getShadow } from '../../src/config/theme';
+import { Card, Skeleton, EmptyState, Button } from '../../src/components/ui';
 
 export default function MyListingsScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -52,106 +58,247 @@ export default function MyListingsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
-        <ActivityIndicator size="large" color="#4cae4f" />
+      <View style={[styles.loadingContainer, { backgroundColor: currentTheme.background }]}>
+        <ActivityIndicator size="large" color={currentTheme.primary} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
-      <View className="bg-white dark:bg-[#1e291e] px-4 pt-12 pb-4 flex-row items-center justify-between border-b border-[#eaf0ea] dark:border-[#2a382a]">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity onPress={() => router.back()} className="p-2">
-            <ChevronLeft size={24} color="#4cae4f" />
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+      <View style={[styles.header, {
+        backgroundColor: currentTheme.surface,
+        borderBottomColor: currentTheme.border,
+      }]}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={spacing.md}
+            activeOpacity={0.7}
+          >
+            <ChevronLeft size={24} color={currentTheme.primary} />
           </TouchableOpacity>
-          <Text className="text-xl font-bold text-slate-900 dark:text-white">My Listings</Text>
+          <Text style={[typography.heading, { color: currentTheme.text }]}>My Listings</Text>
         </View>
-        <TouchableOpacity onPress={() => router.push('/listings/create')} className="bg-[#4cae4f] px-4 py-2 rounded-xl flex-row items-center gap-2">
-          <Plus size={16} color="white" />
-          <Text className="text-white font-bold text-sm">New</Text>
+        <TouchableOpacity
+          onPress={() => router.push('/listings/create')}
+          style={[styles.newButton, { backgroundColor: currentTheme.primary }]}
+          activeOpacity={0.8}
+        >
+          <Plus size={16} color={currentTheme.onPrimary} />
+          <Text style={[typography.labelSm, { color: currentTheme.onPrimary }]}>New</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
-        className="flex-1" 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={currentTheme.primary}
+          />
+        }
       >
-        <View className="px-4 py-4">
+        <View style={styles.content}>
           {listings.length === 0 ? (
-            <View className="items-center py-16">
-              <Text className="text-4xl mb-4">🌾</Text>
-              <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">No listings yet</Text>
-              <Text className="text-sm text-gray-500 text-center px-8 mb-6">Create your first farm listing to attract investors.</Text>
-              <TouchableOpacity onPress={() => router.push('/listings/create')} className="bg-[#4cae4f] px-6 py-3 rounded-xl">
-                <Text className="text-white font-bold">Create Listing</Text>
-              </TouchableOpacity>
-            </View>
+            <EmptyState
+              icon={Sprout}
+              title="No listings yet"
+              description="Create your first farm listing to attract investors."
+              actionLabel="Create Listing"
+              onAction={() => router.push('/listings/create')}
+            />
           ) : (
             listings.map((listing) => (
-              <TouchableOpacity
-                key={listing.id}
-                onPress={() => router.push(`/property/${listing.id}`)}
-                className="bg-white dark:bg-[#1e291e] rounded-2xl overflow-hidden mb-4 border border-[#eaf0ea] dark:border-[#2a382a]"
-              >
+              <Card key={listing.id} variant="interactive" onPress={() => router.push(`/property/${listing.id}`)} style={styles.card}>
                 <Image
                   source={{ uri: listing.images?.[0] || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800' }}
-                  style={{ width: '100%', height: 160 }}
+                  style={styles.cardImage}
                   contentFit="cover"
                 />
-                <View className="p-4">
-                  <View className="flex-row items-center justify-between mb-2">
-                    <Text className="text-base font-bold text-slate-900 dark:text-white flex-1" numberOfLines={1}>
+                <View style={styles.cardBody}>
+                  <View style={styles.cardHeader}>
+                    <Text style={[typography.titleSm, { color: currentTheme.text, flex: 1 }]} numberOfLines={1}>
                       {listing.name}
                     </Text>
-                    <View className={`px-2 py-1 rounded-full ${listing.status === 'ACTIVE' ? 'bg-green-100' : 'bg-gray-100'}`}>
-                      <Text className={`text-[10px] font-bold ${listing.status === 'ACTIVE' ? 'text-green-700' : 'text-gray-500'}`}>
+                    <View style={[
+                      styles.badge,
+                      { backgroundColor: listing.status === 'ACTIVE' ? colors.secondary[100] : colors.neutral[100] },
+                    ]}>
+                      <Text style={[
+                        typography.captionXs,
+                        {
+                          fontWeight: '700',
+                          color: listing.status === 'ACTIVE' ? colors.secondary[700] : colors.neutral[500],
+                        },
+                      ]}>
                         {listing.status}
                       </Text>
                     </View>
                   </View>
-                  <View className="flex-row items-center mb-3">
-                    <MapPin size={12} color="#6b7280" />
-                    <Text className="text-xs text-gray-500 ml-1">{listing.location_name}</Text>
+                  <View style={styles.locationRow}>
+                    <MapPin size={12} color={currentTheme.textSecondary} />
+                    <Text style={[typography.caption, { color: currentTheme.textSecondary, marginLeft: spacing.xs }]}>
+                      {listing.location_name}
+                    </Text>
                   </View>
-                  <View className="flex-row justify-between items-center">
+                  <View style={styles.detailsRow}>
                     <View>
-                      <Text className="text-[10px] text-gray-400 uppercase">Price/Acre</Text>
-                      <Text className="text-sm font-bold text-[#4cae4f]">₹{listing.price_per_acre.toLocaleString('en-IN')}</Text>
+                      <Text style={[typography.captionXs, { color: currentTheme.textSecondary, textTransform: 'uppercase' }]}>Price/Acre</Text>
+                      <Text style={[typography.bodySm, { color: currentTheme.primary, fontWeight: '700' }]}>
+                        {'₹'}{listing.price_per_acre.toLocaleString('en-IN')}
+                      </Text>
                     </View>
                     <View>
-                      <Text className="text-[10px] text-gray-400 uppercase">Area</Text>
-                      <Text className="text-sm font-bold text-slate-900 dark:text-white">{listing.area_acres} Acres</Text>
+                      <Text style={[typography.captionXs, { color: currentTheme.textSecondary, textTransform: 'uppercase' }]}>Area</Text>
+                      <Text style={[typography.bodySm, { color: currentTheme.text, fontWeight: '700' }]}>{listing.area_acres} Acres</Text>
                     </View>
-                    <View className="flex-row gap-2">
-                      <TouchableOpacity onPress={() => router.push(`/property/${listing.id}`)} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        <Text className="text-xs font-bold text-slate-600">View</Text>
+                    <View style={styles.actionButtons}>
+                      <TouchableOpacity
+                        onPress={() => router.push(`/property/${listing.id}`)}
+                        style={[styles.iconButton, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[100] }]}
+                        hitSlop={spacing.sm}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={[typography.caption, { color: isDark ? colors.neutral[300] : colors.neutral[600], fontWeight: '700' }]}>View</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => router.push(`/listings/edit/${listing.id}`)} className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                        <Pencil size={16} color="#3b82f6" />
+                      <TouchableOpacity
+                        onPress={() => router.push(`/listings/edit/${listing.id}`)}
+                        style={[styles.iconButton, { backgroundColor: isDark ? colors.info[900] + '4D' : colors.info[50] }]}
+                        hitSlop={spacing.sm}
+                        activeOpacity={0.7}
+                      >
+                        <Pencil size={16} color={currentTheme.info} />
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => handleDelete(listing.id)}
                         disabled={deletingId === listing.id}
-                        className={`p-2 rounded-lg ${deletingId === listing.id ? 'bg-red-100 dark:bg-red-900/20' : 'bg-red-50 dark:bg-red-900/30'}`}
+                        style={[
+                          styles.iconButton,
+                          {
+                            backgroundColor: deletingId === listing.id
+                              ? (isDark ? colors.error[900] + '33' : colors.error[100])
+                              : (isDark ? colors.error[900] + '4D' : colors.error[50]),
+                          },
+                        ]}
+                        hitSlop={spacing.sm}
+                        activeOpacity={0.7}
                       >
                         {deletingId === listing.id ? (
-                          <ActivityIndicator size="small" color="#ef4444" />
+                          <ActivityIndicator size="small" color={currentTheme.error} />
                         ) : (
-                          <Trash2 size={16} color="#ef4444" />
+                          <Trash2 size={16} color={currentTheme.error} />
                         )}
                       </TouchableOpacity>
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </Card>
             ))
           )}
-          <View className="h-20" />
+          <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  header: {
+    paddingTop: 48,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  backButton: {
+    padding: spacing.sm,
+    minHeight: 44,
+    minWidth: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  newButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.lg,
+    minHeight: 44,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+  },
+  card: {
+    marginBottom: spacing.lg,
+    overflow: 'hidden',
+    padding: 0,
+  },
+  cardImage: {
+    width: '100%',
+    height: 160,
+  },
+  cardBody: {
+    padding: spacing.lg,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.sm,
+  },
+  badge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radii.full,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  detailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  iconButton: {
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    minHeight: 44,
+    minWidth: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bottomSpacer: {
+    height: 80,
+  },
+});

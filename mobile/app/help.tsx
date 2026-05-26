@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, Linking } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StatusBar, Linking, useColorScheme, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { ChevronLeft, ChevronDown, ChevronUp, Mail, Phone, Globe, FileText, Shield, HelpCircle, Info } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { colors, spacing, radii, typography, theme, getShadow } from '../src/config/theme';
+import { Card, Button } from '../src/components/ui';
 
 const faqs = [
   {
@@ -32,6 +34,9 @@ const faqs = [
 
 export default function HelpScreen() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
 
   const handleEmailSupport = () => {
     Linking.openURL('mailto:support@farmconnect.com');
@@ -45,150 +50,259 @@ export default function HelpScreen() {
     Linking.openURL('https://farmconnect.com');
   };
 
+  const handleTermsOfService = () => {
+    // TODO: Navigate to Terms of Service
+  };
+
+  const handlePrivacyPolicy = () => {
+    // TODO: Navigate to Privacy Policy
+  };
+
+  const iconColor = isDark ? colors.primary[400] : colors.primary[700];
+
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* Header */}
-      <View className="bg-white dark:bg-[#1e291e] px-4 pt-12 pb-4 border-b border-[#eaf0ea] dark:border-[#2a382a]">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity onPress={() => router.back()} className="p-2">
-            <ChevronLeft size={24} color="#4cae4f" />
+      <View style={[styles.header, { backgroundColor: currentTheme.surface, borderBottomColor: currentTheme.border }]}>
+        <View style={styles.headerRow}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <ChevronLeft size={24} color={iconColor} />
           </TouchableOpacity>
-          <View className="flex-1">
-            <Text className="text-xl font-bold text-slate-900 dark:text-white">Help & Support</Text>
-            <Text className="text-xs text-gray-500 dark:text-gray-400">We're here to help!</Text>
+          <View style={styles.headerContent}>
+            <Text style={[typography.title, { color: currentTheme.text }]}>Help & Support</Text>
+            <Text style={[typography.caption, { color: currentTheme.textTertiary }]}>We're here to help!</Text>
           </View>
         </View>
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="p-4 space-y-6">
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
           {/* Contact Support */}
-          <View className="bg-white dark:bg-[#1e291e] rounded-2xl p-6 border border-[#eaf0ea] dark:border-[#2a382a]">
-            <View className="flex-row items-center gap-3 mb-4">
-              <HelpCircle size={24} color="#4cae4f" />
-              <Text className="text-lg font-bold text-slate-900 dark:text-white">Contact Support</Text>
+          <Card variant="default" padding="xl">
+            <View style={styles.sectionHeader}>
+              <HelpCircle size={24} color={iconColor} />
+              <Text style={[typography.titleSm, { color: currentTheme.text }]}>Contact Support</Text>
             </View>
 
-            <View className="space-y-3">
+            <View style={styles.contactList}>
               <TouchableOpacity
                 onPress={handleEmailSupport}
-                className="flex-row items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl"
+                style={[styles.contactItem, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[50] }]}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Mail size={20} color="#4cae4f" />
-                <View className="flex-1">
-                  <Text className="text-sm font-semibold text-slate-900 dark:text-white">Email Support</Text>
-                  <Text className="text-xs text-gray-500">support@farmconnect.com</Text>
+                <Mail size={20} color={iconColor} />
+                <View style={styles.contactText}>
+                  <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text }]}>Email Support</Text>
+                  <Text style={[typography.caption, { color: currentTheme.textTertiary }]}>support@farmconnect.com</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={handleCallSupport}
-                className="flex-row items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl"
+                style={[styles.contactItem, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[50] }]}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Phone size={20} color="#4cae4f" />
-                <View className="flex-1">
-                  <Text className="text-sm font-semibold text-slate-900 dark:text-white">Call Support</Text>
-                  <Text className="text-xs text-gray-500">+91 12345 67890</Text>
+                <Phone size={20} color={iconColor} />
+                <View style={styles.contactText}>
+                  <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text }]}>Call Support</Text>
+                  <Text style={[typography.caption, { color: currentTheme.textTertiary }]}>+91 12345 67890</Text>
                 </View>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={handleVisitWebsite}
-                className="flex-row items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl"
+                style={[styles.contactItem, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[50] }]}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Globe size={20} color="#4cae4f" />
-                <View className="flex-1">
-                  <Text className="text-sm font-semibold text-slate-900 dark:text-white">Visit Website</Text>
-                  <Text className="text-xs text-gray-500">farmconnect.com</Text>
+                <Globe size={20} color={iconColor} />
+                <View style={styles.contactText}>
+                  <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text }]}>Visit Website</Text>
+                  <Text style={[typography.caption, { color: currentTheme.textTertiary }]}>farmconnect.com</Text>
                 </View>
               </TouchableOpacity>
             </View>
-          </View>
+          </Card>
 
           {/* FAQ */}
-          <View className="bg-white dark:bg-[#1e291e] rounded-2xl border border-[#eaf0ea] dark:border-[#2a382a] overflow-hidden">
-            <View className="p-6 border-b border-[#eaf0ea] dark:border-[#2a382a]">
-              <View className="flex-row items-center gap-3">
-                <HelpCircle size={24} color="#4cae4f" />
-                <Text className="text-lg font-bold text-slate-900 dark:text-white">Frequently Asked Questions</Text>
-              </View>
+          <Card variant="default" padding="lg">
+            <View style={[styles.faqHeader, { borderBottomColor: currentTheme.border }]}>
+              <HelpCircle size={24} color={iconColor} />
+              <Text style={[typography.titleSm, { color: currentTheme.text }]}>Frequently Asked Questions</Text>
             </View>
 
             {faqs.map((faq, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                className={`border-b border-[#eaf0ea] dark:border-[#2a382a] ${index === faqs.length - 1 ? 'border-b-0' : ''}`}
+                style={[styles.faqItem, { borderBottomColor: index === faqs.length - 1 ? 'transparent' : currentTheme.border }]}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <View className="p-4 flex-row items-center justify-between">
-                  <Text className="flex-1 text-sm font-semibold text-slate-900 dark:text-white pr-4">
+                <View style={styles.faqQuestionRow}>
+                  <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text, flex: 1, paddingRight: spacing.sm }]}>
                     {faq.question}
                   </Text>
                   {expandedFaq === index ? (
-                    <ChevronUp size={20} color="#94a3b8" />
+                    <ChevronUp size={20} color={isDark ? colors.neutral[400] : colors.neutral[400]} />
                   ) : (
-                    <ChevronDown size={20} color="#94a3b8" />
+                    <ChevronDown size={20} color={isDark ? colors.neutral[400] : colors.neutral[400]} />
                   )}
                 </View>
                 {expandedFaq === index && (
-                  <View className="px-4 pb-4">
-                    <Text className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <View style={styles.faqAnswer}>
+                    <Text style={[typography.bodySm, { color: currentTheme.textTertiary, lineHeight: 22 }]}>
                       {faq.answer}
                     </Text>
                   </View>
                 )}
               </TouchableOpacity>
             ))}
-          </View>
+          </Card>
 
           {/* Legal & Safety */}
-          <View className="bg-white dark:bg-[#1e291e] rounded-2xl p-6 border border-[#eaf0ea] dark:border-[#2a382a]">
-            <View className="flex-row items-center gap-3 mb-4">
-              <Shield size={24} color="#4cae4f" />
-              <Text className="text-lg font-bold text-slate-900 dark:text-white">Legal & Safety</Text>
+          <Card variant="default" padding="xl">
+            <View style={styles.sectionHeader}>
+              <Shield size={24} color={iconColor} />
+              <Text style={[typography.titleSm, { color: currentTheme.text }]}>Legal & Safety</Text>
             </View>
 
-            <View className="space-y-3">
-              <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                <FileText size={20} color="#4cae4f" />
-                <Text className="flex-1 text-sm font-semibold text-slate-900 dark:text-white">Terms of Service</Text>
-                <ChevronDown size={16} color="#94a3b8" />
+            <View style={styles.contactList}>
+              <TouchableOpacity
+                onPress={handleTermsOfService}
+                style={[styles.contactItem, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[50] }]}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <FileText size={20} color={iconColor} />
+                <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text, flex: 1 }]}>Terms of Service</Text>
+                <ChevronDown size={16} color={isDark ? colors.neutral[400] : colors.neutral[400]} />
               </TouchableOpacity>
 
-              <TouchableOpacity className="flex-row items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                <Shield size={20} color="#4cae4f" />
-                <Text className="flex-1 text-sm font-semibold text-slate-900 dark:text-white">Privacy Policy</Text>
-                <ChevronDown size={16} color="#94a3b8" />
+              <TouchableOpacity
+                onPress={handlePrivacyPolicy}
+                style={[styles.contactItem, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[50] }]}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Shield size={20} color={iconColor} />
+                <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text, flex: 1 }]}>Privacy Policy</Text>
+                <ChevronDown size={16} color={isDark ? colors.neutral[400] : colors.neutral[400]} />
               </TouchableOpacity>
             </View>
-          </View>
+          </Card>
 
           {/* App Info */}
-          <View className="bg-white dark:bg-[#1e291e] rounded-2xl p-6 border border-[#eaf0ea] dark:border-[#2a382a]">
-            <View className="flex-row items-center gap-3 mb-4">
-              <Info size={24} color="#4cae4f" />
-              <Text className="text-lg font-bold text-slate-900 dark:text-white">About FarmConnect</Text>
+          <Card variant="default" padding="xl">
+            <View style={styles.sectionHeader}>
+              <Info size={24} color={iconColor} />
+              <Text style={[typography.titleSm, { color: currentTheme.text }]}>About FarmConnect</Text>
             </View>
 
-            <View className="space-y-2">
-              <View className="flex-row justify-between">
-                <Text className="text-sm text-gray-500">Version</Text>
-                <Text className="text-sm font-semibold text-slate-900 dark:text-white">2.4.0</Text>
+            <View style={styles.infoList}>
+              <View style={styles.infoRow}>
+                <Text style={[typography.bodySm, { color: currentTheme.textTertiary }]}>Version</Text>
+                <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text }]}>2.4.0</Text>
               </View>
-              <View className="flex-row justify-between">
-                <Text className="text-sm text-gray-500">Build</Text>
-                <Text className="text-sm font-semibold text-slate-900 dark:text-white">2026.04.03</Text>
+              <View style={styles.infoRow}>
+                <Text style={[typography.bodySm, { color: currentTheme.textTertiary }]}>Build</Text>
+                <Text style={[typography.bodySm, { fontWeight: '600', color: currentTheme.text }]}>2026.04.03</Text>
               </View>
             </View>
 
-            <Text className="text-xs text-gray-400 mt-4 text-center">
+            <Text style={[typography.captionXs, { color: isDark ? colors.neutral[500] : colors.neutral[300], textAlign: 'center', marginTop: spacing.lg }]}>
               Connecting Farmers with Investors
             </Text>
-          </View>
+          </Card>
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: 48,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  backButton: {
+    padding: spacing.sm,
+    minHeight: 44,
+    minWidth: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerContent: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: spacing.lg,
+    gap: spacing.xl,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  contactList: {
+    gap: spacing.md,
+  },
+  contactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    minHeight: 44,
+  },
+  contactText: {
+    flex: 1,
+  },
+  faqHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.xl,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+  },
+  faqItem: {
+    borderBottomWidth: 1,
+  },
+  faqQuestionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.lg,
+    minHeight: 44,
+  },
+  faqAnswer: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.lg,
+  },
+  infoList: {
+    gap: spacing.sm,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    minHeight: 44,
+    alignItems: 'center',
+  },
+});

@@ -9,6 +9,11 @@ import {
   Alert,
   Keyboard,
   TextInput as RNTextInput,
+  useColorScheme,
+  ActivityIndicator,
+  Animated,
+  StyleSheet,
+  ViewStyle,
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import {
@@ -19,6 +24,8 @@ import {
   Mail,
   Phone,
 } from 'lucide-react-native';
+import { colors, spacing, radii, typography, theme, getShadow } from '../../src/config/theme';
+import { Card, Button } from '../../src/components/ui';
 import { useRegistrationStore, useAuthStore } from '../../src/stores';
 import { Input } from '../../src/components/ui/Input';
 import {
@@ -28,6 +35,10 @@ import {
 } from '../../src/utils/validation';
 
 export default function RegisterStep1() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+
   const {
     userRole,
     setUserRole,
@@ -45,6 +56,8 @@ export default function RegisterStep1() {
   const lastNameRef = useRef<RNTextInput>(null);
   const emailRef = useRef<RNTextInput>(null);
   const phoneRef = useRef<RNTextInput>(null);
+
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const validateField = (field: string, value: string) => {
     let result;
@@ -117,7 +130,6 @@ export default function RegisterStep1() {
 
     const result = await sendOtp(formData.phone);
     if (result.success) {
-      // Show OTP if in dev mode
       if (result.devOtp) {
         Alert.alert(
           'OTP Sent',
@@ -132,8 +144,36 @@ export default function RegisterStep1() {
     }
   };
 
+  const getRoleCardStyles = (role: 'consumer' | 'farmer') => {
+    const isSelected = userRole === role;
+    const styles: { container: ViewStyle; iconContainer: ViewStyle; iconColor: string; titleColor: string; subtitleColor: string } = {
+      container: {
+        flex: 1,
+        padding: spacing.lg,
+        borderRadius: radii.xl,
+        borderWidth: 2,
+        borderColor: isSelected ? currentTheme.primary : currentTheme.border,
+        backgroundColor: isSelected ? `${currentTheme.primary}0D` : currentTheme.surface,
+        minHeight: 44,
+      },
+      iconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: radii.md,
+        backgroundColor: isSelected ? currentTheme.primary : `${colors.primary[500]}1A`,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: spacing.md,
+      },
+      iconColor: isSelected ? '#FFFFFF' : colors.primary[500],
+      titleColor: currentTheme.text,
+      subtitleColor: currentTheme.textTertiary,
+    };
+    return styles;
+  };
+
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
+    <View style={{ flex: 1, backgroundColor: currentTheme.background }}>
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -141,228 +181,388 @@ export default function RegisterStep1() {
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingTop: 32, paddingBottom: 40 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: spacing.xl,
+            paddingTop: spacing['2xl'],
+            paddingBottom: spacing['3xl'],
+          }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           alwaysBounceVertical={false}
         >
           {/* Progress Bar */}
-          <View className="mb-8">
-            <View className="h-1.5 bg-[#eaf0ea] dark:bg-[#2a382a] rounded-full overflow-hidden">
-              <View className="h-full w-[25%] bg-primary rounded-full" />
+          <View style={{ marginBottom: spacing['2xl'] }}>
+            <View
+              style={{
+                height: 6,
+                backgroundColor: isDark ? '#2A382A' : colors.primary[100],
+                borderRadius: radii.full,
+                overflow: 'hidden',
+              }}
+            >
+              <View
+                style={{
+                  height: '100%',
+                  width: '25%',
+                  backgroundColor: currentTheme.primary,
+                  borderRadius: radii.full,
+                }}
+              />
             </View>
-            <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">
-              Step 1 of 4 • Account Setup
+            <Text
+              style={{
+                ...typography.caption,
+                color: currentTheme.textTertiary,
+                marginTop: spacing.sm,
+              }}
+            >
+              Step 1 of 4 {'\u2022'} Account Setup
             </Text>
           </View>
 
-            {/* Title */}
-            <Text className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-              Create Account
-            </Text>
-            <Text className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-              Join FarmConnect to start your agricultural journey
-            </Text>
+          {/* Title */}
+          <Text
+            style={{
+              ...typography.display,
+              color: currentTheme.text,
+              marginBottom: spacing.sm,
+            }}
+          >
+            Create Account
+          </Text>
+          <Text
+            style={{
+              ...typography.bodySm,
+              color: currentTheme.textTertiary,
+              marginBottom: spacing['2xl'],
+            }}
+          >
+            Join FarmConnect to start your agricultural journey
+          </Text>
 
-            {/* Role Selection */}
-            <Text className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">
-              Select your role
-            </Text>
-            <View className="flex-row gap-3 mb-8">
-              <TouchableOpacity
-                onPress={() => { setUserRole('consumer'); clearError('role'); }}
-                className={`flex-1 p-4 rounded-2xl border-2 transition-all ${
-                  userRole === 'consumer'
-                    ? 'border-primary bg-primary/5'
-                    : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
-                }`}
-              >
-                <View className={`size-10 rounded-xl items-center justify-center mb-3 ${
-                  userRole === 'consumer' ? 'bg-primary' : 'bg-[#4cae4f]/10'
-                }`}>
-                  <TrendingUp size={20} color={userRole === 'consumer' ? 'white' : '#4cae4f'} />
-                </View>
-                <Text className="text-sm font-bold text-slate-900 dark:text-white mb-1">
-                  Investor
-                </Text>
-                <Text className="text-[10px] leading-3 text-gray-500 dark:text-gray-400 font-medium">
-                  Fund farms & earn returns
-                </Text>
-                {userRole === 'consumer' && (
-                  <View className="absolute top-3 right-3">
-                    <ShieldCheck size={18} color="#4cae4f" />
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => { setUserRole('farmer'); clearError('role'); }}
-                className={`flex-1 p-4 rounded-2xl border-2 transition-all ${
-                  userRole === 'farmer'
-                    ? 'border-primary bg-primary/5'
-                    : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
-                }`}
-              >
-                <View className={`size-10 rounded-xl items-center justify-center mb-3 ${
-                  userRole === 'farmer' ? 'bg-primary' : 'bg-[#4cae4f]/10'
-                }`}>
-                  <Sprout size={20} color={userRole === 'farmer' ? 'white' : '#4cae4f'} />
-                </View>
-                <Text className="text-sm font-bold text-slate-900 dark:text-white mb-1">
-                  Farmer
-                </Text>
-                <Text className="text-[10px] leading-3 text-gray-500 dark:text-gray-400 font-medium">
-                  List farm & get funding
-                </Text>
-                {userRole === 'farmer' && (
-                  <View className="absolute top-3 right-3">
-                    <ShieldCheck size={18} color="#4cae4f" />
-                  </View>
-                )}
-              </TouchableOpacity>
-            </View>
-            {errors.role && (
-              <Text className="text-xs text-red-500 mb-4 -mt-4 ml-1">{errors.role}</Text>
-            )}
-
-            {/* Form Fields */}
-            <View className="gap-1">
-              <View className="flex-row gap-3">
-                <View className="flex-1">
-                  <Input
-                    label="First Name"
-                    value={formData.firstName}
-                    onChangeText={(v: string) => {
-                      updateFormData('firstName', v);
-                      if (touchedFields.firstName) validateField('firstName', v);
-                    }}
-                    onBlur={() => handleFieldBlur('firstName', formData.firstName)}
-                    placeholder="John"
-                    error={errors.firstName}
-                    autoComplete="name-given"
-                    textContentType="givenName"
-                    returnKeyType="next"
-                    onSubmitEditing={() => lastNameRef.current?.focus()}
-                  />
-                </View>
-                <View className="flex-1">
-                  <Input
-                    ref={lastNameRef}
-                    label="Last Name"
-                    value={formData.lastName}
-                    onChangeText={(v: string) => {
-                      updateFormData('lastName', v);
-                      if (touchedFields.lastName) validateField('lastName', v);
-                    }}
-                    onBlur={() => handleFieldBlur('lastName', formData.lastName)}
-                    placeholder="Doe"
-                    error={errors.lastName}
-                    autoComplete="name-family"
-                    textContentType="familyName"
-                    returnKeyType="next"
-                    onSubmitEditing={() => emailRef.current?.focus()}
-                  />
-                </View>
-              </View>
-
-              <Input
-                ref={emailRef}
-                label="Email Address"
-                value={formData.email}
-                onChangeText={(v: string) => {
-                  updateFormData('email', v);
-                  if (touchedFields.email) validateField('email', v);
-                }}
-                onBlur={() => handleFieldBlur('email', formData.email)}
-                placeholder="john.doe@email.com"
-                error={errors.email}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                textContentType="emailAddress"
-                icon={<Mail size={18} color="#9ca3af" />}
-                returnKeyType="next"
-                onSubmitEditing={() => phoneRef.current?.focus()}
-              />
-
-              <Input
-                ref={phoneRef}
-                label="Phone Number"
-                value={formData.phone}
-                onChangeText={(v: string) => {
-                  updateFormData('phone', v);
-                  if (touchedFields.phone) validateField('phone', v);
-                }}
-                onBlur={() => handleFieldBlur('phone', formData.phone)}
-                placeholder="+91 98765 43210"
-                error={errors.phone}
-                keyboardType="phone-pad"
-                autoComplete="tel"
-                textContentType="telephoneNumber"
-                icon={<Phone size={18} color="#9ca3af" />}
-                returnKeyType="done"
-                onSubmitEditing={handleContinue}
-              />
-            </View>
-
-            {/* Terms */}
+          {/* Role Selection */}
+          <Text
+            style={{
+              ...typography.caption,
+              fontWeight: '700',
+              color: currentTheme.textTertiary,
+              textTransform: 'uppercase',
+              letterSpacing: 2,
+              marginBottom: spacing.md,
+              marginLeft: spacing.sm,
+            }}
+          >
+            Select your role
+          </Text>
+          <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing['2xl'] }}>
+            {/* Investor Card */}
             <TouchableOpacity
-              onPress={() => setAgreedToTerms(!agreedToTerms)}
-              className="flex-row items-start mt-4 gap-3 p-1"
+              onPress={() => { setUserRole('consumer'); clearError('role'); }}
+              style={getRoleCardStyles('consumer').container}
+              activeOpacity={0.8}
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Investor role"
+              accessibilityState={{ selected: userRole === 'consumer' }}
             >
-              <View className={`size-5 mt-0.5 rounded-lg border-2 transition-all flex items-center justify-center ${
-                agreedToTerms 
-                  ? 'bg-primary border-primary' 
-                  : 'border-[#eaf0ea] dark:border-[#2a382a] bg-white dark:bg-[#1e291e]'
-              }`}>
-                {agreedToTerms && <View className="size-2 bg-white rounded-full" />}
+              <View style={getRoleCardStyles('consumer').iconContainer}>
+                <TrendingUp size={20} color={getRoleCardStyles('consumer').iconColor} />
               </View>
-              <Text className="flex-1 text-xs text-gray-500 dark:text-gray-400 font-medium leading-4">
-                I agree to the{' '}
-                <Text className="text-primary font-bold">Terms of Service</Text>
-                {' '}and{' '}
-                <Text className="text-primary font-bold">Privacy Policy</Text>
+              <Text
+                style={{
+                  ...typography.labelSm,
+                  color: getRoleCardStyles('consumer').titleColor,
+                  marginBottom: spacing.sm / 2,
+                }}
+              >
+                Investor
               </Text>
-            </TouchableOpacity>
-
-            {/* Continue Button */}
-            <TouchableOpacity
-              onPress={handleContinue}
-              activeOpacity={0.85}
-              disabled={isLoading || !agreedToTerms}
-              className={`mt-8 py-4 rounded-2xl flex-row items-center justify-center gap-2 transition-all ${
-                isLoading || !agreedToTerms
-                  ? 'bg-gray-300 dark:bg-gray-700 shadow-none'
-                  : 'bg-primary shadow-xl shadow-primary/25 active:scale-[0.98]'
-              }`}
-            >
-              {isLoading ? (
-                <>
-                  <View className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full" />
-                  <Text className="text-white font-bold text-base">
-                    Sending OTP...
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text className="text-white font-bold text-base">
-                    Continue
-                  </Text>
-                  <ChevronRight size={20} color="white" strokeWidth={2.5} />
-                </>
+              <Text
+                style={{
+                  ...typography.captionXs,
+                  color: getRoleCardStyles('consumer').subtitleColor,
+                  fontWeight: '500',
+                }}
+              >
+                Fund farms {'&'} earn returns
+              </Text>
+              {userRole === 'consumer' && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: spacing.md,
+                    right: spacing.md,
+                  }}
+                >
+                  <ShieldCheck size={18} color={colors.primary[500]} />
+                </View>
               )}
             </TouchableOpacity>
 
-            <View className="mt-8 flex-row items-center justify-center gap-1">
-              <Text className="text-sm text-slate-500 dark:text-slate-400">
-                Already have an account?
+            {/* Farmer Card */}
+            <TouchableOpacity
+              onPress={() => { setUserRole('farmer'); clearError('role'); }}
+              style={getRoleCardStyles('farmer').container}
+              activeOpacity={0.8}
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Farmer role"
+              accessibilityState={{ selected: userRole === 'farmer' }}
+            >
+              <View style={getRoleCardStyles('farmer').iconContainer}>
+                <Sprout size={20} color={getRoleCardStyles('farmer').iconColor} />
+              </View>
+              <Text
+                style={{
+                  ...typography.labelSm,
+                  color: getRoleCardStyles('farmer').titleColor,
+                  marginBottom: spacing.sm / 2,
+                }}
+              >
+                Farmer
               </Text>
-              <TouchableOpacity onPress={() => router.push('/login')}>
-                <Text className="text-sm font-bold text-[#4cae4f]"> Sign in</Text>
-              </TouchableOpacity>
+              <Text
+                style={{
+                  ...typography.captionXs,
+                  color: getRoleCardStyles('farmer').subtitleColor,
+                  fontWeight: '500',
+                }}
+              >
+                List farm {'&'} get funding
+              </Text>
+              {userRole === 'farmer' && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: spacing.md,
+                    right: spacing.md,
+                  }}
+                >
+                  <ShieldCheck size={18} color={colors.primary[500]} />
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+          {errors.role && (
+            <Text
+              style={{
+                ...typography.caption,
+                color: currentTheme.error,
+                marginBottom: spacing.md,
+                marginLeft: spacing.sm,
+              }}
+            >
+              {errors.role}
+            </Text>
+          )}
+
+          {/* Form Fields */}
+          <Card variant="elevated" padding="lg" style={{ gap: spacing.md }}>
+            <View style={{ flexDirection: 'row', gap: spacing.md }}>
+              <View style={{ flex: 1 }}>
+                <Input
+                  label="First Name"
+                  value={formData.firstName}
+                  onChangeText={(v: string) => {
+                    updateFormData('firstName', v);
+                    if (touchedFields.firstName) validateField('firstName', v);
+                  }}
+                  onBlur={() => handleFieldBlur('firstName', formData.firstName)}
+                  placeholder="John"
+                  error={errors.firstName}
+                  autoComplete="name-given"
+                  textContentType="givenName"
+                  returnKeyType="next"
+                  onSubmitEditing={() => lastNameRef.current?.focus()}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Input
+                  ref={lastNameRef}
+                  label="Last Name"
+                  value={formData.lastName}
+                  onChangeText={(v: string) => {
+                    updateFormData('lastName', v);
+                    if (touchedFields.lastName) validateField('lastName', v);
+                  }}
+                  onBlur={() => handleFieldBlur('lastName', formData.lastName)}
+                  placeholder="Doe"
+                  error={errors.lastName}
+                  autoComplete="name-family"
+                  textContentType="familyName"
+                  returnKeyType="next"
+                  onSubmitEditing={() => emailRef.current?.focus()}
+                />
+              </View>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
+
+            <Input
+              ref={emailRef}
+              label="Email Address"
+              value={formData.email}
+              onChangeText={(v: string) => {
+                updateFormData('email', v);
+                if (touchedFields.email) validateField('email', v);
+              }}
+              onBlur={() => handleFieldBlur('email', formData.email)}
+              placeholder="john.doe@email.com"
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+              textContentType="emailAddress"
+              icon={<Mail size={18} color={currentTheme.inputPlaceholder} />}
+              returnKeyType="next"
+              onSubmitEditing={() => phoneRef.current?.focus()}
+            />
+
+            <Input
+              ref={phoneRef}
+              label="Phone Number"
+              value={formData.phone}
+              onChangeText={(v: string) => {
+                updateFormData('phone', v);
+                if (touchedFields.phone) validateField('phone', v);
+              }}
+              onBlur={() => handleFieldBlur('phone', formData.phone)}
+              placeholder="+91 98765 43210"
+              error={errors.phone}
+              keyboardType="phone-pad"
+              autoComplete="tel"
+              textContentType="telephoneNumber"
+              icon={<Phone size={18} color={currentTheme.inputPlaceholder} />}
+              returnKeyType="done"
+              onSubmitEditing={handleContinue}
+            />
+          </Card>
+
+          {/* Terms */}
+          <TouchableOpacity
+            onPress={() => setAgreedToTerms(!agreedToTerms)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              marginTop: spacing.lg,
+              gap: spacing.md,
+              padding: spacing.sm,
+              minHeight: 44,
+            }}
+            activeOpacity={0.7}
+            accessible
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: agreedToTerms }}
+            accessibilityLabel="Agree to Terms of Service and Privacy Policy"
+          >
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                marginTop: 2,
+                borderRadius: radii.sm,
+                borderWidth: 2,
+                borderColor: agreedToTerms ? currentTheme.primary : currentTheme.border,
+                backgroundColor: agreedToTerms ? currentTheme.primary : currentTheme.surface,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {agreedToTerms && (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: currentTheme.onPrimary,
+                    borderRadius: radii.full,
+                  }}
+                />
+              )}
+            </View>
+            <Text
+              style={{
+                flex: 1,
+                ...typography.caption,
+                color: currentTheme.textTertiary,
+                lineHeight: 20,
+              }}
+            >
+              I agree to the{' '}
+              <Text
+                style={{
+                  color: currentTheme.primary,
+                  fontWeight: '700',
+                }}
+              >
+                Terms of Service
+              </Text>
+              {' '}and{' '}
+              <Text
+                style={{
+                  color: currentTheme.primary,
+                  fontWeight: '700',
+                }}
+              >
+                Privacy Policy
+              </Text>
+            </Text>
+          </TouchableOpacity>
+
+          {/* Continue Button */}
+          <View style={{ marginTop: spacing['2xl'] }}>
+            <Button
+              label="Continue"
+              onPress={handleContinue}
+              variant="primary"
+              size="lg"
+              loading={isLoading}
+              disabled={!agreedToTerms}
+              fullWidth
+              rightIcon={!isLoading ? <ChevronRight size={20} color="#FFFFFF" strokeWidth={2.5} /> : undefined}
+            />
+          </View>
+
+          {/* Sign In Link */}
+          <View
+            style={{
+              marginTop: spacing['2xl'],
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: spacing.xs,
+              minHeight: 44,
+            }}
+          >
+            <Text
+              style={{
+                ...typography.bodySm,
+                color: currentTheme.textTertiary,
+              }}
+            >
+              Already have an account?
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.push('/login')}
+              style={{
+                minHeight: 44,
+                justifyContent: 'center',
+                paddingVertical: spacing.sm,
+                paddingHorizontal: spacing.sm,
+              }}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Text
+                style={{
+                  ...typography.bodySm,
+                  fontWeight: '700',
+                  color: colors.primary[500],
+                }}
+              >
+                {' '}Sign in
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }

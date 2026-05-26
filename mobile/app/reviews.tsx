@@ -1,11 +1,31 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, TextInput, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
+  RefreshControl,
+  TextInput,
+  Alert,
+  useColorScheme,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 import { ChevronLeft, Star, Plus } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { colors, spacing, radii, typography, theme, getShadow } from '../src/config/theme';
+import { Card, Skeleton, EmptyState, Button } from '../src/components/ui';
 import api, { Review, Contract } from '../src/config/api';
 
 export default function ReviewsScreen() {
   const { contractId, listingId } = useLocalSearchParams();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -74,78 +94,248 @@ export default function ReviewsScreen() {
     }
   };
 
+  const renderStarRating = (size: number, ratingValue: number, onPress?: (star: number) => void) => (
+    <View style={styles.starRow}>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <TouchableOpacity
+          key={star}
+          onPress={() => onPress?.(star)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          style={styles.starButton}
+        >
+          <Star
+            size={size}
+            color={colors.accent[400]}
+            fill={star <= ratingValue ? colors.accent[400] : 'transparent'}
+          />
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+
   if (loading) {
     return (
-      <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15] items-center justify-center">
-        <ActivityIndicator size="large" color="#4cae4f" />
+      <View style={[styles.flexCenter, { backgroundColor: currentTheme.background }]}>
+        <ActivityIndicator size="large" color={currentTheme.primary} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
-      <View className="bg-white dark:bg-[#1e291e] px-4 pt-12 pb-4 flex-row items-center justify-between border-b border-[#eaf0ea] dark:border-[#2a382a]">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity onPress={() => router.back()} className="p-2">
-            <ChevronLeft size={24} color="#4cae4f" />
+    <View style={[styles.flex1, { backgroundColor: currentTheme.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+      {/* Header */}
+      <View style={[
+        styles.header,
+        {
+          backgroundColor: currentTheme.surface,
+          borderBottomColor: currentTheme.border,
+        },
+      ]}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <ChevronLeft size={24} color={currentTheme.primary} />
           </TouchableOpacity>
-          <Text className="text-xl font-bold text-slate-900 dark:text-white">Reviews</Text>
+          <Text style={[typography.heading, { color: currentTheme.text }]}>Reviews</Text>
         </View>
         {contractId && !showForm && (
-          <TouchableOpacity onPress={() => setShowForm(true)} className="bg-[#4cae4f] px-4 py-2 rounded-xl flex-row items-center gap-2">
-            <Plus size={16} color="white" />
-            <Text className="text-white font-bold text-sm">Write</Text>
+          <TouchableOpacity
+            onPress={() => setShowForm(true)}
+            style={[styles.writeButton, { backgroundColor: currentTheme.primary }]}
+          >
+            <Plus size={16} color={currentTheme.onPrimary} />
+            <Text style={[typography.labelSm, { color: currentTheme.onPrimary }]}>Write</Text>
           </TouchableOpacity>
         )}
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}>
-        <View className="px-4 py-4">
+      {/* Content */}
+      <ScrollView
+        style={styles.flex1}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={currentTheme.primary}
+          />
+        }
+      >
+        <View style={styles.content}>
           {showForm && (
-            <View className="bg-white dark:bg-[#1e291e] rounded-2xl p-4 mb-4 border border-[#eaf0ea] dark:border-[#2a382a]">
-              <Text className="text-base font-bold text-slate-900 dark:text-white mb-3">Write a Review</Text>
-              <View className="flex-row gap-2 mb-4">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <TouchableOpacity key={s} onPress={() => setRating(s)}>
-                    <Star size={32} color="#facc15" fill={s <= rating ? '#facc15' : 'transparent'} />
-                  </TouchableOpacity>
-                ))}
-              </View>
-              <TextInput value={comment} onChangeText={setComment} placeholder="Share your experience..." placeholderTextColor="#9ca3af" multiline numberOfLines={4} className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-[#f9fbf9] dark:bg-[#151d15] text-sm text-slate-900 dark:text-white mb-3" style={{ textAlignVertical: 'top' }} />
-              <View className="flex-row gap-3">
-                <TouchableOpacity onPress={() => setShowForm(false)} className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 items-center">
-                  <Text className="text-slate-700 dark:text-slate-300 font-bold">Cancel</Text>
+            <Card variant="outlined" padding="lg" style={styles.formCard}>
+              <Text style={[typography.title, { color: currentTheme.text, marginBottom: spacing.md }]}>
+                Write a Review
+              </Text>
+
+              {renderStarRating(32, rating, setRating)}
+
+              <TextInput
+                value={comment}
+                onChangeText={setComment}
+                placeholder="Share your experience..."
+                placeholderTextColor={currentTheme.inputPlaceholder}
+                multiline
+                numberOfLines={4}
+                style={[
+                  styles.textInput,
+                  {
+                    backgroundColor: currentTheme.inputBackground,
+                    borderColor: currentTheme.inputBorder,
+                    color: currentTheme.inputText,
+                  },
+                ]}
+              />
+
+              <View style={styles.formActions}>
+                <TouchableOpacity
+                  onPress={() => setShowForm(false)}
+                  style={[styles.cancelButton, { backgroundColor: isDark ? colors.neutral[800] : colors.neutral[100] }]}
+                >
+                  <Text style={[typography.label, { color: currentTheme.textSecondary }]}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleSubmit} disabled={submitting} className={`flex-1 py-3 rounded-xl bg-[#4cae4f] items-center ${submitting ? 'opacity-60' : ''}`}>
-                  {submitting ? <ActivityIndicator color="white" size="small" /> : <Text className="text-white font-bold">Submit Review</Text>}
+                <TouchableOpacity
+                  onPress={handleSubmit}
+                  disabled={submitting}
+                  style={[styles.submitButton, { backgroundColor: currentTheme.primary, opacity: submitting ? 0.6 : 1 }]}
+                >
+                  {submitting ? (
+                    <ActivityIndicator color={currentTheme.onPrimary} size="small" />
+                  ) : (
+                    <Text style={[typography.label, { color: currentTheme.onPrimary }]}>Submit Review</Text>
+                  )}
                 </TouchableOpacity>
               </View>
-            </View>
+            </Card>
           )}
 
           {reviews.length === 0 ? (
-            <View className="items-center py-16">
-              <Text className="text-4xl mb-4">⭐</Text>
-              <Text className="text-lg font-bold text-slate-900 dark:text-white mb-2">No reviews yet</Text>
-              <Text className="text-sm text-gray-500 text-center px-8">Be the first to leave a review.</Text>
-            </View>
+            <EmptyState
+              icon={Star}
+              title="No reviews yet"
+              description="Be the first to leave a review."
+            />
           ) : (
             reviews.map((review) => (
-              <View key={review.id} className="bg-white dark:bg-[#1e291e] rounded-2xl p-4 mb-4 border border-[#eaf0ea] dark:border-[#2a382a]">
-                <View className="flex-row items-center gap-1 mb-2">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={16} color="#facc15" fill={i < review.rating ? '#facc15' : 'transparent'} />
-                  ))}
-                  <Text className="text-[10px] text-gray-400 ml-2">{new Date(review.created_at).toLocaleDateString()}</Text>
+              <Card key={review.id} variant="default" padding="lg" style={styles.reviewCard}>
+                <View style={styles.reviewHeader}>
+                  {renderStarRating(16, review.rating)}
+                  <Text style={[typography.captionXs, { color: currentTheme.textTertiary, marginLeft: spacing.sm }]}>
+                    {new Date(review.created_at).toLocaleDateString()}
+                  </Text>
                 </View>
-                <Text className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{review.comment}</Text>
-              </View>
+                <Text style={[typography.bodySm, { color: currentTheme.textSecondary, lineHeight: 22 }]}>
+                  {review.comment}
+                </Text>
+              </Card>
             ))
           )}
-          <View className="h-20" />
+          <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
+  flexCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing['3xl'],
+    paddingBottom: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  backButton: {
+    padding: spacing.sm,
+    minHeight: 44,
+    minWidth: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  writeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.lg,
+    minHeight: 44,
+  },
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+  },
+  formCard: {
+    marginBottom: spacing.lg,
+  },
+  starRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  starButton: {
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textInput: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    fontSize: typography.bodySm.fontSize,
+    textAlignVertical: 'top',
+    marginBottom: spacing.md,
+    minHeight: 44,
+  },
+  formActions: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    alignItems: 'center',
+    minHeight: 44,
+  },
+  submitButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    borderRadius: radii.lg,
+    alignItems: 'center',
+    minHeight: 44,
+  },
+  reviewCard: {
+    marginBottom: spacing.lg,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  bottomSpacer: {
+    height: spacing['3xl'],
+  },
+});

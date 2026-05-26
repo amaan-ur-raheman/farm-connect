@@ -1,9 +1,30 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
-import { Bell, CheckCircle, Clock, MessageSquare, AlertTriangle, Wallet, Package, ChevronLeft } from 'lucide-react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+  useColorScheme,
+} from 'react-native';
+import {
+  Bell,
+  CheckCircle,
+  Clock,
+  MessageSquare,
+  AlertTriangle,
+  Wallet,
+  Package,
+  ChevronLeft,
+} from 'lucide-react-native';
 import { router } from 'expo-router';
 import api, { Notification } from '../src/config/api';
 import { useUnreadCounts } from '../src/config/unread-context';
+import { colors, spacing, radii, typography, theme, getShadow } from '../src/config/theme';
+import { Card, Skeleton, EmptyState, Button } from '../src/components/ui';
 
 const typeIcons: Record<string, any> = {
   CONTRACT: Clock,
@@ -15,15 +36,19 @@ const typeIcons: Record<string, any> = {
 };
 
 const typeColors: Record<string, string> = {
-  CONTRACT: '#3b82f6',
-  PAYMENT: '#4cae4f',
-  DELIVERY: '#f59e0b',
-  DISPUTE: '#ef4444',
+  CONTRACT: colors.info.light,
+  PAYMENT: colors.success.light,
+  DELIVERY: colors.warning.light,
+  DISPUTE: colors.error.light,
   CHAT: '#8b5cf6',
-  SYSTEM: '#6b7280',
+  SYSTEM: colors.neutral[500],
 };
 
 export default function NotificationsScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const currentTheme = isDark ? theme.dark : theme.light;
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,10 +58,9 @@ export default function NotificationsScreen() {
     try {
       const res = await api.get<any>('/api/notifications');
       const responseData = res.data?.data;
-      
-      // Backend returns { notifications: [...], unread_count: X, pagination: {...} }
+
       const notificationsArray = responseData?.notifications || responseData || [];
-      
+
       if (!Array.isArray(notificationsArray)) {
         console.error('Notifications API returned unexpected format:', typeof responseData);
         setNotifications([]);
@@ -45,18 +69,22 @@ export default function NotificationsScreen() {
       }
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
-      setNotifications([]); // Ensure it's always an array
+      setNotifications([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchNotifications(); }, [fetchNotifications]);
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   const markAsRead = async (id: string) => {
     try {
       await api.patch(`/api/notifications/${id}/read`);
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
       refreshUnreadCounts();
     } catch (err) {
       console.error('Failed to mark notification as read:', err);
@@ -66,7 +94,7 @@ export default function NotificationsScreen() {
   const markAllAsRead = async () => {
     try {
       await api.patch('/api/notifications/read-all');
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       refreshUnreadCounts();
     } catch (err) {
       console.error('Failed to mark all notifications as read:', err);
@@ -78,78 +106,243 @@ export default function NotificationsScreen() {
     fetchNotifications().finally(() => setRefreshing(false));
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <View className="flex-1 bg-[#f9fbf9] dark:bg-[#151d15]">
-      <StatusBar barStyle="dark-content" />
-      <View className="bg-white dark:bg-[#1e291e] px-4 pt-12 pb-4 flex-row items-center justify-between border-b border-[#eaf0ea] dark:border-[#2a382a]">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity onPress={() => router.back()} className="p-2">
-            <ChevronLeft size={24} color="#4cae4f" />
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+      {/* Header */}
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: currentTheme.surface,
+            borderBottomColor: currentTheme.border,
+          },
+        ]}
+      >
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={spacing.md}
+            activeOpacity={0.7}
+          >
+            <ChevronLeft size={24} color={currentTheme.primary} />
           </TouchableOpacity>
-          <Text className="text-xl font-bold text-slate-900 dark:text-white">Notifications</Text>
+          <Text style={[styles.headerTitle, { color: currentTheme.text }]}>
+            Notifications
+          </Text>
           {unreadCount > 0 && (
-            <View className="bg-red-500 px-2 py-0.5 rounded-full">
-              <Text className="text-[10px] font-bold text-white">{unreadCount}</Text>
+            <View style={[styles.badge, { backgroundColor: currentTheme.error }]}>
+              <Text style={styles.badgeText}>{unreadCount}</Text>
             </View>
           )}
         </View>
         {unreadCount > 0 && (
-          <TouchableOpacity onPress={markAllAsRead}>
-            <Text className="text-sm font-semibold text-[#4cae4f]">Mark all read</Text>
+          <TouchableOpacity
+            onPress={markAllAsRead}
+            style={styles.markAllButton}
+            hitSlop={spacing.sm}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.markAllText, { color: currentTheme.primary }]}>
+              Mark all read
+            </Text>
           </TouchableOpacity>
         )}
       </View>
 
+      {/* Content */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#4cae4f" />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={currentTheme.primary} />
         </View>
       ) : notifications.length === 0 ? (
-        <View className="flex-1 items-center justify-center px-8">
-          <Bell size={48} color="#94a3b8" />
-          <Text className="text-lg font-bold text-slate-900 dark:text-white mt-4 mb-2">No notifications yet</Text>
-          <Text className="text-sm text-gray-500 text-center">You'll see updates about contracts, payments, and messages here.</Text>
-        </View>
+        <EmptyState
+          icon={Bell}
+          title="No notifications yet"
+          description="You'll see updates about contracts, payments, and messages here."
+        />
       ) : (
-        <ScrollView 
-          className="flex-1" 
+        <ScrollView
+          style={styles.scrollView}
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4cae4f" />}
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={currentTheme.primary}
+            />
+          }
         >
           {notifications.map((notification) => {
             const Icon = typeIcons[notification.type] || Bell;
-            const color = typeColors[notification.type] || '#6b7280';
+            const iconColor = typeColors[notification.type] || colors.neutral[500];
+            const isUnread = !notification.read;
+
             return (
-              <TouchableOpacity
+              <Card
                 key={notification.id}
+                variant="interactive"
+                padding="md"
                 onPress={() => markAsRead(notification.id)}
-                className={`flex-row items-start px-4 py-4 border-b border-[#eaf0ea] dark:border-[#2a382a] ${
-                  !notification.read ? 'bg-[#4cae4f]/5' : ''
-                }`}
+                style={isUnread ? { backgroundColor: isDark ? `${colors.primary[500]}10` : `${colors.primary[500]}0D` } : undefined}
               >
-                <View className="size-10 rounded-full items-center justify-center mr-3" style={{ backgroundColor: `${color}15` }}>
-                  <Icon size={20} color={color} />
-                </View>
-                <View className="flex-1">
-                  <View className="flex-row items-center justify-between mb-1">
-                    <Text className={`text-sm font-bold text-slate-900 dark:text-white ${!notification.read ? '' : 'opacity-70'}`}>
-                      {notification.title}
-                    </Text>
-                    {!notification.read && <View className="size-2 bg-[#4cae4f] rounded-full ml-2" />}
+                <View style={styles.notificationRow}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: `${iconColor}15` },
+                    ]}
+                  >
+                    <Icon size={20} color={iconColor} />
                   </View>
-                  <Text className="text-xs text-gray-500 dark:text-gray-400 mb-1">{notification.message}</Text>
-                  <Text className="text-[10px] text-gray-400">
-                    {new Date(notification.created_at).toLocaleString()}
-                  </Text>
+                  <View style={styles.notificationContent}>
+                    <View style={styles.titleRow}>
+                      <Text
+                        style={[
+                          styles.notificationTitle,
+                          {
+                            color: currentTheme.text,
+                            opacity: isUnread ? 1 : 0.7,
+                          },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {notification.title}
+                      </Text>
+                      {isUnread && (
+                        <View style={[styles.unreadDot, { backgroundColor: currentTheme.primary }]} />
+                      )}
+                    </View>
+                    <Text
+                      style={[styles.notificationMessage, { color: currentTheme.textSecondary }]}
+                      numberOfLines={2}
+                    >
+                      {notification.message}
+                    </Text>
+                    <Text style={[styles.timestamp, { color: currentTheme.textTertiary }]}>
+                      {new Date(notification.created_at).toLocaleString()}
+                    </Text>
+                  </View>
                 </View>
-              </TouchableOpacity>
+              </Card>
             );
           })}
-          <View className="h-20" />
+          <View style={styles.bottomSpacer} />
         </ScrollView>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing['3xl'],
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    ...typography.heading,
+  },
+  badge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: radii.full,
+    minWidth: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: {
+    ...typography.captionXs,
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  markAllButton: {
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
+  },
+  markAllText: {
+    ...typography.labelSm,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  notificationCard: {
+    marginBottom: 0,
+  },
+  notificationRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: radii.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  notificationContent: {
+    flex: 1,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.xs,
+  },
+  notificationTitle: {
+    ...typography.labelSm,
+    flex: 1,
+    marginRight: spacing.xs,
+  },
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: radii.full,
+    marginLeft: spacing.xs,
+  },
+  notificationMessage: {
+    ...typography.bodySm,
+    marginBottom: spacing.xs,
+  },
+  timestamp: {
+    ...typography.caption,
+  },
+  bottomSpacer: {
+    height: spacing['3xl'],
+  },
+});
