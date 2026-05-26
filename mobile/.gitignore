@@ -1,0 +1,15 @@
+# Generated native project folders (managed Expo workflow)
+ios/
+android/
+.kotlin/
+
+# Expo
+.expo/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+
+# Environment
+.env
+.env.local
+!.env.example

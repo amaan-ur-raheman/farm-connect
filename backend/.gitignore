@@ -1,0 +1,14 @@
+# Build output
+dist/
+
+# Environment
+.env
+.env.local
+!.env.example
+
+# Prisma local SQLite (dev only)
+prisma/dev.db
+prisma/dev.db-journal
+
+# Logs
+*.log

@@ -1,42 +1,68 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# ─── Dependencies ────────────────────────────────────────────────────────────
 node_modules/
+.pnp
+.pnp.js
 
-# Expo
-.expo/
+# ─── Environment Variables ───────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+# Keep .env.example committed
+!.env.example
+
+# ─── Build Outputs ───────────────────────────────────────────────────────────
 dist/
+build/
+out/
+
+# ─── Expo / React Native ─────────────────────────────────────────────────────
+.expo/
 web-build/
 expo-env.d.ts
+.metro-health-check*
 
-# Native
-.kotlin/
+# Generated native folders (managed workflow)
+/mobile/ios
+/mobile/android
+mobile/.kotlin/
+
+# ─── TypeScript ──────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+mprocs.log
+
+# ─── Native / Certificates ───────────────────────────────────────────────────
 *.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
 *.pem
 
-# local env files
-.env*.local
-.env
+# ─── macOS ───────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# typescript
-*.tsbuildinfo
+# ─── Editor ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# generated native folders
-/ios
-/android
+# ─── Prisma ──────────────────────────────────────────────────────────────────
+# Keep schema.prisma and migrations committed
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# ─── Misc ────────────────────────────────────────────────────────────────────
+*.tgz
+.cache/
+tmp/
+temp/
