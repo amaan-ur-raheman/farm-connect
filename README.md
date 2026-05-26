@@ -1,195 +1,96 @@
-# FarmConnect Monorepo
+# FarmConnect
 
-A comprehensive agricultural investment platform connecting farmers with investors through a secure, transparent escrow-based system.
-
-## 📊 Project Status: ✅ Production Ready
-
-**Completion:** 100%  
-**Last Updated:** April 2026
-
----
-
-## 🏗️ Structure
+An agricultural investment platform connecting farmers with investors through a secure, escrow-based contract system.
 
 ```
 farm-connect-v2/
-├── mobile/                    # React Native + Expo app
-│   ├── app/                   # Expo Router screens (23 screens)
-│   ├── src/                   # Components, stores, utils, config
-│   ├── .env                   # Environment variables
-│   ├── SETUP.md              # Mobile setup guide
-│   └── package.json
-│
-├── backend/                   # Node.js + Express + Prisma API
-│   ├── src/                   # Modules, middleware, config
-│   ├── prisma/                # Database schema & migrations
-│   ├── tests/                 # Unit tests (Vitest)
-│   ├── API_DOCUMENTATION.md   # Complete API docs
-│   ├── .env                   # Environment variables
-│   └── package.json
-│
-└── package.json              # Root workspace config
+├── mobile/     # React Native + Expo (iOS, Android, Web)
+└── backend/    # Node.js + Express REST API + WebSocket
 ```
 
 ---
 
-## 🚀 Quick Start
+## Tech Stack
+
+**Mobile** — React Native 0.83, Expo SDK 55, Expo Router, Zustand, TanStack Query, NativeWind v4, Ky, Socket.io, Lucide icons
+
+**Backend** — Node.js, Express, TypeScript, PostgreSQL + Prisma, Upstash Redis, BullMQ, Socket.io, JWT, Zod
+
+**Services** — Twilio (OTP), Razorpay (payments), Cloudinary (images)
+
+---
+
+## Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- PostgreSQL database
-- Redis (Upstash)
-- API keys for: Twilio, Razorpay, Cloudinary
+- Node.js 18+
+- PostgreSQL
+- API keys: Twilio, Razorpay, Cloudinary, Upstash Redis
 
-### 1. Backend Setup
+### Backend
 
 ```bash
 cd backend
-
-# Install dependencies
 npm install
-
-# Copy environment template and configure
-cp .env.example .env
-# Edit .env with your API keys
-
-# Initialize database
+cp .env.example .env    # fill in credentials
 npm run db:generate
 npm run db:push
-npm run db:seed    # Optional: Add test data
-
-# Start server
-npm run dev
+npm run db:seed         # optional test data
+npm run dev             # → http://localhost:3000
 ```
 
-Server runs on: `http://localhost:3000`
-
-### 2. Mobile Setup
+### Mobile
 
 ```bash
 cd mobile
-
-# Install dependencies
 npm install
-
-# Configure API URL based on your device:
-# - iOS Simulator: http://localhost:3000
-# - Android Emulator: http://10.0.2.2:3000
-# - Physical Device: http://YOUR_IP:3000
-
 echo "EXPO_PUBLIC_API_URL=http://localhost:3000" > .env
-
-# Start Expo
 npm start
 ```
 
-Then press:
-- `i` - iOS Simulator
-- `a` - Android Emulator  
-- `w` - Web browser
-- Scan QR - Physical device (Expo Go app)
+Press `i` (iOS simulator), `a` (Android emulator), `w` (web), or scan QR for a physical device.
+
+> **Physical device / Android emulator:** replace `localhost` with your machine's LAN IP or use `http://10.0.2.2:3000` for Android emulator.
 
 ---
 
-## 📱 Features
+## Environment Variables
 
-### Farmer Features
-- ✅ Create and manage farm listings
-- ✅ Upload images to Cloudinary
-- ✅ Accept/reject investment contracts
-- ✅ Post farm updates with photos
-- ✅ Manage deliveries
-- ✅ Track payments and wallet
-- ✅ Real-time chat with investors
-- ✅ Handle disputes
-
-### Investor Features
-- ✅ Browse marketplace with filters
-- ✅ View detailed property information
-- ✅ Invest in farms via contracts
-- ✅ Escrow-based payment protection
-- ✅ Receive farm updates
-- ✅ Track deliveries
-- ✅ Rate and review farms
-- ✅ Real-time chat with farmers
-
-### Shared Features
-- ✅ OTP-based authentication (Twilio SMS)
-- ✅ KYC verification system
-- ✅ Wallet management
-- ✅ Push notifications
-- ✅ Profile management
-- ✅ Role-based dashboards
-
----
-
-## 🛠️ Tech Stack
-
-### Mobile
-- **Framework:** React Native + Expo SDK 55
-- **Navigation:** Expo Router (file-based)
-- **State:** Zustand with AsyncStorage persistence
-- **Styling:** NativeWind (Tailwind CSS)
-- **HTTP Client:** Ky with custom interceptors
-- **Real-time:** Socket.io client
-- **Icons:** Lucide React Native
-
-### Backend
-- **Runtime:** Node.js + TypeScript
-- **Framework:** Express.js
-- **Database:** PostgreSQL via Prisma ORM
-- **Cache:** Upstash Redis
-- **Auth:** JWT (access + refresh tokens)
-- **Payments:** Razorpay
-- **SMS:** Twilio
-- **Storage:** Cloudinary
-- **WebSocket:** Socket.io
-- **Validation:** Zod schemas
-
----
-
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Mobile Setup](./mobile/SETUP.md) | Mobile app configuration guide |
-| [API Docs](./backend/API_DOCUMENTATION.md) | Complete REST API reference |
-| [Testing](./backend/tests/README.md) | Backend testing guide |
-
----
-
-## 🔑 Environment Variables
-
-### Backend (.env)
+### `backend/.env`
 
 ```env
 # Database
-DATABASE_URL="postgresql://..."
-DIRECT_URL="postgresql://..."
+DATABASE_URL="postgresql://user:pass@host:5432/farmconnect"
+DIRECT_URL="postgresql://user:pass@host:5432/farmconnect"
 
 # JWT
-JWT_SECRET="your-secret-key"
-JWT_REFRESH_SECRET="your-refresh-secret"
+JWT_SECRET="min-32-char-secret"
+JWT_REFRESH_SECRET="min-32-char-secret"
+ACCESS_TOKEN_EXPIRY="15m"
+REFRESH_TOKEN_EXPIRY="7d"
 
-# Third-party Services
+# Twilio
 TWILIO_ACCOUNT_SID="AC..."
 TWILIO_AUTH_TOKEN="..."
 TWILIO_PHONE_NUMBER="+1..."
 
+# Razorpay
 RAZORPAY_KEY_ID="rzp_test_..."
 RAZORPAY_KEY_SECRET="..."
 RAZORPAY_WEBHOOK_SECRET="whsec_..."
 
+# Cloudinary
 CLOUDINARY_CLOUD_NAME="..."
 CLOUDINARY_API_KEY="..."
 CLOUDINARY_API_SECRET="..."
 
+# Upstash Redis
 UPSTASH_REDIS_REST_URL="https://..."
 UPSTASH_REDIS_REST_TOKEN="..."
 ```
 
-### Mobile (.env)
+### `mobile/.env`
 
 ```env
 EXPO_PUBLIC_API_URL=http://localhost:3000
@@ -197,215 +98,115 @@ EXPO_PUBLIC_API_URL=http://localhost:3000
 
 ---
 
-## 🧪 Testing
+## Features
 
-### Backend Tests
+**Farmers** — create/manage listings, upload images, accept/reject contracts, post farm updates, manage deliveries, handle disputes, withdraw earnings via wallet
+
+**Investors** — browse marketplace, invest via contracts, escrow-protected payments, track deliveries, rate farms, real-time chat
+
+**Shared** — OTP authentication (SMS), biometric login, KYC verification, wallet, push notifications, dark mode, i18n
+
+---
+
+## API Reference
+
+| Resource | Endpoints |
+|---|---|
+| Auth | `POST /api/auth/otp/send` · `/otp/verify` · `/refresh` · `/logout` |
+| Listings | `GET/POST /api/listings` · `GET /api/listings/mine` · `DELETE /api/listings/:id` |
+| Contracts | `GET /api/contracts/farmer\|consumer` · `POST /api/contracts` · `POST /api/contracts/:id/action` |
+| Payments | `POST /api/payments/create-order` · `/verify` · `/webhook` |
+| Wallet | `GET /api/wallet/balance` · `/transactions` · `POST /api/wallet/withdraw` |
+| Chat | `GET /api/chat/conversations` · `GET /api/chat/:id/messages` |
+| KYC | `POST /api/kyc/upload` |
+| Weather | `GET /api/weather` |
+| Health | `GET /health` |
+
+Full reference: [`backend/API_DOCUMENTATION.md`](./backend/API_DOCUMENTATION.md)
+
+---
+
+## Database Schema
+
+13 models: `User`, `FarmListing`, `Contract`, `FarmUpdate`, `EscrowLedger`, `Delivery`, `Dispute`, `WalletTransaction`, `Review`, `AuditLog`, `Notification`, `Conversation`, `Message`
+
+```bash
+npm run db:studio   # open Prisma Studio
+```
+
+---
+
+## Scripts
+
+```bash
+# Root — run both services concurrently
+npm run dev
+npm run dev:backend
+npm run dev:mobile
+
+# Backend
+npm run dev           # hot-reload dev server
+npm run build         # compile TypeScript
+npm run db:generate   # generate Prisma client
+npm run db:push       # push schema to DB
+npm run db:migrate    # run migrations
+npm run db:seed       # seed test data
+npm run test          # Vitest unit tests
+
+# Mobile
+npm start             # Expo dev server
+npm run ios           # iOS simulator
+npm run android       # Android emulator
+npm run web           # browser
+npm run lint          # ESLint
+```
+
+---
+
+## Security
+
+- JWT access + refresh tokens with short expiry
+- Rate limiting: 100 req/15 min general, 10 req/15 min on auth routes
+- Helmet security headers, CORS, XSS protection
+- Input validation with Zod on all endpoints
+- SQL injection prevention via Prisma ORM
+- OTP rate limiting + bcrypt hashing
+
+---
+
+## Testing
 
 ```bash
 cd backend
-
-# Run all tests
-npm test
-
-# Watch mode
-npm test -- --watch
-
-# Specific test file
-npm test auth.test.ts
+npm test              # run all tests
+npm test -- --watch   # watch mode
+npm test auth.test.ts # single file
 ```
 
-**Test Coverage:**
-- ✅ Authentication (OTP send/verify)
-- ✅ Listing CRUD operations
-- ✅ Input validation utilities
-
-### Manual Testing
-
-**Test Credentials (Development):**
-```
-Phone: +919876543210
-OTP: Check backend console
-```
-
-**Test Payment Cards:**
-- Visa: `4111 1111 1111 1111`
-- Mastercard: `5267 3181 8797 5449`
-- CVV: Any 3 digits
+**Test credentials (development)**
+- Phone: `+919876543210` — OTP prints to backend console
+- Visa: `4111 1111 1111 1111` · Mastercard: `5267 3181 8797 5449` (any CVV)
 
 ---
 
-## 📡 API Endpoints
+## Troubleshooting
 
-### Authentication
-- `POST /api/auth/otp/send` - Send OTP
-- `POST /api/auth/otp/verify` - Verify & login
-- `POST /api/auth/refresh` - Refresh token
-- `POST /api/auth/logout` - Logout
+**Mobile can't reach backend**
+1. Confirm backend is up: `curl http://localhost:3000/health`
+2. Check `EXPO_PUBLIC_API_URL` in `mobile/.env`
+3. Physical device must be on the same WiFi; use your LAN IP (`ipconfig getifaddr en0` on macOS)
 
-### Listings
-- `GET /api/listings` - Get all (paginated)
-- `POST /api/listings` - Create listing
-- `GET /api/listings/mine` - My listings
-- `DELETE /api/listings/:id` - Delete listing
-
-### Contracts
-- `GET /api/contracts/farmer` - Farmer contracts
-- `GET /api/contracts/consumer` - Investor contracts
-- `POST /api/contracts` - Create contract
-- `POST /api/contracts/:id/action` - Accept/Reject/Complete
-
-### Payments
-- `POST /api/payments/create-order` - Create Razorpay order
-- `POST /api/payments/verify` - Verify payment
-- `POST /api/payments/webhook` - Razorpay webhook
-
-### Wallet
-- `GET /api/wallet/balance` - Get balance
-- `GET /api/wallet/transactions` - Transaction history
-- `POST /api/wallet/withdraw` - Withdraw funds
-
-[See full API documentation →](./backend/API_DOCUMENTATION.md)
-
----
-
-## 🏃 Development Scripts
-
-### Root
+**Database errors**
 ```bash
-npm run dev           # Start both backend & mobile
-npm run dev:backend   # Backend only
-npm run dev:mobile    # Mobile only
+cd backend && npm run db:generate && npm run db:push
 ```
 
-### Backend
-```bash
-npm run dev           # Dev server (hot reload)
-npm run build         # Compile TypeScript
-npm run db:generate   # Generate Prisma client
-npm run db:push       # Push schema to DB
-npm run db:migrate    # Run migrations
-npm run db:seed       # Seed database
-npm run db:studio     # Open Prisma Studio
-npm run test          # Run tests
-```
-
-### Mobile
-```bash
-npm start             # Expo dev server
-npm run android       # Android emulator
-npm run ios           # iOS simulator
-npm run web           # Web browser
-npm run lint          # ESLint check
-```
+**OTP not received** — check Twilio credentials and account balance; in dev mode the OTP is logged to the console regardless.
 
 ---
 
-## 🔒 Security Features
+## Documentation
 
-- ✅ JWT authentication with refresh tokens
-- ✅ Rate limiting (100 req/15min general, 10 req/15min auth)
-- ✅ Helmet security headers
-- ✅ CORS configuration
-- ✅ Input validation with Zod
-- ✅ SQL injection prevention (Prisma ORM)
-- ✅ XSS protection
-- ✅ OTP rate limiting
-- ✅ Secure password hashing (bcrypt)
-
----
-
-## 📈 Database Schema
-
-**11 Models:**
-- User (with KYC)
-- FarmListing
-- Contract
-- FarmUpdate
-- EscrowLedger
-- Delivery
-- Dispute
-- WalletTransaction
-- Review
-- Notification
-- Conversation & Message
-
-**Key Relationships:**
-- Users ↔ Contracts (Farmer & Consumer roles)
-- Contracts ↔ EscrowLedger, Deliveries, Updates
-- Conversation ↔ Messages (many-to-many)
-
----
-
-## 🎯 Recent Improvements (April 2026)
-
-### ✅ Code Quality Enhancements
-1. **Error Handling:** Fixed all silent `catch {}` blocks with proper logging
-2. **Unit Tests:** Added comprehensive test suite (auth, listings, utils)
-3. **Documentation:** Created complete API documentation
-4. **Configuration:** Improved environment variable management
-
-### ✅ Developer Experience
-- Added `.env.example` files for both mobile and backend
-- Created detailed setup guides
-- Added troubleshooting documentation
-- Improved error messages throughout
-
----
-
-## 🐛 Troubleshooting
-
-### Mobile can't connect to backend
-
-**Check:**
-1. Backend is running: `http://localhost:3000/health`
-2. Correct API URL in mobile `.env`
-3. Same WiFi network (for physical devices)
-4. Firewall allows port 3000
-
-**Solutions:**
-```bash
-# Test backend health
-curl http://localhost:3000/health
-
-# Find your IP (for physical devices)
-# macOS: ipconfig getifaddr en0
-# Windows: ipconfig
-
-# Update mobile/.env with correct URL
-```
-
-### Database connection errors
-
-```bash
-# Regenerate Prisma client
-cd backend && npm run db:generate
-
-# Push schema to database
-npm run db:push
-```
-
-### OTP not received
-
-1. Check Twilio credentials in `.env`
-2. Verify phone number format (+91...)
-3. Check Twilio account balance
-4. In development, OTP prints to console
-
----
-
-## 📞 Support
-
-For issues or questions:
-- Check [API Documentation](./backend/API_DOCUMENTATION.md)
-- Review [Mobile Setup Guide](./mobile/SETUP.md)
-- Read [Testing Guide](./backend/tests/README.md)
-
----
-
-## 📄 License
-
-Private - All rights reserved
-
----
-
-**Built with ❤️ for connecting farmers and investors**
+- [API Documentation](./backend/API_DOCUMENTATION.md)
+- [Mobile Setup Guide](./mobile/SETUP.md)
+- [Testing Guide](./backend/tests/README.md)
