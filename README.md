@@ -1,26 +1,75 @@
-# FarmConnect
+<div align="center">
 
-An agricultural investment platform connecting farmers with investors through a secure, escrow-based contract system.
+# 🌾 FarmConnect
+
+**Connecting Farmers with Investors Through Secure, Escrow-Based Contracts**
+
+[![React Native](https://img.shields.io/badge/React_Native-0.83-61DAFB?logo=react)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-SDK_55-000020?logo=expo)](https://expo.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-4169E1?logo=postgresql)](https://postgresql.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://typescriptlang.org/)
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Tech Stack](#-tech-stack)
+- [Quick Start](#-quick-start)
+- [Environment Variables](#-environment-variables)
+- [Features](#-features)
+- [API Reference](#-api-reference)
+- [Database Schema](#-database-schema)
+- [Available Scripts](#-available-scripts)
+- [Security](#-security)
+- [Testing](#-testing)
+- [Troubleshooting](#-troubleshooting)
+- [Documentation](#-documentation)
+
+---
+
+## 🎯 Overview
+
+FarmConnect is an agricultural investment platform that bridges the gap between farmers seeking capital and investors looking for opportunities. The platform facilitates secure transactions through an escrow-based contract system, ensuring trust and transparency for all parties.
+
+### Project Structure
 
 ```
-farm-connect-v2/
+farm-connect/
 ├── mobile/     # React Native + Expo (iOS, Android, Web)
 └── backend/    # Node.js + Express REST API + WebSocket
 ```
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-**Mobile** — React Native 0.83, Expo SDK 55, Expo Router, Zustand, TanStack Query, NativeWind v4, Ky, Socket.io, Lucide icons
+### Mobile
+- **Framework:** React Native 0.83, Expo SDK 55, Expo Router
+- **State Management:** Zustand, TanStack Query
+- **Styling:** NativeWind v4, Lucide Icons
+- **Real-time:** Socket.io Client
+- **HTTP:** Ky
 
-**Backend** — Node.js, Express, TypeScript, PostgreSQL + Prisma, Upstash Redis, BullMQ, Socket.io, JWT, Zod
+### Backend
+- **Runtime:** Node.js, Express, TypeScript
+- **Database:** PostgreSQL, Prisma ORM
+- **Queue & Cache:** Upstash Redis, BullMQ
+- **Real-time:** Socket.io
+- **Validation:** Zod
+- **Authentication:** JWT
 
-**Services** — Twilio (OTP), Razorpay (payments), Cloudinary (images)
+### Third-Party Services
+- **SMS:** Twilio (OTP)
+- **Payments:** Razorpay
+- **Media:** Cloudinary (images)
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -28,19 +77,19 @@ farm-connect-v2/
 - PostgreSQL
 - API keys: Twilio, Razorpay, Cloudinary, Upstash Redis
 
-### Backend
+### Backend Setup
 
 ```bash
 cd backend
 npm install
-cp .env.example .env    # fill in credentials
+cp .env.example .env    # Fill in your credentials
 npm run db:generate
 npm run db:push
-npm run db:seed         # optional test data
+npm run db:seed         # Optional: seed test data
 npm run dev             # → http://localhost:3000
 ```
 
-### Mobile
+### Mobile Setup
 
 ```bash
 cd mobile
@@ -49,15 +98,16 @@ echo "EXPO_PUBLIC_API_URL=http://localhost:3000" > .env
 npm start
 ```
 
-Press `i` (iOS simulator), `a` (Android emulator), `w` (web), or scan QR for a physical device.
-
-> **Physical device / Android emulator:** replace `localhost` with your machine's LAN IP or use `http://10.0.2.2:3000` for Android emulator.
+> **Tips:**
+> - Press `i` for iOS simulator, `a` for Android emulator, `w` for web
+> - For physical devices, replace `localhost` with your machine's LAN IP
+> - Android emulator: use `http://10.0.2.2:3000`
 
 ---
 
-## Environment Variables
+## ⚙️ Environment Variables
 
-### `backend/.env`
+### Backend (`backend/.env`)
 
 ```env
 # Database
@@ -90,7 +140,7 @@ UPSTASH_REDIS_REST_URL="https://..."
 UPSTASH_REDIS_REST_TOKEN="..."
 ```
 
-### `mobile/.env`
+### Mobile (`mobile/.env`)
 
 ```env
 EXPO_PUBLIC_API_URL=http://localhost:3000
@@ -98,115 +148,158 @@ EXPO_PUBLIC_API_URL=http://localhost:3000
 
 ---
 
-## Features
+## ✨ Features
 
-**Farmers** — create/manage listings, upload images, accept/reject contracts, post farm updates, manage deliveries, handle disputes, withdraw earnings via wallet
+### For Farmers
+- Create and manage farm listings with image uploads
+- Accept or reject investment contracts
+- Post farm updates and progress reports
+- Manage deliveries and logistics
+- Handle disputes through the platform
+- Withdraw earnings directly to your wallet
 
-**Investors** — browse marketplace, invest via contracts, escrow-protected payments, track deliveries, rate farms, real-time chat
+### For Investors
+- Browse verified farm listings in the marketplace
+- Invest securely via escrow-protected contracts
+- Track deliveries and farm progress in real-time
+- Rate and review farms after completion
+- Communicate directly with farmers through in-app chat
 
-**Shared** — OTP authentication (SMS), biometric login, KYC verification, wallet, push notifications, dark mode, i18n
+### Platform Features
+- 📱 OTP-based authentication (SMS)
+- 🔐 Biometric login support
+- 🆔 KYC verification
+- 💳 Secure wallet & transactions
+- 🔔 Push notifications
+- 🌙 Dark mode
+- 🌍 Internationalization (i18n)
 
 ---
 
-## API Reference
+## 📡 API Reference
 
-| Resource | Endpoints |
-|---|---|
-| Auth | `POST /api/auth/otp/send` · `/otp/verify` · `/refresh` · `/logout` |
-| Listings | `GET/POST /api/listings` · `GET /api/listings/mine` · `DELETE /api/listings/:id` |
+| Resource  | Endpoints |
+|-----------|-----------|
+| Auth      | `POST /api/auth/otp/send` · `/otp/verify` · `/refresh` · `/logout` |
+| Listings  | `GET/POST /api/listings` · `GET /api/listings/mine` · `DELETE /api/listings/:id` |
 | Contracts | `GET /api/contracts/farmer\|consumer` · `POST /api/contracts` · `POST /api/contracts/:id/action` |
-| Payments | `POST /api/payments/create-order` · `/verify` · `/webhook` |
-| Wallet | `GET /api/wallet/balance` · `/transactions` · `POST /api/wallet/withdraw` |
-| Chat | `GET /api/chat/conversations` · `GET /api/chat/:id/messages` |
-| KYC | `POST /api/kyc/upload` |
-| Weather | `GET /api/weather` |
-| Health | `GET /health` |
+| Payments  | `POST /api/payments/create-order` · `/verify` · `/webhook` |
+| Wallet    | `GET /api/wallet/balance` · `/transactions` · `POST /api/wallet/withdraw` |
+| Chat      | `GET /api/chat/conversations` · `GET /api/chat/:id/messages` |
+| KYC       | `POST /api/kyc/upload` |
+| Weather   | `GET /api/weather` |
+| Health    | `GET /health` |
 
-Full reference: [`backend/API_DOCUMENTATION.md`](./backend/API_DOCUMENTATION.md)
+📖 **Full reference:** [`backend/API_DOCUMENTATION.md`](./backend/API_DOCUMENTATION.md)
 
 ---
 
-## Database Schema
+## 🗄️ Database Schema
 
-13 models: `User`, `FarmListing`, `Contract`, `FarmUpdate`, `EscrowLedger`, `Delivery`, `Dispute`, `WalletTransaction`, `Review`, `AuditLog`, `Notification`, `Conversation`, `Message`
+**13 core models:** `User`, `FarmListing`, `Contract`, `FarmUpdate`, `EscrowLedger`, `Delivery`, `Dispute`, `WalletTransaction`, `Review`, `AuditLog`, `Notification`, `Conversation`, `Message`
 
 ```bash
-npm run db:studio   # open Prisma Studio
+npm run db:studio   # Open Prisma Studio for visual data management
 ```
 
 ---
 
-## Scripts
+## 📝 Available Scripts
 
+### Root (Monorepo)
 ```bash
-# Root — run both services concurrently
-npm run dev
-npm run dev:backend
-npm run dev:mobile
+npm run dev           # Run both backend & mobile concurrently
+npm run dev:backend   # Run backend only
+npm run dev:mobile    # Run mobile only
+```
 
-# Backend
-npm run dev           # hot-reload dev server
-npm run build         # compile TypeScript
-npm run db:generate   # generate Prisma client
-npm run db:push       # push schema to DB
-npm run db:migrate    # run migrations
-npm run db:seed       # seed test data
-npm run test          # Vitest unit tests
+### Backend
+```bash
+npm run dev           # Hot-reload dev server
+npm run build         # Compile TypeScript
+npm run db:generate   # Generate Prisma client
+npm run db:push       # Push schema to database
+npm run db:migrate    # Run database migrations
+npm run db:seed       # Seed test data
+npm run test          # Run Vitest unit tests
+```
 
-# Mobile
-npm start             # Expo dev server
+### Mobile
+```bash
+npm start             # Start Expo dev server
 npm run ios           # iOS simulator
 npm run android       # Android emulator
-npm run web           # browser
-npm run lint          # ESLint
+npm run web           # Browser
+npm run lint          # Run ESLint
 ```
 
 ---
 
-## Security
+## 🔒 Security
 
-- JWT access + refresh tokens with short expiry
-- Rate limiting: 100 req/15 min general, 10 req/15 min on auth routes
-- Helmet security headers, CORS, XSS protection
-- Input validation with Zod on all endpoints
-- SQL injection prevention via Prisma ORM
-- OTP rate limiting + bcrypt hashing
+- **Authentication:** JWT access + refresh tokens with short expiry
+- **Rate Limiting:** 100 requests/15 min (general), 10 req/15 min (auth routes)
+- **Headers:** Helmet security headers, CORS, XSS protection
+- **Validation:** Zod input validation on all endpoints
+- **Injection Prevention:** Prisma ORM prevents SQL injection
+- **OTP Security:** Rate-limited OTP with bcrypt hashing
 
 ---
 
-## Testing
+## 🧪 Testing
 
 ```bash
 cd backend
-npm test              # run all tests
-npm test -- --watch   # watch mode
-npm test auth.test.ts # single file
+npm test              # Run all tests
+npm test -- --watch   # Watch mode
+npm test auth.test.ts # Single file
 ```
 
-**Test credentials (development)**
-- Phone: `+919876543210` — OTP prints to backend console
-- Visa: `4111 1111 1111 1111` · Mastercard: `5267 3181 8797 5449` (any CVV)
+### Test Credentials (Development)
+| Field      | Value                              |
+|------------|------------------------------------|
+| Phone      | `+919876543210`                    |
+| OTP        | Printed to backend console         |
+| Visa       | `4111 1111 1111 1111`              |
+| Mastercard | `5267 3181 8797 5449`              |
+| CVV        | Any 3-digit number                 |
 
 ---
 
-## Troubleshooting
+## 🛠️ Troubleshooting
 
-**Mobile can't reach backend**
-1. Confirm backend is up: `curl http://localhost:3000/health`
+### Mobile can't reach backend
+1. Confirm backend is running: `curl http://localhost:3000/health`
 2. Check `EXPO_PUBLIC_API_URL` in `mobile/.env`
-3. Physical device must be on the same WiFi; use your LAN IP (`ipconfig getifaddr en0` on macOS)
+3. Physical devices must be on the same WiFi; use your LAN IP:
+   ```bash
+   # macOS
+   ipconfig getifaddr en0
+   # Linux
+   hostname -I
+   ```
 
-**Database errors**
+### Database errors
 ```bash
 cd backend && npm run db:generate && npm run db:push
 ```
 
-**OTP not received** — check Twilio credentials and account balance; in dev mode the OTP is logged to the console regardless.
+### OTP not received
+- Verify Twilio credentials and account balance
+- In development mode, the OTP is always logged to the backend console
 
 ---
 
-## Documentation
+## 📚 Documentation
 
 - [API Documentation](./backend/API_DOCUMENTATION.md)
 - [Mobile Setup Guide](./mobile/SETUP.md)
 - [Testing Guide](./backend/tests/README.md)
+
+---
+
+<div align="center">
+
+**FarmConnect** — Empowering Agriculture Through Technology 🌱
+
+</div>
